@@ -1,19 +1,37 @@
 fileFormatVersion: 2
-guid: 81a9dedac82b75a43b01d43a259ecf94
-timeCreated: 1458614416
+guid: 4e4507f59cedc5f45a7677a301c224ef
+timeCreated: 1459017932
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: CrackedSpriteSheet_0
-    21300002: CrackedSpriteSheet_1
-    21300004: CrackedSpriteSheet_2
-    21300006: CrackedSpriteSheet_3
-    21300008: CrackedSpriteSheet_4
-    21300010: CrackedSpriteSheet_5
+    21300000: Step5
+    21300002: Crack5
+    21300004: Break1
+    21300006: Hole
+    21300008: Exit1
+    21300010: Entrance1
+    21300012: Step4
+    21300014: Crack4
+    21300016: Break2
+    21300018: Hole2
+    21300020: Entrance2
+    21300022: Step3
+    21300024: Crack3
+    21300026: Break3
+    21300028: Rock
+    21300030: Exit2
+    21300032: Step2
+    21300034: Crack2
+    21300036: Break4
+    21300038: Player
+    21300040: Step1
+    21300042: Crack1
+    21300044: Break5
+    21300046: Tile
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 1
+    enableMipMap: 0
     linearTexture: 0
     correctGamma: 0
     fadeOut: 0
@@ -50,94 +68,394 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spritePixelsToUnits: 64
+  spritePixelsToUnits: 128
   alphaIsTransparency: 1
   textureType: 8
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: CrackedSpriteSheet_0
+    - name: Step5
       rect:
         serializedVersion: 2
-        x: 0
-        y: 577
-        width: 63
-        height: 62
+        x: 1
+        y: 552
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
-      - - {x: -24.5, y: 31}
-        - {x: -31.5, y: 24}
-        - {x: -31.5, y: -31}
-        - {x: 28.5, y: -31}
-        - {x: 31.5, y: -29}
-        - {x: 31.5, y: 30}
-        - {x: 25.5, y: 31}
-    - name: CrackedSpriteSheet_1
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Crack5
       rect:
         serializedVersion: 2
-        x: 64
-        y: 576
-        width: 63
-        height: 64
+        x: 134
+        y: 552
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
-      - - {x: -18.5, y: 32}
-        - {x: -31.5, y: 27}
-        - {x: -31.5, y: -27}
-        - {x: -14.5, y: -32}
-        - {x: 13.5, y: -32}
-        - {x: 31.5, y: -25}
-        - {x: 31.5, y: 28}
-        - {x: 19.5, y: 32}
-    - name: CrackedSpriteSheet_2
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Break1
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 64
-        height: 63
+        x: 267
+        y: 552
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
-      - - {x: -32, y: 31.5}
-        - {x: -32, y: -31.5}
-        - {x: 32, y: -31.5}
-        - {x: 32, y: 31.5}
-    - name: CrackedSpriteSheet_3
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Hole
       rect:
         serializedVersion: 2
-        x: 0
-        y: 448
-        width: 64
-        height: 64
+        x: 399
+        y: 552
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
-      - - {x: -32, y: 32}
-        - {x: -32, y: -32}
-        - {x: 32, y: -32}
-        - {x: 32, y: 32}
-    - name: CrackedSpriteSheet_4
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Exit1
       rect:
         serializedVersion: 2
-        x: 0
-        y: 384
-        width: 64
-        height: 64
+        x: 533
+        y: 552
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
-      - - {x: -32, y: 32}
-        - {x: -32, y: -32}
-        - {x: 32, y: -32}
-        - {x: 32, y: 32}
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 44, y: -64}
+        - {x: 64, y: -50}
+        - {x: 64, y: 22}
+        - {x: 29, y: 64}
+    - name: Entrance1
+      rect:
+        serializedVersion: 2
+        x: 667
+        y: 424
+        width: 128
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 64, y: -63}
+        - {x: 64, y: 70}
+        - {x: 38, y: 87}
+        - {x: -18, y: 128}
+        - {x: -64, y: 128}
+        - {x: -64, y: -128}
+        - {x: -19, y: -128}
+        - {x: 11, y: -94}
+        - {x: 39, y: -78}
+        - {x: 41, y: -76}
+    - name: Step4
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 423
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Crack4
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 423
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Break2
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 422
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Hole2
+      rect:
+        serializedVersion: 2
+        x: 399
+        y: 422
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+      - - {x: -54, y: 54}
+        - {x: 54, y: 54}
+        - {x: 54, y: -54}
+        - {x: -54, y: -54}
+    - name: Entrance2
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 345
+        width: 127
+        height: 204
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 17.5, y: 102}
+        - {x: -63.5, y: 102}
+        - {x: -63.5, y: -52}
+        - {x: 33.5, y: -102}
+        - {x: 51.5, y: -102}
+        - {x: 63.5, y: -89}
+        - {x: 63.5, y: 45}
+        - {x: 41.5, y: 85}
+    - name: Step3
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 292
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Crack3
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 294
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Break3
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 293
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Rock
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 316
+        width: 126
+        height: 76
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -28, y: 38}
+        - {x: -63, y: 9}
+        - {x: -63, y: -25}
+        - {x: -32, y: -38}
+        - {x: 50, y: -38}
+        - {x: 63, y: -5}
+        - {x: 63, y: 6}
+        - {x: 28, y: 38}
+    - name: Exit2
+      rect:
+        serializedVersion: 2
+        x: 667
+        y: 293
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 25}
+        - {x: 2, y: 64}
+    - name: Step2
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 160
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Crack2
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 160
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Break4
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 163
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Player
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 163
+        width: 69
+        height: 116
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -34.5, y: 58}
+        - {x: -34.5, y: -58}
+        - {x: 34.5, y: -58}
+        - {x: 34.5, y: 29}
+        - {x: 30.5, y: 58}
+    - name: Step1
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 30
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Crack1
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 30
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Break5
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 32
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Tile
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 32
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
     outline: []
   spritePackingTag: 
   userData: 
