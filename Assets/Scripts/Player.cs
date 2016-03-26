@@ -23,7 +23,7 @@ public class Player : MonoBehaviour {
 		landed = false;
 		busy = false;
 		hoppingInPlaceFrames = 10;
-		hoppingtodirectionframes= 15;
+		hoppingtodirectionframes= 8;
 		jumpingFrames = 20;
 		currentState = AnimationState.IDLE;
 	}
@@ -63,6 +63,7 @@ public class Player : MonoBehaviour {
 	{
 		if (!busy)
 		{
+            landed = false;
 			busy = true;
 			position = new Vector2(position.x, position.y + 1);
 			//update position
@@ -74,6 +75,7 @@ public class Player : MonoBehaviour {
 	{
 		if (!busy)
 		{
+            landed = false;
 			busy = true;
 			position = new Vector2(position.x, position.y - 1);
 			//update position
@@ -85,6 +87,7 @@ public class Player : MonoBehaviour {
 	{
 		if (!busy)
 		{
+            landed = false;
 			busy = true;
 			position = new Vector2(position.x - 1, position.y);
 			//update position
@@ -96,6 +99,7 @@ public class Player : MonoBehaviour {
 	{
 		if (!busy)
 		{
+            landed = false;
 			busy = true;
 			position = new Vector2(position.x + 1, position.y);
 			//update position
@@ -106,6 +110,7 @@ public class Player : MonoBehaviour {
 	public void hopInPlace() {
 		if (!busy)
 		{
+            landed = false;
 			busy = true;
 			currentState = AnimationState.HOP_UP;
 		}
@@ -114,6 +119,7 @@ public class Player : MonoBehaviour {
 	{
 		if (!busy)
 		{
+            landed = false;
 			jumped = true;
 			busy = true;
 			currentState = AnimationState.JUMP_UP;
@@ -132,6 +138,7 @@ public class Player : MonoBehaviour {
 	{
 		//stop animation
 		busy = false;
+        landed = true;
 		currentState = AnimationState.IDLE;
 		//update position
 		position = newPosition;
@@ -154,6 +161,7 @@ public class Player : MonoBehaviour {
 		jumped = false;
 		landed = false;
 		position = new Vector2(startX, startY);
+        currentState = AnimationState.IDLE;
 		//update position
 		transform.position = new Vector3(position.x, position.y, transform.position.z);
 		//reset animations
@@ -181,6 +189,7 @@ public class Player : MonoBehaviour {
 			{
 				busy = false;
 				currentState = AnimationState.IDLE;
+                landed = true;
 				currentSize = 0.8f;
 			}
 		}
@@ -189,8 +198,8 @@ public class Player : MonoBehaviour {
 	
 	public void doHopToEast()
 	{
-		float deltaPosition = 1f / (hoppingtodirectionframes/2);
-		float deltaSize = (2 - 0.8f) / (hoppingtodirectionframes/2);
+		float deltaPosition = 1f / (hoppingtodirectionframes);
+		float deltaSize = (2 - 0.8f) / (hoppingtodirectionframes);
 		int startX = (int)position.x - 1;
 		//update position
 		transform.position = new Vector3(transform.position.x + deltaPosition, transform.position.y, transform.position.z);
@@ -204,6 +213,7 @@ public class Player : MonoBehaviour {
 			//check at/passed destination
 			busy = false;
 			currentState = AnimationState.IDLE;
+            landed = true;
 			currentSize = 0.8f;
 			transform.position = new Vector3(position.x, transform.position.y, transform.position.z);
 		}
@@ -217,8 +227,8 @@ public class Player : MonoBehaviour {
 	}
 	public void doHopToWest()
 	{
-		float deltaPosition = 1f / (hoppingtodirectionframes/2);
-		float deltaSize = (2 - 0.8f) / (hoppingtodirectionframes/2);
+		float deltaPosition = 1f / (hoppingtodirectionframes);
+		float deltaSize = (2 - 0.8f) / (hoppingtodirectionframes);
 		int startX = (int)position.x + 1;
 		//update position
 		transform.position = new Vector3(transform.position.x - deltaPosition, transform.position.y, transform.position.z);
@@ -233,6 +243,7 @@ public class Player : MonoBehaviour {
 			//check at/passed destination
 			busy = false;
 			currentState = AnimationState.IDLE;
+            landed = true;
 			currentSize = 0.8f;
 			transform.position = new Vector3(position.x, transform.position.y, transform.position.z);
 		}
@@ -246,8 +257,8 @@ public class Player : MonoBehaviour {
 	}
 	public void doHopToNorth()
 	{
-		float deltaPosition = 1f / (hoppingtodirectionframes/2);
-		float deltaSize = (2 - 0.8f) / (hoppingtodirectionframes/2);
+		float deltaPosition = 1f / (hoppingtodirectionframes);
+		float deltaSize = (2 - 0.8f) / (hoppingtodirectionframes);
 		int startY = (int)position.y - 1;
 		//update position
 		transform.position = new Vector3(transform.position.x, transform.position.y + deltaPosition, transform.position.z);
@@ -262,6 +273,7 @@ public class Player : MonoBehaviour {
 			//check at/passed destination
 			busy = false;
 			currentState = AnimationState.IDLE;
+            landed = true;
 			currentSize = 0.8f;
 			transform.position = new Vector3(transform.position.x, position.y, transform.position.z);
 		}
@@ -276,8 +288,8 @@ public class Player : MonoBehaviour {
 	}
 	public void doHopToSouth()
 	{
-		float deltaPosition = 1f / (hoppingtodirectionframes/2);
-		float deltaSize = (2 - 0.8f) / (hoppingtodirectionframes/2);
+		float deltaPosition = 1f / (hoppingtodirectionframes);
+		float deltaSize = (2 - 0.8f) / (hoppingtodirectionframes);
 		int startY = (int)position.y + 1;
 		//update position
 		transform.position = new Vector3(transform.position.x, transform.position.y - deltaPosition, transform.position.z);
@@ -292,6 +304,7 @@ public class Player : MonoBehaviour {
 			//check at/passed destination
 			busy = false;
 			currentState = AnimationState.IDLE;
+            landed = true;
 			currentSize = 0.8f;
 			transform.position = new Vector3(transform.position.x, position.y, transform.position.z);
 		}

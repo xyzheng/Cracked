@@ -73,103 +73,6 @@ public class BoardManager
 
 }
 
-public class TileBoardManager : BoardManager {
-    //health values/states of a 'tile' of a board
-    protected enum TILE_HEALTH { HEALTHY, DAMAGED, DESTROYED };
-    //keep track of start, goal, board
-    protected List<Vector2> starts;
-    protected List<Vector2> goals;
-	// constructor
-	public TileBoardManager(){
-        current = new Board();
-        next = new Board();
-        starts = new List<Vector2>();
-        starts.Add(new Vector2(0, 4));
-        goals = new List<Vector2>();
-        goals.Add(new Vector2(4, 0));
-        //add to boards
-        boards = new List<Board>();
-        boards.Add(current.getCopy());
-        //backtracked
-        currentBoardIndex = 0;
-	}
-    //getters
-    public Vector2 getStart() { return starts[currentBoardIndex]; }
-    public Vector2 getGoal() { return goals[currentBoardIndex]; }
-    public bool currentIsValidAt(int x, int y) { return current.isValid(x, y); }
-    public bool currentIsHealthyAt(int x, int y) { return current.getValueAt(x, y) == (int)TILE_HEALTH.HEALTHY; }
-    public bool currentIsDamagedAt(int x, int y) { return current.getValueAt(x, y) == (int)TILE_HEALTH.DAMAGED; }
-    public bool currentIsDestroyedAt(int x, int y) { return current.getValueAt(x, y) == (int)TILE_HEALTH.DESTROYED; }
-    public bool nextIsValidAt(int x, int y) { return next.isValid(x, y); }
-    public bool nextIsHealthyAt(int x, int y) { return next.getValueAt(x, y) == (int)TILE_HEALTH.HEALTHY; }
-    public bool nextIsDamagedAt(int x, int y) { return next.getValueAt(x, y) == (int)TILE_HEALTH.DAMAGED; }
-    public bool nextIsDestroyedAt(int x, int y) { return next.getValueAt(x, y) == (int)TILE_HEALTH.DESTROYED; }
-    //setters
-    public bool damageCurrentBoard(int x, int y) {
-        if (current.isValid(x, y))
-        {
-            int value = current.getValueAt(x, y);
-            if (value + 1 > (int)TILE_HEALTH.DESTROYED) { return false; }
-            current.setValueAtTo(x, y, value + 1);
-            return true;
-        }
-        return false;
-    }
-    public bool unDamageCurrentBoard(int x, int y) {
-        if (current.isValid(x, y))
-        {
-            int value = current.getValueAt(x, y);
-            if (value - 1 < (int)TILE_HEALTH.HEALTHY) { return false; }
-            current.setValueAtTo(x, y, value - 1);
-            return true;
-        }
-        return false;
-    }
-    public bool damageNextBoard(int x, int y) {
-        if (next.isValid(x, y))
-        {
-            int value = next.getValueAt(x, y);
-            if (value + 1 > (int)TILE_HEALTH.DESTROYED) { return false; }
-            next.setValueAtTo(x, y, value + 1);
-            return true;
-        }
-        return false;
-    }
-    public bool unDamageNextBoard(int x, int y) {
-        if (next.isValid(x, y))
-        {
-            int value = next.getValueAt(x, y);
-            if (value - 1 < (int)TILE_HEALTH.HEALTHY) { return false; }
-            next.setValueAtTo(x, y, value - 1);
-            return true;
-        }
-        return false;
-    }
-    public override void clear()
-    {
-        base.clear();
-        starts.Clear();
-        goals.Clear();
-    }
-    public override void clearedCurrentBoard()
-    {
-        //establish currentboard as the futureboard
-        starts.Add(new Vector2(0, 4));
-        goals.Add(new Vector2(4, 0));
-        base.clearedCurrentBoard();
-    }
-    public override void clearForwardBoards()
-    {
-        for (int i = boards.Count - 1; i > currentBoardIndex; i--)
-        {
-            //boards.RemoveAt(i);
-            starts.RemoveAt(i);
-            goals.RemoveAt(i);
-        }
-        base.clearForwardBoards();
-    }
-}
-
 public class RockBoardManager : BoardManager {
     //constructor
     public RockBoardManager(){
@@ -220,3 +123,108 @@ public class RockBoardManager : BoardManager {
         return false;
     }
 }
+
+public class TileBoardManager : BoardManager
+{
+    //health values/states of a 'tile' of a board
+    protected enum TILE_HEALTH { HEALTHY, DAMAGED, DESTROYED };
+    //keep track of start, goal, board
+    protected List<Vector2> starts;
+    protected List<Vector2> goals;
+
+    // constructor
+    public TileBoardManager(int startX = 0, int startY = 4, int goalX = 4, int goalY = 0)
+    {
+        current = new Board();
+        next = new Board();
+        starts = new List<Vector2>();
+        starts.Add(new Vector2(startX, startY));
+        goals = new List<Vector2>();
+        goals.Add(new Vector2(goalX, goalY));
+        //add to boards
+        boards = new List<Board>();
+        boards.Add(current.getCopy());
+        //backtracked
+        currentBoardIndex = 0;
+    }
+    //getters
+    public Vector2 getStart() { return starts[currentBoardIndex]; }
+    public Vector2 getGoal() { return goals[currentBoardIndex]; }
+    public bool currentIsValidAt(int x, int y) { return current.isValid(x, y); }
+    public bool currentIsHealthyAt(int x, int y) { return current.getValueAt(x, y) == (int)TILE_HEALTH.HEALTHY; }
+    public bool currentIsDamagedAt(int x, int y) { return current.getValueAt(x, y) == (int)TILE_HEALTH.DAMAGED; }
+    public bool currentIsDestroyedAt(int x, int y) { return current.getValueAt(x, y) == (int)TILE_HEALTH.DESTROYED; }
+    public bool nextIsValidAt(int x, int y) { return next.isValid(x, y); }
+    public bool nextIsHealthyAt(int x, int y) { return next.getValueAt(x, y) == (int)TILE_HEALTH.HEALTHY; }
+    public bool nextIsDamagedAt(int x, int y) { return next.getValueAt(x, y) == (int)TILE_HEALTH.DAMAGED; }
+    public bool nextIsDestroyedAt(int x, int y) { return next.getValueAt(x, y) == (int)TILE_HEALTH.DESTROYED; }
+    //setters
+    public bool damageCurrentBoard(int x, int y)
+    {
+        if (current.isValid(x, y))
+        {
+            int value = current.getValueAt(x, y);
+            if (value + 1 > (int)TILE_HEALTH.DESTROYED) { return false; }
+            current.setValueAtTo(x, y, value + 1);
+            return true;
+        }
+        return false;
+    }
+    public bool unDamageCurrentBoard(int x, int y)
+    {
+        if (current.isValid(x, y))
+        {
+            int value = current.getValueAt(x, y);
+            if (value - 1 < (int)TILE_HEALTH.HEALTHY) { return false; }
+            current.setValueAtTo(x, y, value - 1);
+            return true;
+        }
+        return false;
+    }
+    public bool damageNextBoard(int x, int y)
+    {
+        if (next.isValid(x, y))
+        {
+            int value = next.getValueAt(x, y);
+            if (value + 1 > (int)TILE_HEALTH.DESTROYED) { return false; }
+            next.setValueAtTo(x, y, value + 1);
+            return true;
+        }
+        return false;
+    }
+    public bool unDamageNextBoard(int x, int y)
+    {
+        if (next.isValid(x, y))
+        {
+            int value = next.getValueAt(x, y);
+            if (value - 1 < (int)TILE_HEALTH.HEALTHY) { return false; }
+            next.setValueAtTo(x, y, value - 1);
+            return true;
+        }
+        return false;
+    }
+    public override void clear()
+    {
+        base.clear();
+        starts.Clear();
+        goals.Clear();
+    }
+    public override void clearedCurrentBoard()
+    {
+        //establish currentboard as the futureboard
+        starts.Add(new Vector2(0, 4));
+        goals.Add(new Vector2(4, 0));
+        base.clearedCurrentBoard();
+    }
+    public override void clearForwardBoards()
+    {
+        for (int i = boards.Count - 1; i > currentBoardIndex; i--)
+        {
+            //boards.RemoveAt(i);
+            starts.RemoveAt(i);
+            goals.RemoveAt(i);
+        }
+        base.clearForwardBoards();
+    }
+}
+
