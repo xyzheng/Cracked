@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour {
     }
 
 	// Main update loop
-	void FixedUpdate () {
+	void Update () {
         if (state == GameState.TITLE)
         {
             //player lands on start
