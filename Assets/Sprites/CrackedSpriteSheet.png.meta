@@ -1,27 +1,33 @@
 fileFormatVersion: 2
-guid: af71eaa3688e587429c2df0dd6b66e76
-timeCreated: 1458983422
+guid: 4e4507f59cedc5f45a7677a301c224ef
+timeCreated: 1459017932
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: Tile
+    21300000: Step5
     21300002: Crack5
     21300004: Break1
     21300006: Hole
-    21300008: Step3
-    21300010: Crack4
-    21300012: Break2
-    21300014: Hole2
-    21300016: Step2
-    21300018: Crack3
-    21300020: Break3
-    21300022: Rock
-    21300024: Step1
-    21300026: Crack2
-    21300028: Break4
-    21300030: Player
-    21300032: Crack1
-    21300034: Break5
+    21300008: Exit1
+    21300010: Entrance1
+    21300012: Step4
+    21300014: Crack4
+    21300016: Break2
+    21300018: Hole2
+    21300020: Entrance2
+    21300022: Step3
+    21300024: Crack3
+    21300026: Break3
+    21300028: Rock
+    21300030: Exit2
+    21300032: Step2
+    21300034: Crack2
+    21300036: Break4
+    21300038: Player
+    21300040: Step1
+    21300042: Crack1
+    21300044: Break5
+    21300046: Tile
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -68,10 +74,10 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: Tile
+    - name: Step5
       rect:
         serializedVersion: 2
-        x: 0
+        x: 1
         y: 552
         width: 128
         height: 128
@@ -128,11 +134,49 @@ TextureImporter:
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: 64}
-    - name: Step3
+    - name: Exit1
       rect:
         serializedVersion: 2
-        x: 0
-        y: 421
+        x: 533
+        y: 552
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 44, y: -64}
+        - {x: 64, y: -50}
+        - {x: 64, y: 22}
+        - {x: 29, y: 64}
+    - name: Entrance1
+      rect:
+        serializedVersion: 2
+        x: 667
+        y: 424
+        width: 128
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 64, y: -63}
+        - {x: 64, y: 70}
+        - {x: 38, y: 87}
+        - {x: -18, y: 128}
+        - {x: -64, y: 128}
+        - {x: -64, y: -128}
+        - {x: -19, y: -128}
+        - {x: 11, y: -94}
+        - {x: 39, y: -78}
+        - {x: 41, y: -76}
+    - name: Step4
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 423
         width: 128
         height: 128
       alignment: 0
@@ -192,11 +236,30 @@ TextureImporter:
         - {x: 54, y: 54}
         - {x: 54, y: -54}
         - {x: -54, y: -54}
-    - name: Step2
+    - name: Entrance2
       rect:
         serializedVersion: 2
-        x: 0
-        y: 291
+        x: 532
+        y: 345
+        width: 127
+        height: 204
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 17.5, y: 102}
+        - {x: -63.5, y: 102}
+        - {x: -63.5, y: -52}
+        - {x: 33.5, y: -102}
+        - {x: 51.5, y: -102}
+        - {x: 63.5, y: -89}
+        - {x: 63.5, y: 45}
+        - {x: 41.5, y: 85}
+    - name: Step3
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 292
         width: 128
         height: 128
       alignment: 0
@@ -256,10 +319,26 @@ TextureImporter:
         - {x: 63, y: -5}
         - {x: 63, y: 6}
         - {x: 28, y: 38}
-    - name: Step1
+    - name: Exit2
       rect:
         serializedVersion: 2
-        x: 0
+        x: 667
+        y: 293
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 25}
+        - {x: 2, y: 64}
+    - name: Step2
+      rect:
+        serializedVersion: 2
+        x: 1
         y: 160
         width: 128
         height: 128
@@ -317,6 +396,21 @@ TextureImporter:
         - {x: 34.5, y: -58}
         - {x: 34.5, y: 29}
         - {x: 30.5, y: 58}
+    - name: Step1
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 30
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
     - name: Crack1
       rect:
         serializedVersion: 2
@@ -336,6 +430,21 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 267
+        y: 32
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Tile
+      rect:
+        serializedVersion: 2
+        x: 401
         y: 32
         width: 128
         height: 128

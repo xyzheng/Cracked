@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour {
     public GameObject player;
     Player playerScript;
     bool handledPlayerJump;
+    public GameObject entrance;
+    public GameObject exit;
     public Text levelText;
     //GameStates
     enum GameState { TITLE, PAUSE, PLAY }
@@ -35,11 +37,14 @@ public class GameManager : MonoBehaviour {
     }
 
 	// Main update loop
-	void Update () {
+	void FixedUpdate () {
         if (state == GameState.TITLE)
         {
             //player lands on start
             gbm.steppedOn((int)gbm.getStart().x, (int)gbm.getStart().y);
+            //instantiate exit to right of goal/entrance to left
+            entrance = (GameObject)Instantiate(entrance, new Vector3(gbm.getStart().x -1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0), Quaternion.identity);
+            exit = (GameObject)Instantiate(exit, new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0), Quaternion.identity);
             state = GameState.PLAY;
         }
         else if (state == GameState.PAUSE)
@@ -49,10 +54,9 @@ public class GameManager : MonoBehaviour {
         {
             //levelText
             levelText.text = "Level: " + level.ToString();
-            //check input
-            handleInput();
+            
             //synch animations
-            if (playerScript.didLand())
+            if (!playerScript.isBusy())
             {
                 //synch animations
                 gbm.steppedOn((int)playerScript.getPosition().x, gbm.getCurrentHeight() - (int)playerScript.getPosition().y - 1);
@@ -62,24 +66,27 @@ public class GameManager : MonoBehaviour {
                     handleJump();
                 }
             }
+            //check input
+            handleInput();
             //check reach goal
-                //get player position - have to swap y
-            Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
-                //cleared floor
-            if (gbm.getGoal() == playerBoardPosition && !playerScript.isBusy()) { handleClearedFloor(); }
+            if (gbm.getGoal() == new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1) && !playerScript.isBusy()) { handleClearedFloor(); }
         }
 	}
     public void handleClearedFloor()
     {
         level -= 1;
     //clear priorKeys
-        im.clearPriorKeys();
+        //im.clearPriorKeys();
     //gbm
         gbm.clearedCurrentBoard(); 
     //reset player stuff
         playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
         playerScript.notJump();
         handledPlayerJump = false;
+        //reset entrance/exit
+        entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+        exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+        state = GameState.PLAY;
 
     }
     public void handleJump()
@@ -159,9 +166,12 @@ public class GameManager : MonoBehaviour {
             playerScript.notJump();
             handledPlayerJump = false;
             //clear prior keys list
-            im.clearPriorKeys();
+            //im.clearPriorKeys();
             //change floor
             level += 1;
+            //reset entrance/exit
+            entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+            exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
         }
     }
     public void handleForwardTrack()
@@ -173,9 +183,12 @@ public class GameManager : MonoBehaviour {
             playerScript.notJump();
             handledPlayerJump = false;
             //clear prior keys list
-            im.clearPriorKeys();
+            //im.clearPriorKeys();
             //change floor
             level -= 1;
+            //reset entrance/exit
+            entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+            exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
         }
     }
     //keyboard input
@@ -193,7 +206,7 @@ public class GameManager : MonoBehaviour {
                 player.GetComponent<Player>().moveUp();
                 gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
                 //add to prior keys list
-                im.addToPriorKeys(im.getMoveUpKey());
+                //im.addToPriorKeys(im.getMoveUpKey());
             }
             else
             {
@@ -214,7 +227,7 @@ public class GameManager : MonoBehaviour {
                 player.GetComponent<Player>().moveDown();
                 gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
                 //add to prior keys list
-                im.addToPriorKeys(im.getMoveDownKey());
+                //im.addToPriorKeys(im.getMoveDownKey());
             }
             else
             {
@@ -235,7 +248,7 @@ public class GameManager : MonoBehaviour {
                 player.GetComponent<Player>().moveLeft();
                 gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
                 //add to prior keys list
-                im.addToPriorKeys(im.getMoveLeftKey());
+                //im.addToPriorKeys(im.getMoveLeftKey());
             }
             else
             {
@@ -256,7 +269,7 @@ public class GameManager : MonoBehaviour {
                 player.GetComponent<Player>().moveRight();
                 gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
                 //add to prior keys list
-                im.addToPriorKeys(im.getMoveRightKey());
+                //im.addToPriorKeys(im.getMoveRightKey());
             }
             else
             {
@@ -266,11 +279,16 @@ public class GameManager : MonoBehaviour {
         }
         else if (!playerScript.didJump() && Input.GetKeyUp(im.getJumpKey()) && !playerScript.isBusy())
         {
-            //if backtracked accept changes
-            gbm.moveWhileBacktrack();
-            playerScript.jump();
-            //add to prior keys list
-            im.addToPriorKeys(im.getJumpKey());
+            //check if move valid - player's y is flipped
+            Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+            if (gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y))
+            {
+                //if backtracked accept changes
+                gbm.moveWhileBacktrack();
+                playerScript.jump();
+                //add to prior keys list
+                //im.addToPriorKeys(im.getJumpKey());
+            }
         }
         else if (Input.GetKeyUp(im.getResetBoardKey())) { resetBoard(); }
         else if (Input.GetKeyUp(im.getPauseKey()))
@@ -295,7 +313,10 @@ public class GameManager : MonoBehaviour {
         //player lands on start
         gbm.steppedOn((int)gbm.getStart().x, (int)gbm.getStart().y);
         //clear prior keys list
-        im.clearPriorKeys();
+        //im.clearPriorKeys();
+        //reset entrance/exit
+        entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+        exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
     }
     public void resetGame()
     {
@@ -307,5 +328,8 @@ public class GameManager : MonoBehaviour {
         //player
         playerScript.reset((int)gbm.getStart().x, (int)(gbm.getCurrentHeight() - gbm.getStart().y - 1));
         handledPlayerJump = false;
+        //reset entrance/exit
+        entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+        exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
     }
 }
