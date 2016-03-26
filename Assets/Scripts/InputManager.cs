@@ -5,7 +5,7 @@ using System.Collections.Generic;
 //Simple InputManager
 public class InputManager {
     //prior key pressed
-    public List<KeyCode> priorKeys;
+    //public List<KeyCode> priorKeys;
     //keys for movement of player
     protected KeyCode moveUp;
     protected KeyCode moveLeft;
@@ -36,7 +36,7 @@ public class InputManager {
         forwardTrack = KeyCode.F;
         resetGame = KeyCode.R;
         //priorkeys
-        priorKeys = new List<KeyCode>();
+        //priorKeys = new List<KeyCode>();
 	}
 
     //getters
@@ -66,20 +66,20 @@ public class InputManager {
     public void rebindResetGameKey(KeyCode newKey) { resetGame = newKey; }
 
     //modifying priorkeys
-    public void addToPriorKeys(KeyCode key) { priorKeys.Add(key); }
-    public void clearPriorKeys() { priorKeys.Clear(); }
-    public void removeLastKeyPressed()
-    {
-        if (getLastKeyPressed() != KeyCode.Escape)
-        {
-            priorKeys.RemoveAt(priorKeys.Count - 1);
-        }
-    }
-    public KeyCode getLastKeyPressed() { 
-        if (priorKeys.Count != 0) {
-            return priorKeys[priorKeys.Count - 1];
-        }
-        //list empty, return escape
-        return KeyCode.Escape; 
-    }
+    //public void addToPriorKeys(KeyCode key) { priorKeys.Add(key); }
+    //public void clearPriorKeys() { priorKeys.Clear(); }
+    //public void removeLastKeyPressed()
+    //{
+    //    if (getLastKeyPressed() != KeyCode.Escape)
+    //    {
+    //        priorKeys.RemoveAt(priorKeys.Count - 1);
+    //    }
+    //}
+    //public KeyCode getLastKeyPressed() { 
+    //    if (priorKeys.Count != 0) {
+    //        return priorKeys[priorKeys.Count - 1];
+    //    }
+    //    //list empty, return escape
+    //    return KeyCode.Escape; 
+    //}
 }
