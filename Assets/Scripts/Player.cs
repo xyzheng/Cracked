@@ -29,7 +29,7 @@ public class Player : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void FixedUpdate () {
+	void Update () {
 		if (busy)
 		{
 			if (currentState == AnimationState.HOP_UP || currentState == AnimationState.HOP_DOWN)
