@@ -12,6 +12,9 @@ public class GameBoardManager : MonoBehaviour
     public GameObject[][] tiles;
     public GameObject[][] rocks;
 
+	public float currentRockSize;
+	public bool moving = false;
+
     // constructor
     void Start()
     {
@@ -279,6 +282,12 @@ public class GameBoardManager : MonoBehaviour
             }
         }
     }
+
+	//animate moving/falling rocks
+	public void moveRocks () {
+
+	}
+
     //reset
     public void resetBoard(bool placeRockAtExit)
     {
