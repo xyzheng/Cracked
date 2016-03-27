@@ -147,7 +147,6 @@ public class GameBoardManager : MonoBehaviour
     public void dropRocks(int x, int y)
     {
 //		float deltaPosition = 1.0f / movingFrames;
-		int direction = 0;
         int rX = 0; //x position of rock
         int rY = 0; //y position of rock
         for (int i = 0; i < 5; i++)
@@ -161,28 +160,24 @@ public class GameBoardManager : MonoBehaviour
             else if (i == 1)
             {
                 //left of
-				direction = 1;
                 rX = x - 1;
                 rY = y;
             }
             else if (i == 2)
             {
                 //right of
-				direction = 2;
                 rX = x + 1;
                 rY = y;
             }
             else if (i == 3)
             {
                 //above
-				direction = 3;
                 rX = x;
                 rY = y - 1;
             }
             else if (i == 4)
             {
                 //below
-				direction = 4;
                 rX = x;
                 rY = y + 1;
             }
@@ -191,25 +186,19 @@ public class GameBoardManager : MonoBehaviour
                 && bbm.currentHasRockAt(rX, rY)
                 && (!bbm.currentIsValidAt(rX, rY) || rocks[rX][rY] != null))
             {
-				
-				if (direction == 1) {
-					//rockManager.moveRockWest(rocks[rX][rY], rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y);
-					//rockManager.currentState = Rock.rockMovement.MOVING_LEFT;
+				if (i == 0) {
+					StartCoroutine(rockManager.scaleRock(rocks[rX][rY], 0.5f)); 
+				}
+				if (i == 1) {
 					StartCoroutine(rockManager.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x + 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
 				}
-				if (direction == 2) {
-					//rockManager.moveRockEast(rocks[rX][rY], rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y);
-					//rockManager.currentState = Rock.rockMovement.MOVING_RIGHT;
+				if (i == 2) {
 					StartCoroutine(rockManager.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x - 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
 				}
-				if (direction == 3) {
-					//rockManager.moveRockNorth(rocks[rX][rY], rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y);
-					//rockManager.currentState = Rock.rockMovement.MOVING_UP;
+				if (i == 3) {
 					StartCoroutine(rockManager.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y - 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
 				}
-				if (direction == 4) {
-					//moveRock(rocks[rX][rY], rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y);
-					//rockManager.currentState = Rock.rockMovement.MOVING_DOWN;
+				if (i == 4) {
 					StartCoroutine(rockManager.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y + 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
 				}
 
