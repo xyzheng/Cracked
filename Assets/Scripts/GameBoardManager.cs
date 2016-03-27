@@ -11,14 +11,14 @@ public class GameBoardManager : MonoBehaviour
     public GameObject[][] tiles;
     public GameObject[][] rocks;
 
-	public float currentRockSize;
-	public bool moving = false;
+	public Rock rockManager;
 
     // constructor
     void Start()
     {
         bbm = new BoardManager();
         //gameobjects
+		rockManager = rock.GetComponent<Rock>();
         tiles = new GameObject[bbm.getCurrentWidth()][];
         for (int i = 0; i < bbm.getCurrentWidth(); i++) { tiles[i] = new GameObject[bbm.getCurrentHeight()]; }
         rocks = new GameObject[bbm.getCurrentWidth()][];
@@ -109,7 +109,7 @@ public class GameBoardManager : MonoBehaviour
         clearRocks();
         //place a rock at the exit
         bbm.nextPlaceRockAt((int)bbm.getGoal().x, (int)bbm.getGoal().y);
-        //bbm.clearedCurrentBoard(); //update rockmanager
+        //bbm.clearedCurrentBoard(); //update rock
         bbm.clearedCurrentBoard();
         drawRocks();
         drawTiles();
@@ -146,6 +146,8 @@ public class GameBoardManager : MonoBehaviour
     //rocks 
     public void dropRocks(int x, int y)
     {
+//		float deltaPosition = 1.0f / movingFrames;
+		int direction = 0;
         int rX = 0; //x position of rock
         int rY = 0; //y position of rock
         for (int i = 0; i < 5; i++)
@@ -159,24 +161,28 @@ public class GameBoardManager : MonoBehaviour
             else if (i == 1)
             {
                 //left of
+				direction = 1;
                 rX = x - 1;
                 rY = y;
             }
             else if (i == 2)
             {
                 //right of
+				direction = 2;
                 rX = x + 1;
                 rY = y;
             }
             else if (i == 3)
             {
                 //above
+				direction = 3;
                 rX = x;
                 rY = y - 1;
             }
             else if (i == 4)
             {
                 //below
+				direction = 4;
                 rX = x;
                 rY = y + 1;
             }
@@ -185,8 +191,29 @@ public class GameBoardManager : MonoBehaviour
                 && bbm.currentHasRockAt(rX, rY)
                 && (!bbm.currentIsValidAt(rX, rY) || rocks[rX][rY] != null))
             {
-                //remove rock on current / play animation
-                Destroy(rocks[rX][rY]);
+				
+				if (direction == 1) {
+					//rockManager.moveRockWest(rocks[rX][rY], rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y);
+					//rockManager.currentState = Rock.rockMovement.MOVING_LEFT;
+					StartCoroutine(moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x + 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
+				}
+				if (direction == 2) {
+					//rockManager.moveRockEast(rocks[rX][rY], rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y);
+					//rockManager.currentState = Rock.rockMovement.MOVING_RIGHT;
+					StartCoroutine(moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x - 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
+				}
+				if (direction == 3) {
+					//rockManager.moveRockNorth(rocks[rX][rY], rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y);
+					//rockManager.currentState = Rock.rockMovement.MOVING_UP;
+					StartCoroutine(moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y - 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
+				}
+				if (direction == 4) {
+					//moveRock(rocks[rX][rY], rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y);
+					//rockManager.currentState = Rock.rockMovement.MOVING_DOWN;
+					StartCoroutine(moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y + 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
+				}
+
+				//Destroy(rocks[rX][rY]);
                 rocks[rX][rY] = null;
                 bbm.currentRemoveAt(rX, rY);
                 //check if next board has a rock on hole's position
@@ -277,11 +304,6 @@ public class GameBoardManager : MonoBehaviour
         }
     }
 
-	//animate moving/falling rocks
-	public void moveRocks () {
-
-	}
-
     //reset
     public void resetBoard(bool placeRockAtExit)
     {
@@ -305,6 +327,27 @@ public class GameBoardManager : MonoBehaviour
         drawTiles();
         drawRocks();
     }
+		
+	IEnumerator moveAndScaleRock(GameObject aRock, Vector3 destination, float time) {
+		//float deltaPosition = 1.0f / 5.0f;
+		float moveElapsedTime = 0;
+		Vector3 startingPos = aRock.transform.position;
+		while (moveElapsedTime < time) {
+			aRock.transform.position = Vector3.Lerp (startingPos, destination, (moveElapsedTime / (time/4)));
+			moveElapsedTime += Time.deltaTime;
+			yield return new WaitForEndOfFrame();
+		}
+		float scaleElapsedTime = 0;
+		Vector3 startingScale = aRock.transform.localScale;
+		Vector3 endingScale = new Vector3 (0.0f, 0.0f, 0.0f);
+		while (scaleElapsedTime < time) {
+			//scale the rock
+			aRock.transform.localScale = Vector3.Lerp (startingScale, endingScale, (scaleElapsedTime / (time/4)));
+			scaleElapsedTime += Time.deltaTime;
+			yield return new WaitForEndOfFrame();
+		}
+		Destroy (aRock);
+	}
 }
 
 
