@@ -3,8 +3,7 @@ using System.Collections;
 
 public class Rock : MonoBehaviour {
 
-	/*
-	IEnumerator moveAndScaleRock(GameObject aRock, Vector3 destination, float time) {
+	public IEnumerator moveAndScaleRock(GameObject aRock, Vector3 destination, float time) {
 		//float deltaPosition = 1.0f / 5.0f;
 		float moveElapsedTime = 0;
 		Vector3 startingPos = aRock.transform.position;
@@ -24,5 +23,5 @@ public class Rock : MonoBehaviour {
 		}
 		Destroy (aRock);
 	}
-	*/
+
 }

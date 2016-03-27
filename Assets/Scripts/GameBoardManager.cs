@@ -195,22 +195,22 @@ public class GameBoardManager : MonoBehaviour
 				if (direction == 1) {
 					//rockManager.moveRockWest(rocks[rX][rY], rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y);
 					//rockManager.currentState = Rock.rockMovement.MOVING_LEFT;
-					StartCoroutine(moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x + 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
+					StartCoroutine(rockManager.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x + 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
 				}
 				if (direction == 2) {
 					//rockManager.moveRockEast(rocks[rX][rY], rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y);
 					//rockManager.currentState = Rock.rockMovement.MOVING_RIGHT;
-					StartCoroutine(moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x - 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
+					StartCoroutine(rockManager.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x - 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
 				}
 				if (direction == 3) {
 					//rockManager.moveRockNorth(rocks[rX][rY], rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y);
 					//rockManager.currentState = Rock.rockMovement.MOVING_UP;
-					StartCoroutine(moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y - 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
+					StartCoroutine(rockManager.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y - 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
 				}
 				if (direction == 4) {
 					//moveRock(rocks[rX][rY], rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y);
 					//rockManager.currentState = Rock.rockMovement.MOVING_DOWN;
-					StartCoroutine(moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y + 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
+					StartCoroutine(rockManager.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y + 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
 				}
 
 				//Destroy(rocks[rX][rY]);
@@ -327,27 +327,6 @@ public class GameBoardManager : MonoBehaviour
         drawTiles();
         drawRocks();
     }
-		
-	IEnumerator moveAndScaleRock(GameObject aRock, Vector3 destination, float time) {
-		//float deltaPosition = 1.0f / 5.0f;
-		float moveElapsedTime = 0;
-		Vector3 startingPos = aRock.transform.position;
-		while (moveElapsedTime < time) {
-			aRock.transform.position = Vector3.Lerp (startingPos, destination, (moveElapsedTime / (time/4)));
-			moveElapsedTime += Time.deltaTime;
-			yield return new WaitForEndOfFrame();
-		}
-		float scaleElapsedTime = 0;
-		Vector3 startingScale = aRock.transform.localScale;
-		Vector3 endingScale = new Vector3 (0.0f, 0.0f, 0.0f);
-		while (scaleElapsedTime < time) {
-			//scale the rock
-			aRock.transform.localScale = Vector3.Lerp (startingScale, endingScale, (scaleElapsedTime / (time/4)));
-			scaleElapsedTime += Time.deltaTime;
-			yield return new WaitForEndOfFrame();
-		}
-		Destroy (aRock);
-	}
 }
 
 
