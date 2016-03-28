@@ -182,12 +182,12 @@ public class GameBoardManager : MonoBehaviour
                 rY = y + 1;
             }
             //main rock drop
-            if (bbm.currentIsValidAt(x, y) && bbm.currentIsDestroyedAt(x, y)
-                && bbm.currentHasRockAt(rX, rY)
-                && (!bbm.currentIsValidAt(rX, rY) || rocks[rX][rY] != null))
-            {
+			if (bbm.currentIsValidAt(x, y) && bbm.currentIsDestroyedAt(x, y)
+				&& (bbm.currentIsValidAt(rX, rY) && rocks[rX][rY] != null)) 
+			{
 				if (i == 0) {
 					StartCoroutine(rockManager.scaleRock(rocks[rX][rY], 0.5f)); 
+					//StartCoroutine(rockManager.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x , rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
 				}
 				if (i == 1) {
 					StartCoroutine(rockManager.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x + 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
