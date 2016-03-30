@@ -20,7 +20,14 @@ public class GameManager : MonoBehaviour {
     GameState state;
 
     int level;
-    int LEVEL_START = 99;
+    int LEVEL_START = 0;
+
+    // audio variables
+    public static AudioSource[] aSrc;
+    public static AudioClip crack;
+    public static AudioClip hole;
+    public static AudioClip fall;
+    public static AudioClip jump;
 
     //called before all Start()
     void Awake()
@@ -34,6 +41,13 @@ public class GameManager : MonoBehaviour {
         player = (GameObject)Instantiate(player, new Vector3(0, 0, -2), Quaternion.identity);
         playerScript = player.GetComponent<Player>();
         handledPlayerJump = false;
+        // set up audio variables
+        // 0: crack, 1: hole, 2: fall, 3: jump
+        aSrc = GetComponents<AudioSource>();
+        crack = aSrc[0].clip;
+        hole = aSrc[1].clip;
+        fall = aSrc[2].clip;
+        jump = aSrc[3].clip;
     }
 
 	// Main update loop
@@ -53,7 +67,7 @@ public class GameManager : MonoBehaviour {
         else if (state == GameState.PLAY)
         {
             //levelText
-            levelText.text = "Level: " + level.ToString();
+            levelText.text = "Floors descended: " + level.ToString();
             
             //synch animations
             if (!playerScript.isBusy())
@@ -74,7 +88,7 @@ public class GameManager : MonoBehaviour {
 	}
     public void handleClearedFloor()
     {
-        level -= 1;
+        level += 1;
     //clear priorKeys
         //im.clearPriorKeys();
     //gbm
@@ -168,7 +182,7 @@ public class GameManager : MonoBehaviour {
             //clear prior keys list
             //im.clearPriorKeys();
             //change floor
-            level += 1;
+            level -= 1;
             //reset entrance/exit
             entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
             exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
@@ -185,7 +199,7 @@ public class GameManager : MonoBehaviour {
             //clear prior keys list
             //im.clearPriorKeys();
             //change floor
-            level -= 1;
+            level += 1;
             //reset entrance/exit
             entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
             exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);

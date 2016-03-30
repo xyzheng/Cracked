@@ -47,6 +47,8 @@ public class GameBoardManager : MonoBehaviour
             //break the floor
             tiles[boardX][boardY].GetComponent<Tile>().breakTile();
             bbm.damageCurrentBoard(boardX, boardY);
+            // play sound for making a hole
+            GameManager.aSrc[1].PlayOneShot(GameManager.hole, 1.0f);
             //check rocks
             dropRocks(boardX, boardY);
         }
@@ -54,6 +56,8 @@ public class GameBoardManager : MonoBehaviour
         {
             //did not step off a damaged tile
             bbm.damageNextBoard(boardX, boardY);
+            // play sound for damaging the tile
+            GameManager.aSrc[0].PlayOneShot(GameManager.crack, 1.0f);
         }
     }
     public Vector2 getStart() { return bbm.getStart(); }
@@ -205,6 +209,8 @@ public class GameBoardManager : MonoBehaviour
 				//Destroy(rocks[rX][rY]);
                 rocks[rX][rY] = null;
                 bbm.currentRemoveAt(rX, rY);
+                // play rock falling sound
+                GameManager.aSrc[2].PlayOneShot(GameManager.fall, 1.0f);
                 //check if next board has a rock on hole's position
                 if (bbm.nextHasRockAt(x, y))
                 {

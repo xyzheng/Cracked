@@ -123,6 +123,8 @@ public class Player : MonoBehaviour {
 			jumped = true;
 			busy = true;
 			currentState = AnimationState.JUMP_UP;
+            // play jump audio
+            GameManager.aSrc[3].PlayOneShot(GameManager.jump, 1.0f);
 		}
 	}
 	//getters
