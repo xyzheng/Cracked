@@ -56,8 +56,6 @@ public class GameBoardManager : MonoBehaviour
         {
             //did not step off a damaged tile
             bbm.damageNextBoard(boardX, boardY);
-            // play sound for damaging the tile
-            GameManager.aSrc[0].PlayOneShot(GameManager.crack, 1.0f);
         }
     }
     public Vector2 getStart() { return bbm.getStart(); }

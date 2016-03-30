@@ -219,6 +219,8 @@ public class GameManager : MonoBehaviour {
                 //move player
                 player.GetComponent<Player>().moveUp();
                 gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                // play walking sound
+                aSrc[0].PlayOneShot(crack, 1.0f);
                 //add to prior keys list
                 //im.addToPriorKeys(im.getMoveUpKey());
             }
@@ -240,6 +242,8 @@ public class GameManager : MonoBehaviour {
                 //move player
                 player.GetComponent<Player>().moveDown();
                 gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                // play walking sound
+                aSrc[0].PlayOneShot(crack, 1.0f);
                 //add to prior keys list
                 //im.addToPriorKeys(im.getMoveDownKey());
             }
@@ -261,6 +265,8 @@ public class GameManager : MonoBehaviour {
                 //move player
                 player.GetComponent<Player>().moveLeft();
                 gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                // play walking sound
+                aSrc[0].PlayOneShot(crack, 1.0f);
                 //add to prior keys list
                 //im.addToPriorKeys(im.getMoveLeftKey());
             }
@@ -282,6 +288,8 @@ public class GameManager : MonoBehaviour {
                 //move player
                 player.GetComponent<Player>().moveRight();
                 gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                // play walking sound
+                aSrc[0].PlayOneShot(crack, 1.0f);
                 //add to prior keys list
                 //im.addToPriorKeys(im.getMoveRightKey());
             }
