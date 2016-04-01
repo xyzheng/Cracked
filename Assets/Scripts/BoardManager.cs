@@ -11,6 +11,8 @@ public class SwapBoards
     //getter
     public int getCurrentWidth() { return current.getWidth(); }
     public int getCurrentHeight() { return current.getHeight(); }
+    public int getNextWidth() { return next.getWidth(); }
+    public int getNextHeight() { return next.getHeight(); }
     public bool didBackTrack() { return currentBoardIndex != boards.Count - 1; }
     public bool backTrackPossible() { return currentBoardIndex - 1 >= 0; }
     public bool forwardTrackPossible() { return currentBoardIndex + 1 < boards.Count; } 
@@ -70,7 +72,6 @@ public class SwapBoards
             boards.RemoveAt(i);
         }
     }
-
 }
 
 public class BoardManager : SwapBoards
