@@ -10,15 +10,26 @@ public class GameManager : MonoBehaviour {
     GameBoardManager gbm;
     //prefabs
     public GameObject player;
-    Player playerScript;
+    private Player playerScript;
     bool handledPlayerJump;
     public GameObject entrance;
     public GameObject exit;
     public Text levelText;
-    //GameStates
-    enum GameState { TITLE, PAUSE, PLAY }
+    //basic ui
+    public GameObject backtrack;
+    private BackTrack btScript;
+    public GameObject forwardtrack;
+    private ForwardTrack ftScript;
+    public GameObject reset;
+    public GameObject pause;
+    public GameObject eye;
+    private Eye eyeScript;
+    //States
+    enum GameState { TITLE, PAUSE, LOAD, PEEK, PLAY }
     GameState state;
-
+    GameState priorState;
+    enum LoadState { PLAYER, NEXT, BACK, FORWARD }
+    LoadState lstate;
     int level;
     int LEVEL_START = 0;
 
@@ -33,7 +44,7 @@ public class GameManager : MonoBehaviour {
     void Awake()
     {
         level = LEVEL_START;
-        state = GameState.TITLE; //this should be title ..
+        state = GameState.TITLE;
         im = new InputManager();
         gbmObj = (GameObject)Instantiate(gbmObj, new Vector3(0, 0, 0), Quaternion.identity);
         gbm = gbmObj.GetComponent<GameBoardManager>();
@@ -57,36 +68,113 @@ public class GameManager : MonoBehaviour {
             //player lands on start
             gbm.steppedOn((int)gbm.getStart().x, (int)gbm.getStart().y);
             //instantiate exit to right of goal/entrance to left
-            entrance = (GameObject)Instantiate(entrance, new Vector3(gbm.getStart().x -1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0), Quaternion.identity);
-            exit = (GameObject)Instantiate(exit, new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0), Quaternion.identity);
+            Vector3 entrancePos = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+            Vector3 exitPos = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+            entrance = (GameObject)Instantiate(entrance, entrancePos, Quaternion.identity);
+            exit = (GameObject)Instantiate(exit, exitPos, Quaternion.identity);
+            //basic ui
+            levelText.text = "Floor\n" + level.ToString();
+            reset = (GameObject)Instantiate(reset, new Vector3(entrancePos.x + 1.5f, exitPos.y + 1, 0), Quaternion.identity);
+            pause = (GameObject)Instantiate(pause, new Vector3(exitPos.x - 1.5f, exitPos.y + 1, 0), Quaternion.identity);
+            backtrack = (GameObject)Instantiate(backtrack, new Vector3(entrancePos.x, exitPos.y + 1, 0), Quaternion.identity);
+            btScript = backtrack.GetComponent<BackTrack>();
+            btScript.makeTransparent();
+            forwardtrack = (GameObject)Instantiate(forwardtrack, new Vector3(exitPos.x, exitPos.y + 1, 0), Quaternion.identity);
+            ftScript = forwardtrack.GetComponent<ForwardTrack>();
+            ftScript.makeTransparent();
+            eye = (GameObject)Instantiate(eye, new Vector3(exitPos.x, exitPos.y - 1, 0), Quaternion.identity);
+            eyeScript = eye.GetComponent<Eye>();
             state = GameState.PLAY;
+            //update priorstate
+            priorState = GameState.TITLE;
         }
         else if (state == GameState.PAUSE)
         {
+            //update priorstate
+            priorState = GameState.PAUSE;
         }
         else if (state == GameState.PLAY)
         {
-            //levelText
-            levelText.text = "Floors descended: " + level.ToString();
-            
-            //synch animations
-            if (!playerScript.isBusy())
+            //check if done with peek
+            if (priorState == GameState.PEEK)
+            {
+                eyeScript.unblink();
+                gbm.unPeek();
+                priorState = GameState.PLAY;
+            }
+            else
             {
                 //synch animations
-                gbm.steppedOn((int)playerScript.getPosition().x, gbm.getCurrentHeight() - (int)playerScript.getPosition().y - 1);
-                //handle jump
-                if (playerScript.didJump() && !handledPlayerJump)
+                if (!playerScript.isBusy())
                 {
-                    handleJump();
+                    //synch animations
+                    gbm.steppedOn((int)playerScript.getPosition().x, gbm.getCurrentHeight() - (int)playerScript.getPosition().y - 1);
+                    //handle jump
+                    if (playerScript.didJump() && !handledPlayerJump)
+                    {
+                        handleJump();
+                    }
                 }
+                //check ui
+                if (gbm.backTrackPossible()) { btScript.makeFullColor(); }
+                else { btScript.makeTransparent(); }
+                if (gbm.forwardTrackPossible()) { ftScript.makeFullColor(); }
+                else { ftScript.makeTransparent(); }
+                //check input
+                handlePlayInput();
+                //check reach goal
+                if (gbm.getGoal() == new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1) && !playerScript.isBusy())
+                {
+                    handleClearedFloor();
+                }
+                //update priorstate
+                priorState = GameState.PLAY;
             }
-            //check input
-            handleInput();
-            //check reach goal
-            if (gbm.getGoal() == new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1) && !playerScript.isBusy()) { handleClearedFloor(); }
+        }
+        else if (state == GameState.LOAD)
+        {
+            //wait until player done with animation
+            if (lstate == LoadState.PLAYER && !playerScript.isBusy()){
+                lstate = LoadState.NEXT;
+                gbm.zoomTilesOut();
+            }
+            else if (lstate != LoadState.PLAYER && !gbm.busy()) {//wait until gbm done with zoom
+                if (lstate == LoadState.NEXT) { loadNextFloor(); }
+                else if (lstate == LoadState.BACK) { loadBacktrack(); }
+                else if (lstate == LoadState.FORWARD) { loadForwardTrack(); }
+                state = GameState.PLAY;
+            }
+            //update priorstate
+            priorState = GameState.LOAD;
+        }
+        else if (state == GameState.PEEK)
+        {
+            if (!gbm.busy() && !gbm.isPeeking())
+            {
+                levelText.text = "Next\nFloor";
+                playerScript.fadePlayer();
+                gbm.peek();
+            }
+            //exit peeking
+            if (Input.GetKeyUp(im.getPeekKey()))
+            {
+                levelText.text = "Floor\n" + level.ToString();
+                playerScript.unfadePlayer();
+                gbm.unfadeTiles();
+                state = GameState.PLAY;
+            }
+            //update priorstate
+            priorState = GameState.PEEK;
         }
 	}
+
     public void handleClearedFloor()
+    {
+        state = GameState.LOAD;
+        lstate = LoadState.PLAYER;
+        playerScript.moveRight();
+    }
+    public void loadNextFloor()
     {
         level += 1;
     //clear priorKeys
@@ -100,8 +188,13 @@ public class GameManager : MonoBehaviour {
         //reset entrance/exit
         entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
         exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
-        state = GameState.PLAY;
-
+        //ui stuff
+        levelText.text = "Floor\n" + level.ToString();
+        reset.transform.position = new Vector3(gbm.getStart().x + 0.5f, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+        pause.transform.position = new Vector3(gbm.getGoal().x - 0.5f, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+        btScript.setPosition(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+        ftScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+        eyeScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 2, 0);
     }
     public void handleJump()
     {
@@ -175,38 +268,70 @@ public class GameManager : MonoBehaviour {
     {
         if (gbm.backtrack())
         {
-            //reset player
-            playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
-            playerScript.notJump();
-            handledPlayerJump = false;
-            //clear prior keys list
-            //im.clearPriorKeys();
-            //change floor
-            level -= 1;
-            //reset entrance/exit
-            entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
-            exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+            state = GameState.LOAD;
+            lstate = LoadState.BACK;
+            gbm.zoomTilesIn();
         }
+    }
+    public void loadBacktrack()
+    {
+        //reset player
+        playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
+        playerScript.notJump();
+        handledPlayerJump = false;
+        //clear prior keys list
+        //im.clearPriorKeys();
+        //change floor
+        level -= 1;
+        //reset entrance/exit
+        entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+        exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+        //ui stuff
+        levelText.text = "Floor\n" + level.ToString();
+        reset.transform.position = new Vector3(gbm.getStart().x + 0.5f, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+        pause.transform.position = new Vector3(gbm.getGoal().x - 0.5f, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+        btScript.setPosition(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+        ftScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+        eyeScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 2, 0);
     }
     public void handleForwardTrack()
     {
         if (gbm.forwardTrack())
         {
-            //reset player
-            playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
-            playerScript.notJump();
-            handledPlayerJump = false;
-            //clear prior keys list
-            //im.clearPriorKeys();
-            //change floor
-            level += 1;
-            //reset entrance/exit
-            entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
-            exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+            state = GameState.LOAD;
+            lstate = LoadState.FORWARD;
+            gbm.zoomTilesOut();
         }
     }
+    public void loadForwardTrack()
+    {
+        //reset player
+        playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
+        playerScript.notJump();
+        handledPlayerJump = false;
+        //clear prior keys list
+        //im.clearPriorKeys();
+        //change floor
+        level += 1;
+        //reset entrance/exit
+        entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+        exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+        //ui stuff
+        levelText.text = "Floor\n" + level.ToString();
+        reset.transform.position = new Vector3(gbm.getStart().x + 0.5f, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+        pause.transform.position = new Vector3(gbm.getGoal().x - 0.5f, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+        btScript.setPosition(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+        ftScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+        eyeScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 2, 0);
+    }
+    public void handlePeek()
+    {
+        state = GameState.PEEK;
+        eyeScript.blink();
+        gbm.fadeTiles();
+    }
     //keyboard input
-    public void handleInput()
+    public void handlePlayInput()
     {
         if (Input.GetKeyUp(im.getMoveUpKey()) && !playerScript.isBusy()) {
             //if backtracked accept changes
@@ -318,9 +443,13 @@ public class GameManager : MonoBehaviour {
             //pause the game
             //currentState = GameState.PAUSE;
         }
-        else if (Input.GetKeyUp(im.getBacktrackKey())) { handleBacktrack(); }
+        else if (btScript.clicked() || Input.GetKeyUp(im.getBacktrackKey())) { 
+            handleBacktrack();
+            btScript.unclick();
+        }
         else if (Input.GetKeyUp(im.getForwardTrackKey())) { handleForwardTrack(); } 
         else if (Input.GetKeyUp(im.getResetGameKey())){ resetGame(); }
+        else if (Input.GetKeyUp(im.getPeekKey())) { handlePeek(); }
     }
 
     //reset

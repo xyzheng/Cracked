@@ -1,33 +1,42 @@
 fileFormatVersion: 2
-guid: 4e4507f59cedc5f45a7677a301c224ef
-timeCreated: 1459017932
+guid: a8fb8096aac1dd0408006c962dae0f09
+timeCreated: 1459525173
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: Step5
     21300002: Crack5
     21300004: Break1
-    21300006: Hole
-    21300008: Exit1
-    21300010: Entrance1
-    21300012: Step4
-    21300014: Crack4
-    21300016: Break2
-    21300018: Hole2
-    21300020: Entrance2
-    21300022: Step3
-    21300024: Crack3
-    21300026: Break3
-    21300028: Rock
-    21300030: Exit2
-    21300032: Step2
-    21300034: Crack2
-    21300036: Break4
-    21300038: Player
-    21300040: Step1
-    21300042: Crack1
-    21300044: Break5
-    21300046: Tile
+    21300006: SCrack5
+    21300008: SBreak1
+    21300010: Tile
+    21300012: Entrance1
+    21300014: Step4
+    21300016: Crack4
+    21300018: Break2
+    21300020: SCrack4
+    21300022: SBreak2
+    21300024: Hole
+    21300026: Step3
+    21300028: Crack3
+    21300030: Break3
+    21300032: SCrack3
+    21300034: SBreak3
+    21300036: Rock
+    21300038: Exit2
+    21300040: Step2
+    21300042: Crack2
+    21300044: Break4
+    21300046: SCrack2
+    21300048: SBreak4
+    21300050: Player
+    21300052: Entrance2
+    21300054: Step1
+    21300056: Crack1
+    21300058: Break5
+    21300060: SCrack1
+    21300062: SBreak5
+    21300064: Exit1
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -78,7 +87,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1
-        y: 552
+        y: 539
         width: 128
         height: 128
       alignment: 0
@@ -93,7 +102,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 134
-        y: 552
+        y: 539
         width: 128
         height: 128
       alignment: 0
@@ -108,7 +117,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 267
-        y: 552
+        y: 539
         width: 128
         height: 128
       alignment: 0
@@ -119,11 +128,11 @@ TextureImporter:
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: 64}
-    - name: Hole
+    - name: SCrack5
       rect:
         serializedVersion: 2
         x: 399
-        y: 552
+        y: 539
         width: 128
         height: 128
       alignment: 0
@@ -134,11 +143,11 @@ TextureImporter:
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: 64}
-    - name: Exit1
+    - name: SBreak1
       rect:
         serializedVersion: 2
-        x: 533
-        y: 552
+        x: 531
+        y: 539
         width: 128
         height: 128
       alignment: 0
@@ -147,15 +156,28 @@ TextureImporter:
       outline:
       - - {x: -64, y: 64}
         - {x: -64, y: -64}
-        - {x: 44, y: -64}
-        - {x: 64, y: -50}
-        - {x: 64, y: 22}
-        - {x: 29, y: 64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Tile
+      rect:
+        serializedVersion: 2
+        x: 664
+        y: 539
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
     - name: Entrance1
       rect:
         serializedVersion: 2
-        x: 667
-        y: 424
+        x: 797
+        y: 411
         width: 128
         height: 256
       alignment: 0
@@ -176,7 +198,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1
-        y: 423
+        y: 410
         width: 128
         height: 128
       alignment: 0
@@ -191,7 +213,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 134
-        y: 423
+        y: 410
         width: 128
         height: 128
       alignment: 0
@@ -206,7 +228,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 267
-        y: 422
+        y: 409
         width: 128
         height: 128
       alignment: 0
@@ -217,11 +239,11 @@ TextureImporter:
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: 64}
-    - name: Hole2
+    - name: SCrack4
       rect:
         serializedVersion: 2
         x: 399
-        y: 422
+        y: 409
         width: 128
         height: 128
       alignment: 0
@@ -232,34 +254,41 @@ TextureImporter:
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: 64}
-      - - {x: -54, y: 54}
-        - {x: 54, y: 54}
-        - {x: 54, y: -54}
-        - {x: -54, y: -54}
-    - name: Entrance2
+    - name: SBreak2
       rect:
         serializedVersion: 2
-        x: 532
-        y: 345
-        width: 127
-        height: 204
+        x: 531
+        y: 409
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
-      - - {x: 17.5, y: 102}
-        - {x: -63.5, y: 102}
-        - {x: -63.5, y: -52}
-        - {x: 33.5, y: -102}
-        - {x: 51.5, y: -102}
-        - {x: 63.5, y: -89}
-        - {x: 63.5, y: 45}
-        - {x: 41.5, y: 85}
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Hole
+      rect:
+        serializedVersion: 2
+        x: 664
+        y: 409
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
     - name: Step3
       rect:
         serializedVersion: 2
         x: 1
-        y: 292
+        y: 279
         width: 128
         height: 128
       alignment: 0
@@ -274,7 +303,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 134
-        y: 294
+        y: 281
         width: 128
         height: 128
       alignment: 0
@@ -289,7 +318,37 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 267
-        y: 293
+        y: 280
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: SCrack3
+      rect:
+        serializedVersion: 2
+        x: 399
+        y: 280
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: SBreak3
+      rect:
+        serializedVersion: 2
+        x: 531
+        y: 280
         width: 128
         height: 128
       alignment: 0
@@ -303,8 +362,8 @@ TextureImporter:
     - name: Rock
       rect:
         serializedVersion: 2
-        x: 401
-        y: 316
+        x: 665
+        y: 305
         width: 126
         height: 76
       alignment: 0
@@ -322,8 +381,8 @@ TextureImporter:
     - name: Exit2
       rect:
         serializedVersion: 2
-        x: 667
-        y: 293
+        x: 797
+        y: 280
         width: 128
         height: 128
       alignment: 0
@@ -339,7 +398,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1
-        y: 160
+        y: 147
         width: 128
         height: 128
       alignment: 0
@@ -354,7 +413,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 134
-        y: 160
+        y: 147
         width: 128
         height: 128
       alignment: 0
@@ -369,7 +428,37 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 267
-        y: 163
+        y: 150
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: SCrack2
+      rect:
+        serializedVersion: 2
+        x: 399
+        y: 150
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: SBreak4
+      rect:
+        serializedVersion: 2
+        x: 531
+        y: 150
         width: 128
         height: 128
       alignment: 0
@@ -383,8 +472,8 @@ TextureImporter:
     - name: Player
       rect:
         serializedVersion: 2
-        x: 430
-        y: 163
+        x: 690
+        y: 149
         width: 69
         height: 116
       alignment: 0
@@ -396,11 +485,30 @@ TextureImporter:
         - {x: 34.5, y: -58}
         - {x: 34.5, y: 29}
         - {x: 30.5, y: 58}
+    - name: Entrance2
+      rect:
+        serializedVersion: 2
+        x: 797
+        y: 64
+        width: 128
+        height: 204
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 17, y: 102}
+        - {x: -64, y: 102}
+        - {x: -64, y: -52}
+        - {x: 33, y: -102}
+        - {x: 51, y: -102}
+        - {x: 64, y: -88}
+        - {x: 64, y: 44}
+        - {x: 41, y: 85}
     - name: Step1
       rect:
         serializedVersion: 2
         x: 1
-        y: 30
+        y: 17
         width: 128
         height: 128
       alignment: 0
@@ -415,7 +523,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 134
-        y: 30
+        y: 17
         width: 128
         height: 128
       alignment: 0
@@ -430,7 +538,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 267
-        y: 32
+        y: 19
         width: 128
         height: 128
       alignment: 0
@@ -441,11 +549,11 @@ TextureImporter:
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: 64}
-    - name: Tile
+    - name: SCrack1
       rect:
         serializedVersion: 2
-        x: 401
-        y: 32
+        x: 399
+        y: 19
         width: 128
         height: 128
       alignment: 0
@@ -456,6 +564,38 @@ TextureImporter:
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: 64}
+    - name: SBreak5
+      rect:
+        serializedVersion: 2
+        x: 531
+        y: 19
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+    - name: Exit1
+      rect:
+        serializedVersion: 2
+        x: 663
+        y: 19
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -64, y: 64}
+        - {x: -64, y: -64}
+        - {x: 44, y: -64}
+        - {x: 64, y: -50}
+        - {x: 64, y: 22}
+        - {x: 29, y: 64}
     outline: []
   spritePackingTag: 
   userData: 
