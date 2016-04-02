@@ -1,13 +1,13 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/GameBoardManager.cs">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="Assets/Scripts/GameBoardManager.cs" Line="187" Column="5" />
+      <File FileName="Assets/Scripts/Tile.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/GameBoardManager.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/GameManager.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/BoardManager.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Board.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Rock.cs" Line="27" Column="50" />
-      <File FileName="Assets/Scripts/Tile.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Rock.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Player.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/InputManager.cs" Line="1" Column="1" />
     </Files>
