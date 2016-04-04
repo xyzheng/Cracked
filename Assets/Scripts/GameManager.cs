@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour {
     public GameObject gbmObj;
     GameBoardManager gbm;
     //prefabs
+	public GameObject pausePanel;
     public GameObject player;
     private Player playerScript;
     bool handledPlayerJump;
@@ -39,6 +40,13 @@ public class GameManager : MonoBehaviour {
     public static AudioClip hole;
     public static AudioClip fall;
     public static AudioClip jump;
+	//public static AudioSource music;
+
+	//sliders and toggles
+	private Slider soundSlider;
+	private Slider musicSlider;
+	private Toggle soundToggle;
+	private Toggle musicToggle;
 
     //called before all Start()
     void Awake()
@@ -59,6 +67,7 @@ public class GameManager : MonoBehaviour {
         hole = aSrc[1].clip;
         fall = aSrc[2].clip;
         jump = aSrc[3].clip;
+		//soundSlider = GameObject.Find("Sound Slider").GetComponent<Slider>();
     }
 
 	// Main update loop
@@ -90,7 +99,9 @@ public class GameManager : MonoBehaviour {
         }
         else if (state == GameState.PAUSE)
         {
-            //update priorstate
+            //update prior state
+			//handlePause();
+			handleUnpause();
             priorState = GameState.PAUSE;
         }
         else if (state == GameState.PLAY)
@@ -330,6 +341,19 @@ public class GameManager : MonoBehaviour {
         eyeScript.blink();
         gbm.fadeTiles();
     }
+
+	public void handlePause() {
+		pausePanel.SetActive(true);
+		state = GameState.PAUSE;
+	}
+
+	public void handleUnpause() {
+		if (Input.GetKeyUp (KeyCode.Escape)) {
+			pausePanel.SetActive(false);
+			state = GameState.PLAY;
+		}
+	}
+
     //keyboard input
     public void handlePlayInput()
     {
@@ -438,11 +462,16 @@ public class GameManager : MonoBehaviour {
             }
         }
         else if (Input.GetKeyUp(im.getResetBoardKey())) { resetBoard(); }
-        else if (Input.GetKeyUp(im.getPauseKey()))
-        {
+		else if (Input.GetKeyUp(im.getPauseKey()) && state == GameState.PLAY) {
+			handlePause();
             //pause the game
             //currentState = GameState.PAUSE;
         }
+		/*
+		else if (Input.GetKeyUp (im.getPauseKey()) && state == GameState.PAUSE) {
+			handleUnpause();
+		}
+		*/
         else if (btScript.clicked() || Input.GetKeyUp(im.getBacktrackKey())) { 
             handleBacktrack();
             btScript.unclick();
@@ -483,4 +512,44 @@ public class GameManager : MonoBehaviour {
         entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
         exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
     }
+		
+	//sound slider
+	public void updateSoundSlider () {
+		soundSlider = GameObject.Find("Sound Slider").GetComponent<Slider>();
+		for (int i=0; i<aSrc.Length; i++) {
+			aSrc[i].volume = soundSlider.value;
+		}
+	}
+
+	//sound toggle
+	public void toggleSound () {
+		soundToggle = GameObject.Find("Sound Toggle").GetComponent<Toggle>();
+		soundSlider = GameObject.Find("Sound Slider").GetComponent<Slider>();
+		for (int i=0; i<aSrc.Length; i++) {
+			if (!soundToggle.isOn) {
+				aSrc[i].volume = 0f;
+			}
+			else {
+				aSrc[i].volume = soundSlider.value;
+			}
+		}
+	}
+
+	//music slider
+	public void updateMusicSlider () {
+		musicSlider = GameObject.Find("Music Slider").GetComponent<Slider>();
+	//	music.volume = musicSlider.value;
+	}
+
+	public void toggleMusic () {
+		musicToggle = GameObject.Find("Music Toggle").GetComponent<Toggle>();
+		musicSlider = GameObject.Find("Music Slider").GetComponent<Slider>();
+		if (!musicToggle.isOn) {
+			//music.volume = 0f;
+		}
+		else {
+		//	music.volume = musicSlider.value;
+		}
+	}
+
 }
