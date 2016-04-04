@@ -557,4 +557,8 @@ public class GameManager : MonoBehaviour {
 		state = GameState.PLAY;
 	}
 
+	public void mainMenuButton () {
+		Application.LoadLevel("MainMenu");
+	}
+
 }
