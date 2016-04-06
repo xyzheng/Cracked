@@ -500,7 +500,8 @@ public class GameManager : MonoBehaviour {
 	}
 	public void resetGame()
 	{
-		level = LEVEL_START;
+		level = 0;//LEVEL_START;
+		levelText.text = "Floor\n" + level.ToString();
 		im = new InputManager();
 		gbm.clear();
 		//player lands on start
