@@ -8,12 +8,16 @@ public class Player : MonoBehaviour {
 	protected bool busy;
 	
 	//animation stuff
+    private int fadeFrames = 10;
+    private float minAlpha = 0.6f;
+    private Color baseColor;
+    private Color color;
 	public float currentSize = 0.8f;
-	private enum AnimationState { IDLE, HOP_UP, HOP_DOWN, HOP_EAST, HOP_WEST, HOP_NORTH, HOP_SOUTH, JUMP_UP, JUMP_DOWN }
+	private enum AnimationState { IDLE, HOP_UP, HOP_DOWN, HOP_EAST, HOP_WEST, HOP_NORTH, HOP_SOUTH, JUMP_UP, JUMP_DOWN, FADE_IN, FADE_OUT }
 	AnimationState currentState;
-	protected int hoppingInPlaceFrames;
-	protected int hoppingtodirectionframes;
-	protected int jumpingFrames;
+	protected int hoppingInPlaceFrames = 5;
+	protected int hoppingtodirectionframes = 8;
+	protected int jumpingFrames = 20;
 	
 	// Use this for initialization
 	void Start () {
@@ -22,10 +26,9 @@ public class Player : MonoBehaviour {
 		jumped = false;
 		//landed = false;
 		busy = false;
-		hoppingInPlaceFrames = 5;
-		hoppingtodirectionframes= 8;
-		jumpingFrames = 20;
 		currentState = AnimationState.IDLE;
+        baseColor = GetComponent<SpriteRenderer>().color;
+        color = baseColor;
 	}
 	
 	// Update is called once per frame
@@ -55,7 +58,15 @@ public class Player : MonoBehaviour {
 			else if (currentState == AnimationState.JUMP_UP || currentState == AnimationState.JUMP_DOWN)
 			{
 				doJump();
-			}
+            }
+            else if (currentState == AnimationState.FADE_IN)
+            {
+                doUnfade();
+            }
+            else if (currentState == AnimationState.FADE_OUT)
+            {
+                doFade();
+            }
 		}
 	}
 	//movement
@@ -170,7 +181,44 @@ public class Player : MonoBehaviour {
 		currentSize = 0.8f;
 		transform.localScale = new Vector3(0.8f, 0.8f, transform.localScale.z);
 	}
-	
+
+    public void fadePlayer()
+    {
+        busy = true;
+        currentState = AnimationState.FADE_OUT;
+    }
+    private void doFade()
+    {
+        //calc color
+        color = new Color(baseColor.r, baseColor.g, baseColor.b, color.a - (1f - minAlpha) / fadeFrames);
+        //done
+        if (color.a <= minAlpha)
+        {
+            busy = false;
+            currentState = AnimationState.IDLE;
+            color = new Vector4(baseColor.r, baseColor.g, baseColor.b, minAlpha);
+        }
+        GetComponent<SpriteRenderer>().color = color;
+    }
+    public void unfadePlayer()
+    {
+        busy = true;
+        currentState = AnimationState.FADE_IN;
+    }
+    private void doUnfade()
+    {
+        //calc color
+        color = new Color(baseColor.r, baseColor.g, baseColor.b, color.a + (1f - minAlpha) / fadeFrames);
+        //done
+        if (color.a >= 1f)
+        {
+            busy = false;
+            currentState = AnimationState.IDLE;
+            color = baseColor;
+        }
+        GetComponent<SpriteRenderer>().color = color;
+    }
+
 	//animation stuff
 	public void doHopInPlace()
 	{

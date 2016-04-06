@@ -4,32 +4,67 @@ using System.Collections;
 public class GameBoardManager : MonoBehaviour
 {
     //BoardManager
-    protected BoardManager bbm;
+    public BoardManager bbm;
     //gameobjects
     public GameObject tile;
     public GameObject rock;
     public GameObject[][] tiles;
     public GameObject[][] rocks;
 
-	public Rock rockManager;
+	public Rock rockScript;
+
+    //peeking
+    private bool peeking;
+    private Color color;
+    private int fadeFrames = 10;
+
+    ///zooming in and out
+    private enum AnimState { IDLE, ZOOM_IN, ZOOM_OUT, FADE_IN, FADE_OUT }
+    private AnimState state;
+    private bool evenWidth;
+    private bool evenHeight;
+    private float currentTileWidth;
+    private float maxWidth = 5f;
+    private float baseWidth = 1f;
+    private float minWidth = 1f;
+    private int frames = 25;
 
     // constructor
     void Start()
     {
         bbm = new BoardManager();
         //gameobjects
-		rockManager = rock.GetComponent<Rock>();
+		rockScript = rock.GetComponent<Rock>();
         tiles = new GameObject[bbm.getCurrentWidth()][];
         for (int i = 0; i < bbm.getCurrentWidth(); i++) { tiles[i] = new GameObject[bbm.getCurrentHeight()]; }
         rocks = new GameObject[bbm.getCurrentWidth()][];
         for (int i = 0; i < bbm.getCurrentWidth(); i++) { rocks[i] = new GameObject[bbm.getCurrentHeight()]; }
         //draw tiles; draw rocks
-        drawTiles();
-        drawRocks();
+        drawCurrentTiles();
+        drawCurrentRocks();
+        //peeking
+        peeking = false;
+        color = new Vector4(1f, 1f, 1f, 1f);
+        //zoom
+        state = AnimState.IDLE;
+        currentTileWidth = 1;
+    }
+    void LateUpdate()
+    {
+        if (state != AnimState.IDLE)
+        {
+            if (state == AnimState.ZOOM_IN) { zoomIn(); }
+            else if (state == AnimState.ZOOM_OUT) { zoomOut(); }
+            else if (state == AnimState.FADE_IN) { unfade(); }
+            else if (state == AnimState.FADE_OUT) { fade(); }
+        }
     }
     //getters
     public int getCurrentWidth() { return bbm.getCurrentWidth(); }
     public int getCurrentHeight() { return bbm.getCurrentHeight(); }
+    public bool didBackTrack() { return bbm.didBackTrack(); }
+    public bool backTrackPossible() { return bbm.backTrackPossible(); }
+    public bool forwardTrackPossible() { return bbm.forwardTrackPossible(); } 
     public bool currentIsHealthyAt(int x, int y) { return bbm.currentIsHealthyAt(x, y); }
     public bool canMoveTo(int x, int y)
     {
@@ -38,7 +73,14 @@ public class GameBoardManager : MonoBehaviour
     public void steppedOn(int boardX, int boardY)
     {
         //check to affect cracked 'tiles' of current board
-        tiles[boardX][boardY].GetComponent<Tile>().steppedOnTile();
+        if (!bbm.currentIsDamagedAt(boardX, boardY)) { 
+            tiles[boardX][boardY].GetComponent<Tile>().steppedOnTile();
+            if (!bbm.nextIsDamagedAt(boardX, boardY))
+            {
+                //did not step off a damaged tile
+                bbm.damageNextBoard(boardX, boardY);
+            }
+        }
     }
     public void steppedOffOf(int boardX, int boardY)
     {
@@ -58,6 +100,11 @@ public class GameBoardManager : MonoBehaviour
             bbm.damageNextBoard(boardX, boardY);
         }
     }
+    public bool busy()
+    {
+        return state != AnimState.IDLE;
+    }
+    public bool isPeeking() { return peeking; } 
     public Vector2 getStart() { return bbm.getStart(); }
     public Vector2 getGoal() { return bbm.getGoal(); }
     //setters
@@ -78,9 +125,9 @@ public class GameBoardManager : MonoBehaviour
             bbm.backTrack();
             //draw objects
             clearTiles();
-            drawTiles();
+            drawCurrentTiles();
             clearRocks();
-            drawRocks();
+            drawCurrentRocks();
             handleRocks();
             return true;
         }
@@ -94,9 +141,9 @@ public class GameBoardManager : MonoBehaviour
             bbm.forwardTrack();
             //drawobjects
             clearTiles();
-            drawTiles();
+            drawCurrentTiles();
             clearRocks();
-            drawRocks();
+            drawCurrentRocks();
             handleRocks();
             return true;
         }
@@ -106,15 +153,14 @@ public class GameBoardManager : MonoBehaviour
     {
         //tiles
         clearTiles();
-
         //rocks
         clearRocks();
         //place a rock at the exit
         bbm.nextPlaceRockAt((int)bbm.getGoal().x, (int)bbm.getGoal().y);
         //bbm.clearedCurrentBoard(); //update rock
         bbm.clearedCurrentBoard();
-        drawRocks();
-        drawTiles();
+        drawCurrentRocks();
+        drawCurrentTiles();
         handleRocks(); //check to remove edge case
     }
     public void damageCurrentBoard(int x, int y)
@@ -125,7 +171,7 @@ public class GameBoardManager : MonoBehaviour
             if (bbm.currentIsDamagedAt(x, y))
             {
                 //damaged
-                tiles[x][y].GetComponent<Tile>().crackTile();
+                tiles[x][y].GetComponent<Tile>().stepCrackTile();
             }
             else
             {
@@ -138,12 +184,14 @@ public class GameBoardManager : MonoBehaviour
     }
     public void damageFutureBoard(int x, int y)
     {
+        bbm.damageNextBoard(x, y);
         if (bbm.currentIsValidAt(x,y)) {
             tiles[x][y].GetComponent<Tile>().steppedOnTile();
         }
-        bbm.damageNextBoard(x, y);
+        if (bbm.currentIsDamagedAt(x, y)) { tiles[x][y].GetComponent<Tile>().stepCrackTile(); }
         //check rocks
         if (bbm.nextIsDestroyedAt(x, y)) { bbm.nextRemoveRockAt(x, y); }
+
     }
     //rocks 
     public void dropRocks(int x, int y)
@@ -155,69 +203,63 @@ public class GameBoardManager : MonoBehaviour
         {
             if (i == 0)
             {
-                //at position
+                //rock is at current tile's position (rock is on top of this tile)
                 rX = x;
                 rY = y;
             }
             else if (i == 1)
             {
-                //left of
-                rX = x - 1;
-                rY = y;
+                //rock is below (y - 1) current tile
+                rX = x;
+                rY = y + 1;
             }
             else if (i == 2)
             {
-                //right of
-                rX = x + 1;
+                //rock to left of current tile
+                rX = x - 1;
                 rY = y;
             }
             else if (i == 3)
             {
-                //above
+                //rock is above (y + 1) current tile
                 rX = x;
                 rY = y - 1;
             }
             else if (i == 4)
             {
-                //below
-                rX = x;
-                rY = y + 1;
+                //rock is right of current tile
+                rX = x + 1;
+                rY = y;
             }
             //main rock drop
-			if (bbm.currentIsValidAt(x, y) && bbm.currentIsDestroyedAt(x, y)
-				&& (bbm.currentIsValidAt(rX, rY) && rocks[rX][rY] != null)) 
+            if (bbm.currentIsValidAt(x, y) && bbm.currentIsDestroyedAt(x, y)
+				&& (bbm.currentIsValidAt(rX, rY) && rocks[rX][rY] != null) && !bbm.nextHasRockAt(x, y)) 
 			{
-				if (i == 0) {
-					StartCoroutine(rockManager.scaleRock(rocks[rX][rY], 0.5f)); 
-					//StartCoroutine(rockManager.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x , rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
-				}
-				if (i == 1) {
-					StartCoroutine(rockManager.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x + 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
-				}
-				if (i == 2) {
-					StartCoroutine(rockManager.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x - 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
-				}
-				if (i == 3) {
-					StartCoroutine(rockManager.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y - 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
-				}
-				if (i == 4) {
-					StartCoroutine(rockManager.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y + 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
-				}
-
-				//Destroy(rocks[rX][rY]);
+                if (i == 0)
+                {
+                    StartCoroutine(rockScript.scaleRock(rocks[rX][rY], 0.5f));
+                }
+                if (i == 1)
+                {
+                    StartCoroutine(rockScript.moveAndScaleRock(rocks[rX][rY], new Vector3(rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y + 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
+                }
+                if (i == 2)
+                {
+                    StartCoroutine(rockScript.moveAndScaleRock(rocks[rX][rY], new Vector3(rocks[rX][rY].transform.position.x + 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
+                }
+                if (i == 3)
+                {
+                    StartCoroutine(rockScript.moveAndScaleRock(rocks[rX][rY], new Vector3(rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y - 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
+                }
+                if (i == 4)
+                {
+                    StartCoroutine(rockScript.moveAndScaleRock(rocks[rX][rY], new Vector3(rocks[rX][rY].transform.position.x - 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
+                }
+                //Destroy(rocks[rX][rY]);
                 rocks[rX][rY] = null;
                 bbm.currentRemoveAt(rX, rY);
-                // play rock falling sound
-                GameManager.aSrc[2].PlayOneShot(GameManager.fall, 1.0f);
-                //check if next board has a rock on hole's position
-                if (bbm.nextHasRockAt(x, y))
-                {
-                    //next has rock, damage the floor
-                    bbm.damageNextBoard(x, y);
-                    //if floor is destroyed ... remove the rock
-                    if (bbm.nextIsDestroyedAt(x, y)) { bbm.nextRemoveRockAt(x, y); }
-                }
-                else if (!bbm.nextIsDestroyedAt(x, y)) { bbm.nextPlaceRockAt(x, y); } //next board has no rock, place it there unless it has a hole
+                //next board has no rock, place it there unless it has a hole
+                if (!bbm.nextIsDestroyedAt(x, y)) { bbm.nextPlaceRockAt(x, y); }
             }
         }
     }
@@ -258,7 +300,7 @@ public class GameBoardManager : MonoBehaviour
         }
     }
     //drawstuff
-    public void drawTiles()
+    private void drawCurrentTiles()
     {
         //add to tiles list and instantiate them - board is flipped
         for (int i = 0; i < bbm.getCurrentWidth(); i++)
@@ -267,11 +309,15 @@ public class GameBoardManager : MonoBehaviour
             {
                 //flip y
                 int y = bbm.getCurrentHeight() - j - 1;
-                if (bbm.currentIsHealthyAt(i, j)) { tiles[i][j] = (GameObject)Instantiate(tile, new Vector3(i, y, 0), Quaternion.identity); }
+                if (bbm.currentIsHealthyAt(i, j)) {
+                    tiles[i][j] = (GameObject)Instantiate(tile, new Vector3(i, y, 0), Quaternion.identity);
+                    if (bbm.nextIsDamagedAt(i, j)) { tiles[i][j].GetComponent<Tile>().steppedOnTile(); }
+                }
                 else if (bbm.currentIsDamagedAt(i, j))
                 {
                     tiles[i][j] = (GameObject)Instantiate(tile, new Vector3(i, y, 0), Quaternion.identity);
                     Tile script = tiles[i][j].GetComponent<Tile>();
+                    script.steppedOnTile();
                     script.crackTile();
                 }
                 else if (bbm.currentIsDestroyedAt(i, j))
@@ -284,7 +330,34 @@ public class GameBoardManager : MonoBehaviour
             }
         }
     }
-    public void drawRocks()
+    private void drawNextTiles()
+    {
+        //add to tiles list and instantiate them - board is flipped
+        for (int i = 0; i < bbm.getNextWidth(); i++)
+        {
+            for (int j = 0; j < bbm.getNextHeight(); j++)
+            {
+                //flip y
+                int y = bbm.getNextHeight() - j - 1;
+                if (bbm.nextIsHealthyAt(i, j)) { tiles[i][j] = (GameObject)Instantiate(tile, new Vector3(i, y, 0), Quaternion.identity); }
+                else if (bbm.nextIsDamagedAt(i, j))
+                {
+                    tiles[i][j] = (GameObject)Instantiate(tile, new Vector3(i, y, 0), Quaternion.identity);
+                    Tile script = tiles[i][j].GetComponent<Tile>();
+                    script.steppedOnTile();
+                    script.crackTile();
+                }
+                else if (bbm.nextIsDestroyedAt(i, j))
+                {
+                    tiles[i][j] = (GameObject)Instantiate(tile, new Vector3(i, y, 0), Quaternion.identity);
+                    Tile script = tiles[i][j].GetComponent<Tile>();
+                    script.crackTile();
+                    script.breakTile();
+                }
+            }
+        }
+    }
+    private void drawCurrentRocks()
     {
         //add to tiles list and instantiate them - board is flipped
         for (int i = 0; i < bbm.getCurrentWidth(); i++)
@@ -296,7 +369,212 @@ public class GameBoardManager : MonoBehaviour
             }
         }
     }
-
+    private void drawNextRocks()
+    {
+        //add to tiles list and instantiate them - board is flipped
+        for (int i = 0; i < bbm.getNextWidth(); i++)
+        {
+            for (int j = 0; j < bbm.getNextHeight(); j++)
+            {
+                //remove rock if it exists && flip y
+                if (bbm.nextHasRockAt(i, j)) { rocks[i][j] = (GameObject)Instantiate(rock, new Vector3(i, bbm.getCurrentHeight() - j - 1, -1), Quaternion.identity); }
+            }
+        }
+    }
+    //zoom
+    public void zoomTilesOut()
+    {
+        state = AnimState.ZOOM_OUT;
+        currentTileWidth = baseWidth;
+        if (bbm.getCurrentWidth() % 2 == 0) { evenWidth = true; }
+        if (bbm.getCurrentHeight() % 2 == 0) { evenHeight = true; }
+    }
+    private void zoomOut()
+    {
+        //get center
+        int cx = bbm.getCurrentWidth() / 2 + 1;
+        int cy = bbm.getCurrentHeight() / 2 + 1;
+        //get width
+        float deltaSize = (maxWidth - minWidth) / frames;
+        currentTileWidth += deltaSize;
+        //done
+        if (currentTileWidth >= maxWidth)
+        {
+            state = AnimState.IDLE;
+            currentTileWidth = baseWidth;
+        }
+        float posX = 0;
+        float posY = 0;
+        float posZ = -2;
+        //transform
+        for (int i = 0; i < tiles.Length; i++)
+        {
+            for (int j = 0; j < tiles[i].Length; j++)
+            {
+                //position
+                //if at center, stay where you are; else move by sizeDelta
+                if (i + 1 == cx || (evenWidth && i + 1 == cx - 1)) { posX = tiles[i][j].transform.position.x; }
+                else { posX = tiles[i][j].transform.position.x - (cx - i - 1) * deltaSize; }
+                //if at center, stay where you are; else move by sizeDelta
+                if (j + 1 == cy || (evenHeight &&j + 1 == cy - 1)) { posY = tiles[i][j].transform.position.y; }
+                else { posY = tiles[i][j].transform.position.y + (cy - j - 1) * deltaSize; }
+                //movement
+                if (state == AnimState.IDLE) { 
+                    tiles[i][j].transform.position = new Vector3(i, bbm.getCurrentHeight() - j - 1, 0);
+                    if (rocks[i][j] != null) { rocks[i][j].transform.position = new Vector3(i, bbm.getCurrentHeight() - j - 1, -1); }
+                }
+                else { 
+                    tiles[i][j].transform.position = new Vector3(posX, posY, posZ);
+                    if (rocks[i][j] != null) { rocks[i][j].transform.position = new Vector3(posX, posY, -1); }
+                }
+                //scale
+                tiles[i][j].transform.localScale = new Vector3(currentTileWidth, currentTileWidth, transform.localScale.z);
+                if (rocks[i][j] != null) { rocks[i][j].transform.localScale = new Vector3(currentTileWidth, currentTileWidth, transform.localScale.z); }
+            }
+        }
+    }
+    public void zoomTilesIn()
+    {
+        state = AnimState.ZOOM_IN;
+        currentTileWidth = maxWidth;
+        //get center
+        int cx = bbm.getCurrentWidth() / 2 + 1;
+        int cy = bbm.getCurrentHeight() / 2 + 1;
+        //start zoomed out
+        float posX = 0;
+        float posY = 0;
+        float posZ = -2;
+        for (int i = 0; i < tiles.Length; i++)
+        {
+            for (int j = 0; j < tiles[i].Length; j++)
+            {
+                //make maxwidth
+                tiles[i][j].transform.localScale = new Vector3(maxWidth, maxWidth, transform.localScale.z);
+                //if at center, stay where you are; else move by maxWidth
+                if (i + 1 == cx || (evenWidth && i + 1 == cx - 1)) { posX = tiles[i][j].transform.position.x; }
+                else { posX = tiles[i][j].transform.position.x - (cx - i - 1) * maxWidth; }
+                //if at center, stay where you are; else move by maxWidth
+                if (j + 1 == cy || (evenHeight && j + 1 == cy - 1)) { posY = tiles[i][j].transform.position.y; }
+                else { posY = tiles[i][j].transform.position.y + (cy - j - 1) * maxWidth; }
+                //move to maxpos
+                tiles[i][j].transform.position = new Vector3(posX, posY, posZ);
+                if (rocks[i][j] != null) { rocks[i][j].transform.position = new Vector3(posX, posY, -3); }
+                if (rocks[i][j] != null) { rocks[i][j].transform.localScale = new Vector3(maxWidth, maxWidth, transform.localScale.z); }
+            }
+        }
+        if (bbm.getCurrentWidth() % 2 == 0) { evenWidth = true; }
+        if (bbm.getCurrentHeight() % 2 == 0) { evenHeight = true; }
+    }
+    private void zoomIn()
+    {
+        //get center
+        int cx = bbm.getCurrentWidth() / 2 + 1;
+        int cy = bbm.getCurrentHeight() / 2 + 1;
+        //get width
+        float deltaSize = (maxWidth - minWidth) / frames;
+        currentTileWidth -= deltaSize;
+        //done
+        if (currentTileWidth <= minWidth)
+        {
+            state = AnimState.IDLE;
+            currentTileWidth = baseWidth;
+        }
+        float posX = 0;
+        float posY = 0;
+        float posZ = -2;
+        //transform
+        for (int i = 0; i < tiles.Length; i++)
+        {
+            for (int j = 0; j < tiles[i].Length; j++)
+            {
+                //position
+                //if at center, stay where you are; else move by sizeDelta
+                if (i + 1 == cx || (evenWidth && i + 1 == cx - 1)) { posX = tiles[i][j].transform.position.x; }
+                else { posX = tiles[i][j].transform.position.x + (cx - i - 1) * deltaSize * 3/2; }
+                //if at center, stay where you are; else move by sizeDelta
+                if (j + 1 == cy || (evenHeight && j + 1 == cy - 1)) { posY = tiles[i][j].transform.position.y; }
+                else { posY = tiles[i][j].transform.position.y - (cy - j - 1) * deltaSize * 3/2; }
+                //movement
+                if (state == AnimState.IDLE) { 
+                    tiles[i][j].transform.position = new Vector3(i, bbm.getCurrentHeight() - j - 1, 0);
+                    if (rocks[i][j] != null) { rocks[i][j].transform.position = new Vector3(i, bbm.getCurrentHeight() - j - 1, -1); }
+                }
+                else { 
+                    tiles[i][j].transform.position = new Vector3(posX, posY, posZ);
+                    if (rocks[i][j] != null) { rocks[i][j].transform.position = new Vector3(posX, posY, -1); }
+                }
+                //scale
+                tiles[i][j].transform.localScale = new Vector3(currentTileWidth, currentTileWidth, transform.localScale.z);
+                if (rocks[i][j] != null) { rocks[i][j].transform.localScale = new Vector3(currentTileWidth, currentTileWidth, transform.localScale.z); }
+            }
+        }
+    }
+    //peek
+    public void peek()
+    {
+        peeking = true;
+        //clear
+        clearTiles();
+        clearRocks();
+        //draw
+        drawNextTiles();
+        drawNextRocks();
+    }
+    public void unPeek()
+    {
+        peeking = false;
+        //clear
+        clearTiles();
+        clearRocks();
+        //draw
+        drawCurrentTiles();
+        drawCurrentRocks();
+        handleRocks(); //check to remove edge case
+    }
+    public void fadeTiles()
+    {
+        state = AnimState.FADE_OUT;
+    }
+    private void fade()
+    {
+        //calc color
+        color = new Color(1f, 1f, 1f, color.a - (1f - 0.5f) / fadeFrames);
+        //done
+        if (color.a <= 0.5)
+        {
+            state = AnimState.IDLE;
+            color = new Vector4(1f, 1f, 1f, 0.5f);
+        }
+        for (int i = 0; i < tiles.Length; i++)
+        {
+            for (int j = 0; j < tiles[i].Length; j++)
+            {
+                tiles[i][j].GetComponent<SpriteRenderer>().color = color;
+            }
+        }
+    }
+    public void unfadeTiles()
+    {
+        state = AnimState.FADE_IN;
+    }
+    private void unfade()
+    {
+        //calc color
+        color = new Color(1f, 1f, 1f, color.a + (1f - 0.5f) / fadeFrames);
+        //done
+        if (color.a >= 1f)
+        {
+            state = AnimState.IDLE;
+            color = new Vector4(1f, 1f, 1f, 1f);
+        }
+        for (int i = 0; i < tiles.Length; i++)
+        {
+            for (int j = 0; j < tiles[i].Length; j++)
+            {
+                tiles[i][j].GetComponent<SpriteRenderer>().color = color;
+            }
+        }
+    }
     //reset
     public void resetBoard(bool placeRockAtExit)
     {
@@ -308,8 +586,8 @@ public class GameBoardManager : MonoBehaviour
         if (placeRockAtExit) { bbm.currentPlaceRockAt((int)bbm.getGoal().x, (int)bbm.getGoal().y); }
         bbm.reset(); //update board
         //draw
-        drawRocks(); 
-        drawTiles();
+        drawCurrentRocks(); 
+        drawCurrentTiles();
         handleRocks();
     }
     public void clear()
@@ -317,8 +595,8 @@ public class GameBoardManager : MonoBehaviour
         clearTiles();
         clearRocks();
         bbm = new BoardManager();
-        drawTiles();
-        drawRocks();
+        drawCurrentTiles();
+        drawCurrentRocks();
     }
 }
 

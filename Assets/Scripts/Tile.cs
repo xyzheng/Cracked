@@ -10,6 +10,11 @@ public class Tile : MonoBehaviour {
         GetComponent<Animator>().SetBool("Step", true); 
     }
 
+    public void stepCrackTile()
+    {
+        GetComponent<Animator>().SetBool("SCrack", true);
+    }
+
     public void crackTile() {
         GetComponent<Animator>().SetBool("Crack", true); 
     }

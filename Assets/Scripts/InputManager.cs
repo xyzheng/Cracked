@@ -14,6 +14,7 @@ public class InputManager {
     protected KeyCode jump;
     //keys for game mechanics
     protected KeyCode pause; //pause game
+    protected KeyCode peek; //peek at next floor
     //protected KeyCode undoMove; //reset a move done on the floor 
     protected KeyCode resetBoard; //reset current floor
     protected KeyCode backTrack; //go back a floor
@@ -30,6 +31,7 @@ public class InputManager {
         jump = KeyCode.Space;
         //game mechanics
         pause = KeyCode.Escape;
+        peek = KeyCode.P;
         //undoMove = KeyCode.Q;
         resetBoard = KeyCode.E;
         backTrack = KeyCode.Q;
@@ -46,6 +48,7 @@ public class InputManager {
     public KeyCode getMoveRightKey() { return moveRight; }
     public KeyCode getJumpKey() { return jump; }
     public KeyCode getPauseKey() { return pause; }
+    public KeyCode getPeekKey() { return peek; }
     //public KeyCode getUndoMoveKey() { return undoMove; }
     public KeyCode getResetBoardKey() { return resetBoard; }
     public KeyCode getBacktrackKey() { return backTrack; }
@@ -59,6 +62,7 @@ public class InputManager {
     public void rebindMoveRightKey(KeyCode newKey) { moveRight = newKey; }
     public void rebindJumpKey(KeyCode newKey) { jump = newKey; }
     public void rebindPauseKey(KeyCode newKey) { pause = newKey; }
+    public void rebindPeekKey(KeyCode newKey) { peek = newKey; }
     //public void rebindUndoMoveKey(KeyCode newKey) { undoMove = newKey; }
     public void rebindResetBoardKey(KeyCode newKey) { resetBoard = newKey; }
     public void rebindBacktrackKey(KeyCode newKey) { backTrack = newKey; }
