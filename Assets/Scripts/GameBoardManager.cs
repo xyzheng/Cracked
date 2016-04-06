@@ -4,7 +4,7 @@ using System.Collections;
 public class GameBoardManager : MonoBehaviour
 {
     //BoardManager
-    protected BoardManager bbm;
+   	public BoardManager bbm;
     //gameobjects
     public GameObject tile;
     public GameObject rock;
@@ -193,81 +193,75 @@ public class GameBoardManager : MonoBehaviour
         if (bbm.nextIsDestroyedAt(x, y)) { bbm.nextRemoveRockAt(x, y); }
     }
     //rocks 
-    public void dropRocks(int x, int y)
-    {
-//		float deltaPosition = 1.0f / movingFrames;
-        int rX = 0; //x position of rock
-        int rY = 0; //y position of rock
-        for (int i = 0; i < 5; i++)
-        {
-            if (i == 0)
-            {
-                //at position
-                rX = x;
-                rY = y;
-            }
-            else if (i == 1)
-            {
-                //left of
-                rX = x - 1;
-                rY = y;
-            }
-            else if (i == 2)
-            {
-                //right of
-                rX = x + 1;
-                rY = y;
-            }
-            else if (i == 3)
-            {
-                //above
-                rX = x;
-                rY = y - 1;
-            }
-            else if (i == 4)
-            {
-                //below
-                rX = x;
-                rY = y + 1;
-            }
-            //main rock drop
-			if (bbm.currentIsValidAt(x, y) && bbm.currentIsDestroyedAt(x, y)
-				&& (bbm.currentIsValidAt(rX, rY) && rocks[rX][rY] != null)) 
+	public void dropRocks(int x, int y)
+	{
+		//        float deltaPosition = 1.0f / movingFrames;
+		int rX = 0; //x position of rock
+		int rY = 0; //y position of rock
+		for (int i = 0; i < 5; i++)
+		{
+			if (i == 0)
 			{
-				if (i == 0) {
-					StartCoroutine(rockScript.scaleRock(rocks[rX][rY], 0.5f)); 
-					//StartCoroutine(rockManager.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x , rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
+				//rock is at current tile's position (rock is on top of this tile)
+				rX = x;
+				rY = y;
+			}
+			else if (i == 1)
+			{
+				//rock is below (y - 1) current tile
+				rX = x;
+				rY = y + 1;
+			}
+			else if (i == 2)
+			{
+				//rock to left of current tile
+				rX = x - 1;
+				rY = y;
+			}
+			else if (i == 3)
+			{
+				//rock is above (y + 1) current tile
+				rX = x;
+				rY = y - 1;
+			}
+			else if (i == 4)
+			{
+				//rock is right of current tile
+				rX = x + 1;
+				rY = y;
+			}
+			//main rock drop
+			if (bbm.currentIsValidAt(x, y) && bbm.currentIsDestroyedAt(x, y)
+				&& (bbm.currentIsValidAt(rX, rY) && rocks[rX][rY] != null) && !bbm.nextHasRockAt(x, y)) 
+			{
+				if (i == 0)
+				{
+					StartCoroutine(rockScript.scaleRock(rocks[rX][rY], 0.5f));
 				}
-				if (i == 1) {
-					StartCoroutine(rockScript.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x + 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
+				if (i == 1)
+				{
+					StartCoroutine(rockScript.moveAndScaleRock(rocks[rX][rY], new Vector3(rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y + 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
 				}
-				if (i == 2) {
-					StartCoroutine(rockScript.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x - 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
+				if (i == 2)
+				{
+					StartCoroutine(rockScript.moveAndScaleRock(rocks[rX][rY], new Vector3(rocks[rX][rY].transform.position.x + 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
 				}
-				if (i == 3) {
-					StartCoroutine(rockScript.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y - 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
+				if (i == 3)
+				{
+					StartCoroutine(rockScript.moveAndScaleRock(rocks[rX][rY], new Vector3(rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y - 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
 				}
-				if (i == 4) {
-					StartCoroutine(rockScript.moveAndScaleRock(rocks[rX][rY], new Vector3 (rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y + 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
+				if (i == 4)
+				{
+					StartCoroutine(rockScript.moveAndScaleRock(rocks[rX][rY], new Vector3(rocks[rX][rY].transform.position.x - 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
 				}
-
 				//Destroy(rocks[rX][rY]);
-                rocks[rX][rY] = null;
-                bbm.currentRemoveAt(rX, rY);
-                // play rock falling sound
-                GameManager.aSrc[2].PlayOneShot(GameManager.fall, 1.0f);
-                //check if next board has a rock on hole's position
-                if (bbm.nextHasRockAt(x, y))
-                {
-                    //next has rock, damage the floor
-                    bbm.damageNextBoard(x, y);
-                    //if floor is destroyed ... remove the rock
-                    if (bbm.nextIsDestroyedAt(x, y)) { bbm.nextRemoveRockAt(x, y); }
-                }
-                else if (!bbm.nextIsDestroyedAt(x, y)) { bbm.nextPlaceRockAt(x, y); } //next board has no rock, place it there unless it has a hole
-            }
-        }
-    }
+				rocks[rX][rY] = null;
+				bbm.currentRemoveAt(rX, rY);
+				//next board has no rock, place it there unless it has a hole
+				if (!bbm.nextIsDestroyedAt(x, y)) { bbm.nextPlaceRockAt(x, y); }
+			}
+		}
+	}
     public void handleRocks()
     {
         //check rocks

@@ -220,59 +220,59 @@ public class GameManager : MonoBehaviour {
 			int x = playerBoardPosX;
 			int y = playerBoardPosY;
 			gbm.damageCurrentBoard(x, y);
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.bbm.nextIsDamagedAt(x, y))  gbm.damageFutureBoard(x, y);
 			//up from playerPos
 			x = playerBoardPosX;
 			y = playerBoardPosY - 1;
 			gbm.damageCurrentBoard(x, y);
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.bbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//down
 			x = playerBoardPosX;
 			y = playerBoardPosY + 1;
 			gbm.damageCurrentBoard(x, y);
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.bbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//left 
 			x = playerBoardPosX - 1;
 			y = playerBoardPosY;
 			gbm.damageCurrentBoard(x, y);
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.bbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//right
 			x = playerBoardPosX + 1;
 			y = playerBoardPosY;
 			gbm.damageCurrentBoard(x, y);
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.bbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//top left
 			x = playerBoardPosX - 1;
 			y = playerBoardPosY - 1;
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.bbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//top right
 			x = playerBoardPosX + 1;
 			y = playerBoardPosY - 1;
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.bbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//bot left
 			x = playerBoardPosX - 1;
 			y = playerBoardPosY + 1;
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.bbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//bot right
 			x = playerBoardPosX + 1;
 			y = playerBoardPosY + 1;
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.bbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//2 to the up
 			x = playerBoardPosX;
 			y = playerBoardPosY - 2;
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.bbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//2 to the left
 			x = playerBoardPosX - 2;
 			y = playerBoardPosY;
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.bbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//2 to the right
 			x = playerBoardPosX + 2;
 			y = playerBoardPosY;
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.bbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//2 to the bottom
 			x = playerBoardPosX;
 			y = playerBoardPosY + 2;
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.bbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 		}
 	}
 	public void handleBacktrack()
@@ -501,7 +501,7 @@ public class GameManager : MonoBehaviour {
 	public void resetGame()
 	{
 		level = 0;//LEVEL_START;
-		levelText.text = "Floor\n" + level.ToString();
+		//levelText.text = "Floor\n" + level.ToString();
 		im = new InputManager();
 		gbm.clear();
 		//player lands on start
