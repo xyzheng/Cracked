@@ -1018,8 +1018,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 4cc38e77e998b034d84ef3a3eac9ad65, type: 2}
   m_IsPrefabParent: 0
-<<<<<<< HEAD
-=======
 --- !u!1 &477423200
 GameObject:
   m_ObjectHideFlags: 0
@@ -1090,7 +1088,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 7
->>>>>>> michael
 --- !u!1 &533561191
 GameObject:
   m_ObjectHideFlags: 0
@@ -1208,8 +1205,6 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
-<<<<<<< HEAD
-=======
 --- !u!1001 &797697637
 Prefab:
   m_ObjectHideFlags: 0
@@ -1257,7 +1252,6 @@ Prefab:
     - {fileID: 9573438, guid: 6ddc0905fd75aad4fa113ea3df3d7d36, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 6ddc0905fd75aad4fa113ea3df3d7d36, type: 2}
   m_IsPrefabParent: 0
->>>>>>> michael
 --- !u!1 &803865341
 GameObject:
   m_ObjectHideFlags: 0
@@ -2117,11 +2111,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-<<<<<<< HEAD
-  m_RootOrder: 0
-=======
   m_RootOrder: 2
->>>>>>> michael
 --- !u!1 &1315605327
 GameObject:
   m_ObjectHideFlags: 0
@@ -2335,12 +2325,6 @@ MonoBehaviour:
   levelText: {fileID: 21423511}
   backtrack: {fileID: 183818, guid: abaf33245d9e91044a6e09a128869d0d, type: 2}
   forwardtrack: {fileID: 166304, guid: 791fd6629507d454a9314b61f296feee, type: 2}
-<<<<<<< HEAD
-  reset: {fileID: 100672, guid: 1711ee961b2e29440a716bf0836a50d8, type: 2}
-  pause: {fileID: 183190, guid: d0571adf91f284848a00650d09c6e33e, type: 2}
-  eye: {fileID: 121742, guid: 4cc38e77e998b034d84ef3a3eac9ad65, type: 2}
-=======
->>>>>>> michael
 --- !u!4 &1510949514
 Transform:
   m_ObjectHideFlags: 0
@@ -2352,11 +2336,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-<<<<<<< HEAD
-  m_RootOrder: 2
-=======
   m_RootOrder: 3
->>>>>>> michael
 --- !u!82 &1510949515
 AudioSource:
   m_ObjectHideFlags: 0

@@ -53,10 +53,7 @@
      <Compile Include="Assets\Scripts\GameBoardManager.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\InputManager.cs" />
-<<<<<<< HEAD
-=======
      <Compile Include="Assets\Scripts\Jump.cs" />
->>>>>>> michael
      <Compile Include="Assets\Scripts\MenuManager.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
      <Compile Include="Assets\Scripts\Rock.cs" />

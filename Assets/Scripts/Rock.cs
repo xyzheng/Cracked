@@ -46,11 +46,7 @@ public class Rock : MonoBehaviour {
 	public IEnumerator scaleRock (float time) {
         shake = false;
 		float scaleElapsedTime = 0;
-<<<<<<< HEAD
-		Vector3 startingScale = aRock.transform.localScale;
-=======
 		Vector3 startingScale = transform.localScale;
->>>>>>> michael
 		Vector3 endingScale = new Vector3 (0.0f, 0.0f, 0.0f);
 		while (scaleElapsedTime < time) {
 			//scale the rock
