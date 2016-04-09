@@ -21,10 +21,6 @@ public class GameManager : MonoBehaviour {
 	private BackTrack btScript;
 	public GameObject forwardtrack;
 	private ForwardTrack ftScript;
-	public GameObject reset;
-	public GameObject pause;
-	public GameObject eye;
-	private Eye eyeScript;
 	//States
 	enum GameState { TITLE, PAUSE, LOAD, PEEK, PLAY }
 	GameState state;
@@ -83,16 +79,12 @@ public class GameManager : MonoBehaviour {
 			exit = (GameObject)Instantiate(exit, exitPos, Quaternion.identity);
 			//basic ui
 			levelText.text = "Floor\n" + level.ToString();
-			reset = (GameObject)Instantiate(reset, new Vector3(entrancePos.x + 1.5f, exitPos.y + 1, 0), Quaternion.identity);
-			pause = (GameObject)Instantiate(pause, new Vector3(exitPos.x - 1.5f, exitPos.y + 1, 0), Quaternion.identity);
 			backtrack = (GameObject)Instantiate(backtrack, new Vector3(entrancePos.x, exitPos.y + 1, 0), Quaternion.identity);
 			btScript = backtrack.GetComponent<BackTrack>();
 			btScript.makeTransparent();
 			forwardtrack = (GameObject)Instantiate(forwardtrack, new Vector3(exitPos.x, exitPos.y + 1, 0), Quaternion.identity);
 			ftScript = forwardtrack.GetComponent<ForwardTrack>();
 			ftScript.makeTransparent();
-			eye = (GameObject)Instantiate(eye, new Vector3(exitPos.x, exitPos.y - 1, 0), Quaternion.identity);
-			eyeScript = eye.GetComponent<Eye>();
 			state = GameState.PLAY;
 			//update priorstate
 			priorState = GameState.TITLE;
@@ -109,8 +101,7 @@ public class GameManager : MonoBehaviour {
 			//check if done with peek
 			if (priorState == GameState.PEEK)
 			{
-				eyeScript.unblink();
-				gbm.unPeek();
+				gbm.unpeek();
 				priorState = GameState.PLAY;
 			}
 			else
@@ -147,31 +138,32 @@ public class GameManager : MonoBehaviour {
 			//wait until player done with animation
 			if (lstate == LoadState.PLAYER && !playerScript.isBusy()){
 				lstate = LoadState.NEXT;
-				gbm.zoomTilesOut();
-			}
-			else if (lstate != LoadState.PLAYER && !gbm.busy()) {//wait until gbm done with zoom
-				if (lstate == LoadState.NEXT) { loadNextFloor(); }
-				else if (lstate == LoadState.BACK) { loadBacktrack(); }
-				else if (lstate == LoadState.FORWARD) { loadForwardTrack(); }
-				state = GameState.PLAY;
-			}
+                gbm.clearedCurrentBoard();
+            }
+            else if (lstate != LoadState.PLAYER && gbm.busy())
+            {
+                playerScript.hopInPlace();
+            }
+            else if (lstate != LoadState.PLAYER && !gbm.busy())
+            {
+                playerScript.forceUnfade();
+                //wait until gbm done with zoom
+                if (lstate == LoadState.NEXT) { loadNextFloor(); }
+                else if (lstate == LoadState.BACK) { loadBacktrack(); }
+                else if (lstate == LoadState.FORWARD) { loadForwardTrack(); }
+                state = GameState.PLAY;
+            }
 			//update priorstate
 			priorState = GameState.LOAD;
 		}
 		else if (state == GameState.PEEK)
 		{
-			if (!gbm.busy() && !gbm.isPeeking())
-			{
-				levelText.text = "Next\nFloor";
-				playerScript.fadePlayer();
-				gbm.peek();
-			}
 			//exit peeking
 			if (Input.GetKeyUp(im.getPeekKey()))
 			{
 				levelText.text = "Floor\n" + level.ToString();
 				playerScript.unfadePlayer();
-				gbm.unfadeTiles();
+                gbm.unpeek();
 				state = GameState.PLAY;
 			}
 			//update priorstate
@@ -188,10 +180,6 @@ public class GameManager : MonoBehaviour {
 	public void loadNextFloor()
 	{
 		level += 1;
-		//clear priorKeys
-		//im.clearPriorKeys();
-		//gbm
-		gbm.clearedCurrentBoard(); 
 		//reset player stuff
 		playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
 		playerScript.notJump();
@@ -201,11 +189,8 @@ public class GameManager : MonoBehaviour {
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
 		//ui stuff
 		levelText.text = "Floor\n" + level.ToString();
-		reset.transform.position = new Vector3(gbm.getStart().x + 0.5f, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
-		pause.transform.position = new Vector3(gbm.getGoal().x - 0.5f, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
 		btScript.setPosition(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
 		ftScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
-		eyeScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 2, 0);
 	}
 	public void handleJump()
 	{
@@ -220,59 +205,59 @@ public class GameManager : MonoBehaviour {
 			int x = playerBoardPosX;
 			int y = playerBoardPosY;
 			gbm.damageCurrentBoard(x, y);
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.nextIsDamagedAt(x, y))  gbm.damageFutureBoard(x, y);
 			//up from playerPos
 			x = playerBoardPosX;
 			y = playerBoardPosY - 1;
 			gbm.damageCurrentBoard(x, y);
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//down
 			x = playerBoardPosX;
 			y = playerBoardPosY + 1;
 			gbm.damageCurrentBoard(x, y);
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//left 
 			x = playerBoardPosX - 1;
 			y = playerBoardPosY;
 			gbm.damageCurrentBoard(x, y);
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//right
 			x = playerBoardPosX + 1;
 			y = playerBoardPosY;
 			gbm.damageCurrentBoard(x, y);
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//top left
 			x = playerBoardPosX - 1;
 			y = playerBoardPosY - 1;
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//top right
 			x = playerBoardPosX + 1;
 			y = playerBoardPosY - 1;
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//bot left
 			x = playerBoardPosX - 1;
 			y = playerBoardPosY + 1;
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//bot right
 			x = playerBoardPosX + 1;
 			y = playerBoardPosY + 1;
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//2 to the up
 			x = playerBoardPosX;
 			y = playerBoardPosY - 2;
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//2 to the left
 			x = playerBoardPosX - 2;
 			y = playerBoardPosY;
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//2 to the right
 			x = playerBoardPosX + 2;
 			y = playerBoardPosY;
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 			//2 to the bottom
 			x = playerBoardPosX;
 			y = playerBoardPosY + 2;
-			gbm.damageFutureBoard(x, y);
+			if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 		}
 	}
 	public void handleBacktrack()
@@ -281,7 +266,8 @@ public class GameManager : MonoBehaviour {
 		{
 			state = GameState.LOAD;
 			lstate = LoadState.BACK;
-			gbm.zoomTilesIn();
+			gbm.goUp();
+            playerScript.fadePlayer();
 		}
 	}
 	public void loadBacktrack()
@@ -299,11 +285,8 @@ public class GameManager : MonoBehaviour {
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
 		//ui stuff
 		levelText.text = "Floor\n" + level.ToString();
-		reset.transform.position = new Vector3(gbm.getStart().x + 0.5f, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
-		pause.transform.position = new Vector3(gbm.getGoal().x - 0.5f, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
 		btScript.setPosition(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
 		ftScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
-		eyeScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 2, 0);
 	}
 	public void handleForwardTrack()
 	{
@@ -311,7 +294,7 @@ public class GameManager : MonoBehaviour {
 		{
 			state = GameState.LOAD;
 			lstate = LoadState.FORWARD;
-			gbm.zoomTilesOut();
+            //gbm.goDown
 		}
 	}
 	public void loadForwardTrack()
@@ -329,17 +312,15 @@ public class GameManager : MonoBehaviour {
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
 		//ui stuff
 		levelText.text = "Floor\n" + level.ToString();
-		reset.transform.position = new Vector3(gbm.getStart().x + 0.5f, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
-		pause.transform.position = new Vector3(gbm.getGoal().x - 0.5f, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
 		btScript.setPosition(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
 		ftScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
-		eyeScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 2, 0);
 	}
 	public void handlePeek()
 	{
+        levelText.text = "Next\nFloor";
 		state = GameState.PEEK;
-		eyeScript.blink();
-		gbm.fadeTiles();
+		gbm.peek();
+        playerScript.fadePlayer();
 	}
 
 	public void handlePause() {
@@ -477,7 +458,6 @@ public class GameManager : MonoBehaviour {
 			btScript.unclick();
 		}
 		else if (Input.GetKeyUp(im.getForwardTrackKey())) { handleForwardTrack(); } 
-		else if (Input.GetKeyUp(im.getResetGameKey())){ resetGame(); }
 		else if (Input.GetKeyUp(im.getPeekKey())) { handlePeek(); }
 	}
 
@@ -500,7 +480,7 @@ public class GameManager : MonoBehaviour {
 	}
 	public void resetGame()
 	{
-		level = 0;//LEVEL_START;
+		level = LEVEL_START;
 		levelText.text = "Floor\n" + level.ToString();
 		im = new InputManager();
 		gbm.clear();

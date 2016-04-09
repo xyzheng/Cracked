@@ -19,7 +19,6 @@ public class InputManager {
     protected KeyCode resetBoard; //reset current floor
     protected KeyCode backTrack; //go back a floor
     protected KeyCode forwardTrack;
-    protected KeyCode resetGame;
 
 	// Use this for initialization
 	public InputManager () {
@@ -36,7 +35,6 @@ public class InputManager {
         resetBoard = KeyCode.E;
         backTrack = KeyCode.Q;
         forwardTrack = KeyCode.F;
-        resetGame = KeyCode.R;
         //priorkeys
         //priorKeys = new List<KeyCode>();
 	}
@@ -53,7 +51,6 @@ public class InputManager {
     public KeyCode getResetBoardKey() { return resetBoard; }
     public KeyCode getBacktrackKey() { return backTrack; }
     public KeyCode getForwardTrackKey() { return forwardTrack; }
-    public KeyCode getResetGameKey() { return resetGame; }
 
     //setters
     public void rebindMoveUpKey(KeyCode newKey) { moveUp = newKey; }
@@ -67,7 +64,6 @@ public class InputManager {
     public void rebindResetBoardKey(KeyCode newKey) { resetBoard = newKey; }
     public void rebindBacktrackKey(KeyCode newKey) { backTrack = newKey; }
     public void rebindForwardTrackKey(KeyCode newKey) { forwardTrack = newKey; }
-    public void rebindResetGameKey(KeyCode newKey) { resetGame = newKey; }
 
     //modifying priorkeys
     //public void addToPriorKeys(KeyCode key) { priorKeys.Add(key); }
