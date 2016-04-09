@@ -6,7 +6,7 @@ public class Tile : MonoBehaviour {
 	// Use this for initialization
 	void Start () { }
 
-    public void steppedOnTile() {
+    public void stepTile() {
         GetComponent<Animator>().SetBool("Step", true); 
     }
 

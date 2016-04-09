@@ -184,8 +184,11 @@ public class Player : MonoBehaviour {
 
     public void fadePlayer()
     {
-        busy = true;
-        currentState = AnimationState.FADE_OUT;
+        if (!busy)
+        {
+            busy = true;
+            currentState = AnimationState.FADE_OUT;
+        }
     }
     private void doFade()
     {
@@ -198,6 +201,11 @@ public class Player : MonoBehaviour {
             currentState = AnimationState.IDLE;
             color = new Vector4(baseColor.r, baseColor.g, baseColor.b, minAlpha);
         }
+        GetComponent<SpriteRenderer>().color = color;
+    }
+    public void forceUnfade()
+    {
+        color = baseColor;
         GetComponent<SpriteRenderer>().color = color;
     }
     public void unfadePlayer()
@@ -220,7 +228,7 @@ public class Player : MonoBehaviour {
     }
 
 	//animation stuff
-	public void doHopInPlace()
+	private void doHopInPlace()
 	{
 		float deltaSize = (1 - 0.8f) / (hoppingInPlaceFrames);
 		if (currentState == AnimationState.HOP_UP)
@@ -246,7 +254,7 @@ public class Player : MonoBehaviour {
 		transform.localScale = new Vector3(currentSize, currentSize, transform.localScale.z);
 	}
 	
-	public void doHopToEast()
+	private void doHopToEast()
 	{
 		float deltaPosition = 1f / (hoppingtodirectionframes);
 		float deltaSize = (2 - 0.8f) / (hoppingtodirectionframes);
@@ -275,7 +283,7 @@ public class Player : MonoBehaviour {
 		//apply new size
 		transform.localScale = new Vector3(currentSize, currentSize, transform.localScale.z);
 	}
-	public void doHopToWest()
+	private void doHopToWest()
 	{
 		float deltaPosition = 1f / (hoppingtodirectionframes);
 		float deltaSize = (2 - 0.8f) / (hoppingtodirectionframes);
@@ -305,7 +313,7 @@ public class Player : MonoBehaviour {
 		//apply new size
 		transform.localScale = new Vector3(currentSize, currentSize, transform.localScale.z);
 	}
-	public void doHopToNorth()
+	private void doHopToNorth()
 	{
 		float deltaPosition = 1f / (hoppingtodirectionframes);
 		float deltaSize = (2 - 0.8f) / (hoppingtodirectionframes);
@@ -336,7 +344,7 @@ public class Player : MonoBehaviour {
 		//apply new size
 		transform.localScale = new Vector3(currentSize, currentSize, transform.localScale.z);
 	}
-	public void doHopToSouth()
+	private void doHopToSouth()
 	{
 		float deltaPosition = 1f / (hoppingtodirectionframes);
 		float deltaSize = (2 - 0.8f) / (hoppingtodirectionframes);
@@ -367,7 +375,7 @@ public class Player : MonoBehaviour {
 		transform.localScale = new Vector3(currentSize, currentSize, transform.localScale.z);
 	}
 	
-	public void doJump()
+	private void doJump()
 	{
 		float deltaSize = (2.5f - 0.8f) / jumpingFrames;
 		if (currentState == AnimationState.JUMP_UP)

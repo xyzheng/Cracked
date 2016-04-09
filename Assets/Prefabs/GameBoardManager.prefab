@@ -40,8 +40,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tile: {fileID: 191118, guid: 4814ff0a7ef287e4d95eeb7d0dbf4a07, type: 2}
+  mTile: {fileID: 167836, guid: 6ddc0905fd75aad4fa113ea3df3d7d36, type: 2}
   rock: {fileID: 155418, guid: e57ee7738fde6db42908608a247a3b44, type: 2}
-  rockManager: {fileID: 0}
+  mRock: {fileID: 115924, guid: 09a8353240c26e64abd67516c0eed73a, type: 2}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -57,6 +58,14 @@ Prefab:
       propertyPath: rock
       value: 
       objectReference: {fileID: 155418, guid: e57ee7738fde6db42908608a247a3b44, type: 2}
+    - target: {fileID: 0}
+      propertyPath: mTile
+      value: 
+      objectReference: {fileID: 167836, guid: 6ddc0905fd75aad4fa113ea3df3d7d36, type: 2}
+    - target: {fileID: 0}
+      propertyPath: mRock
+      value: 
+      objectReference: {fileID: 115924, guid: 09a8353240c26e64abd67516c0eed73a, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 139888}
