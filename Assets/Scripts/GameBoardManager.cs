@@ -4,7 +4,7 @@ using System.Collections;
 public class GameBoardManager : MonoBehaviour
 {
     //BoardManager
-    protected BoardManager bbm;
+    public BoardManager bbm;
     //gameobjects
     public GameObject tile;
     public GameObject mTile;
