@@ -766,7 +766,25 @@ public class GameBoardManager : MonoBehaviour
         drawTiles();
         drawRocks();
     }
+    // methods for pushing rocks
+    public bool hasRock(int x, int y)
+    {
+        return bbm.currentHasRockAt(x, y);
+    }
+    public void pushRock(int x, int y)
+    {
+        // move rock to pos (x,y)
+        bbm.currentPlaceRockAt(x, y);
+        // redraw the rocks
+        clearRocks();
+        drawCurrentRocks();
+    }
+    public void removeRock(int x, int y)
+    {
+        // remove rock at current place
+        bbm.currentRemoveAt(x, y);
+        // destroy rock
+        Destroy(rocks[x][y]);
+        rocks[x][y] = null;
+    }
 }
-
-
-
