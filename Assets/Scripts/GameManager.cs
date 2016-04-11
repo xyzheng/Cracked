@@ -44,6 +44,9 @@ public class GameManager : MonoBehaviour {
 	private Toggle soundToggle;
 	private Toggle musicToggle;
 
+    // rock push var
+    bool rockPushed;
+
 	//called before all Start()
 	void Awake()
 	{
@@ -63,7 +66,8 @@ public class GameManager : MonoBehaviour {
 		hole = aSrc[1].clip;
 		fall = aSrc[2].clip;
 		jump = aSrc[3].clip;
-		//soundSlider = GameObject.Find("Sound Slider").GetComponent<Slider>();
+        //soundSlider = GameObject.Find("Sound Slider").GetComponent<Slider>();
+        rockPushed = false;
 	}
 
 	// Main update loop
@@ -184,8 +188,9 @@ public class GameManager : MonoBehaviour {
 		playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
 		playerScript.notJump();
 		handledPlayerJump = false;
-		//reset entrance/exit
-		entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+        rockPushed = false;
+        //reset entrance/exit
+        entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
 		//ui stuff
 		levelText.text = "Floor\n" + level.ToString();
@@ -276,10 +281,11 @@ public class GameManager : MonoBehaviour {
 		playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
 		playerScript.notJump();
 		handledPlayerJump = false;
-		//clear prior keys list
-		//im.clearPriorKeys();
-		//change floor
-		level -= 1;
+        rockPushed = false;
+        //clear prior keys list
+        //im.clearPriorKeys();
+        //change floor
+        level -= 1;
 		//reset entrance/exit
 		entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
@@ -303,10 +309,11 @@ public class GameManager : MonoBehaviour {
 		playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
 		playerScript.notJump();
 		handledPlayerJump = false;
-		//clear prior keys list
-		//im.clearPriorKeys();
-		//change floor
-		level += 1;
+        rockPushed = false;
+        //clear prior keys list
+        //im.clearPriorKeys();
+        //change floor
+        level += 1;
 		//reset entrance/exit
 		entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
@@ -354,7 +361,19 @@ public class GameManager : MonoBehaviour {
 				//add to prior keys list
 				//im.addToPriorKeys(im.getMoveUpKey());
 			}
-			else
+            else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1) && gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2))
+            {
+                // can move a block up
+                rockPushed = true;
+                gbm.removeRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1);
+                gbm.pushRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2);
+                // move player
+                player.GetComponent<Player>().moveUp();
+                gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                // play walking sound
+                aSrc[0].PlayOneShot(crack, 1.0f);
+            }
+            else
 			{
 				//do the growing animation, hopping
 				playerScript.hopInPlace();
@@ -377,7 +396,19 @@ public class GameManager : MonoBehaviour {
 				//add to prior keys list
 				//im.addToPriorKeys(im.getMoveDownKey());
 			}
-			else
+            else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1) && gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2))
+            {
+                // can move a block down
+                rockPushed = true;
+                gbm.removeRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1);
+                gbm.pushRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2);
+                // move player
+                player.GetComponent<Player>().moveDown();
+                gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                // play walking sound
+                aSrc[0].PlayOneShot(crack, 1.0f);
+            }
+            else
 			{
 				//do the growing animation, hopping
 				playerScript.hopInPlace();
@@ -400,7 +431,19 @@ public class GameManager : MonoBehaviour {
 				//add to prior keys list
 				//im.addToPriorKeys(im.getMoveLeftKey());
 			}
-			else
+            else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y) && gbm.canMoveTo((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y))
+            {
+                // can move a block left
+                rockPushed = true;
+                gbm.removeRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y);
+                gbm.pushRock((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y);
+                // move player
+                player.GetComponent<Player>().moveLeft();
+                gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                // play walking sound
+                aSrc[0].PlayOneShot(crack, 1.0f);
+            }
+            else
 			{
 				//do the growing animation, hopping
 				playerScript.hopInPlace();
@@ -425,7 +468,19 @@ public class GameManager : MonoBehaviour {
 				//add to prior keys list
 				//im.addToPriorKeys(im.getMoveRightKey());
 			}
-			else
+            else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y) && gbm.canMoveTo((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y))
+            {
+                // can move a block right
+                rockPushed = true;
+                gbm.removeRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y);
+                gbm.pushRock((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y);
+                // move player
+                player.GetComponent<Player>().moveRight();
+                gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                // play walking sound
+                aSrc[0].PlayOneShot(crack, 1.0f);
+            }
+            else
 			{
 				//do the growing animation, hopping
 				playerScript.hopInPlace();
@@ -462,6 +517,7 @@ public class GameManager : MonoBehaviour {
 		else if (Input.GetKeyUp(im.getForwardTrackKey())) { handleForwardTrack(); } 
 		else if (Input.GetKeyUp(im.getPeekKey())) { handlePeek(); }
         else if (Input.GetKeyUp(im.getDebugKey())) { debug(); }
+        // rockPushed = false; // uncomment for unlimited pushing
 	}
 
 	//reset
@@ -472,7 +528,8 @@ public class GameManager : MonoBehaviour {
 		//reset player jumped
 		playerScript.notJump();
 		handledPlayerJump = false;
-		gbm.resetBoard(level == LEVEL_START);
+        rockPushed = false;
+        gbm.resetBoard(level == LEVEL_START);
 		//player lands on start
 		gbm.steppedOn((int)gbm.getStart().x, (int)gbm.getStart().y);
 		//clear prior keys list
@@ -492,8 +549,9 @@ public class GameManager : MonoBehaviour {
 		//player
 		playerScript.reset((int)gbm.getStart().x, (int)(gbm.getCurrentHeight() - gbm.getStart().y - 1));
 		handledPlayerJump = false;
-		//reset entrance/exit
-		entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+        rockPushed = false;
+        //reset entrance/exit
+        entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
 	}
 
