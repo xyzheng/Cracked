@@ -125,10 +125,10 @@ public class GameManager : MonoBehaviour {
 				//check input
 				handlePlayInput();
 				//check reach goal
-				if (gbm.getGoal() == new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1) && !playerScript.isBusy())
-				{
-					handleClearedFloor();
-				}
+				//if (gbm.getGoal() == new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1) && !playerScript.isBusy())
+				//{
+				//	handleClearedFloor();
+				//}
 				//update priorstate
 				priorState = GameState.PLAY;
 			}
@@ -412,8 +412,10 @@ public class GameManager : MonoBehaviour {
 			gbm.moveWhileBacktrack();
 			//check if move valid - player's y is flipped
 			Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+            //check if at goal      //only move to next level when you press right and are at goal
+            if (gbm.getGoal() == playerBoardPosition) handleClearedFloor();
 			//check if move valid
-			if (gbm.canMoveTo((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))
+			else if (gbm.canMoveTo((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))
 			{
 				//move player
 				player.GetComponent<Player>().moveRight();
@@ -459,6 +461,7 @@ public class GameManager : MonoBehaviour {
 		}
 		else if (Input.GetKeyUp(im.getForwardTrackKey())) { handleForwardTrack(); } 
 		else if (Input.GetKeyUp(im.getPeekKey())) { handlePeek(); }
+        else if (Input.GetKeyUp(im.getDebugKey())) { debug(); }
 	}
 
 	//reset
@@ -494,8 +497,16 @@ public class GameManager : MonoBehaviour {
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
 	}
 
-	//sound slider
-	public void updateSoundSlider () {
+    public void debug()
+    {
+        resetGame();
+        gbm.bbm.nextPlaceRockAt(1, 2);
+        gbm.bbm.nextPlaceRockAt(2, 1);
+        gbm.bbm.nextPlaceRockAt(3, 2);
+    }
+
+    //sound slider
+    public void updateSoundSlider () {
 		soundSlider = GameObject.Find("Sound Slider").GetComponent<Slider>();
 		for (int i=0; i<aSrc.Length; i++) {
 			aSrc[i].volume = soundSlider.value;
