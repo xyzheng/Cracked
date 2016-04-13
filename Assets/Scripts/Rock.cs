@@ -62,6 +62,8 @@ public class Rock : MonoBehaviour {
     } 
     private void sh()
     {
-        transform.position = new Vector3(orig.x + Random.Range(-deltaPos, deltaPos), orig.y + Random.Range(-deltaPos, deltaPos), orig.z);
+        transform.position = new Vector3(orig.x + Random.Range(-deltaPos, deltaPos) / 5,
+                                         orig.y + Random.Range(-deltaPos, deltaPos) / 7.5f,
+                                         orig.z);
     }
 }
