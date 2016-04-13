@@ -197,7 +197,10 @@ public class GameBoardManager : MonoBehaviour
             updateTile(x, y);
         }
     }
-    public bool busy() { return state != State.IDLE; }
+    public bool busy()
+    {
+        return state != State.IDLE;
+    }
     public bool isPeeking() { return peeking; }
     public Vector2 getStart() { return bbm.getStart(); }
     public Vector2 getGoal() { return bbm.getGoal(); }
@@ -229,7 +232,10 @@ public class GameBoardManager : MonoBehaviour
         }
         return false;
     }
-    public void clearedCurrentBoard() { state = State.CLEARED_BOARD; }
+    public void clearedCurrentBoard()
+    {
+        state = State.CLEARED_BOARD;
+    }
     public void damageCurrentBoard(int x, int y)
     {
         if (bbm.damageCurrentBoard(x, y))
@@ -327,6 +333,14 @@ public class GameBoardManager : MonoBehaviour
                 dropRocks(i, j);
             }
         }
+    }
+    public void handleSingleRock(int x, int y)      // calls drop rock on all holes adj to a specific rock
+    {
+        if (bbm.currentIsDestroyedAt(x, y)) dropRocks(x, y);            // at Position
+        if (bbm.currentIsDestroyedAt(x, y + 1)) dropRocks(x, y + 1);    // below Pos
+        if (bbm.currentIsDestroyedAt(x - 1, y)) dropRocks(x - 1, y);    // left of Pos
+        if (bbm.currentIsDestroyedAt(x, y - 1)) dropRocks(x, y - 1);    // above Pos
+        if (bbm.currentIsDestroyedAt(x + 1, y)) dropRocks(x + 1, y);    // right of Pos
     }
     //clearstuff
     public void clearTiles()
@@ -759,5 +773,26 @@ public class GameBoardManager : MonoBehaviour
         bbm = new BoardManager();
         drawTiles();
         drawRocks();
+    }
+    // methods for pushing rocks
+    public bool hasRock(int x, int y)
+    {
+        return bbm.currentHasRockAt(x, y);
+    }
+    public void pushRock(int x, int y)
+    {
+        // move rock to pos (x,y)
+        bbm.currentPlaceRockAt(x, y);
+        // redraw the rocks
+        clearRocks();
+        drawCurrentRocks();
+    }
+    public void removeRock(int x, int y)
+    {
+        // remove rock at current place
+        bbm.currentRemoveAt(x, y);
+        // destroy rock
+        Destroy(rocks[x][y]);
+        rocks[x][y] = null;
     }
 }
