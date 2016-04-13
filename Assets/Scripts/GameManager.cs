@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour {
 	public GameObject player;
 	private Player playerScript;
 	bool handledPlayerJump;
+    bool handledPlayerLeap;
+    bool leapMode;
 	public GameObject entrance;
 	public GameObject exit;
 	public Text levelText;
@@ -56,6 +58,8 @@ public class GameManager : MonoBehaviour {
 		player = (GameObject)Instantiate(player, new Vector3(0, 0, -2), Quaternion.identity);
 		playerScript = player.GetComponent<Player>();
 		handledPlayerJump = false;
+        handledPlayerLeap = false;
+        leapMode = false;
 		// set up audio variables
 		// 0: crack, 1: hole, 2: fall, 3: jump
 		aSrc = GetComponents<AudioSource>();
@@ -183,7 +187,9 @@ public class GameManager : MonoBehaviour {
 		//reset player stuff
 		playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
 		playerScript.notJump();
+        playerScript.notLeap();
 		handledPlayerJump = false;
+        handledPlayerLeap = false;
 		//reset entrance/exit
 		entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
@@ -260,6 +266,41 @@ public class GameManager : MonoBehaviour {
 			if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
 		}
 	}
+    public void handleLeap()        // healthyness isn't checked here because it is checked outside the function
+    {                               // we only call handleLeap if our destination is valid and healthy
+        handledPlayerLeap = true;
+        //get player pos
+        int playerBoardPosX = (int)playerScript.getPosition().x;
+        int playerBoardPosY = gbm.getCurrentHeight() - (int)playerScript.getPosition().y - 1;
+        //at player pos
+        int x = playerBoardPosX;
+        int y = playerBoardPosY;
+        if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
+        //up from player pos
+        x = playerBoardPosX;
+        y = playerBoardPosY - 1;
+        if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
+        //down
+        x = playerBoardPosX;
+        y = playerBoardPosY + 1;
+        if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
+        //left 
+        x = playerBoardPosX - 1;
+        y = playerBoardPosY;
+        if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
+        //right
+        x = playerBoardPosX + 1;
+        y = playerBoardPosY;
+        if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
+    }
+    public void toggleLeapMode()
+    {
+        if (!handledPlayerLeap)
+        {
+            if (leapMode) leapMode = false;
+            else leapMode = true;
+        }
+    }
 	public void handleBacktrack()
 	{
 		if (gbm.backtrack())
@@ -275,11 +316,16 @@ public class GameManager : MonoBehaviour {
 		//reset player
 		playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
 		playerScript.notJump();
+        playerScript.notLeap();
 		handledPlayerJump = false;
-		//clear prior keys list
-		//im.clearPriorKeys();
-		//change floor
-		level -= 1;
+        handledPlayerLeap = false;
+        leapMode = false;
+        //clear prior keys list
+        //im.clearPriorKeys();
+        //change floor
+        //if (gbm.bbm.repeatedFloor == 0)
+        level -= 1;
+        //else level = gbm.bbm.repeatedFloor;
 		//reset entrance/exit
 		entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
@@ -302,11 +348,14 @@ public class GameManager : MonoBehaviour {
 		//reset player
 		playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
 		playerScript.notJump();
+        playerScript.notLeap();
 		handledPlayerJump = false;
-		//clear prior keys list
-		//im.clearPriorKeys();
-		//change floor
-		level += 1;
+        handledPlayerLeap = false;
+        leapMode = false;
+        //clear prior keys list
+        //im.clearPriorKeys();
+        //change floor
+        level += 1;
 		//reset entrance/exit
 		entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
@@ -327,7 +376,6 @@ public class GameManager : MonoBehaviour {
 		pausePanel.SetActive(true);
 		state = GameState.PAUSE;
 	}
-
 	public void handleUnpause() {
 		if (Input.GetKeyUp (KeyCode.Escape)) {
 			pausePanel.SetActive(false);
@@ -342,95 +390,170 @@ public class GameManager : MonoBehaviour {
 			//if backtracked accept changes
 			gbm.moveWhileBacktrack();
 			//player's y is flipped
-			Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
-			//check if up is valid & not blocked by rocks
-			if (gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1))
-			{
-				//move player
-				player.GetComponent<Player>().moveUp();
-				gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-				// play walking sound
-				aSrc[0].PlayOneShot(crack, 1.0f);
-				//add to prior keys list
-				//im.addToPriorKeys(im.getMoveUpKey());
-			}
-			else
-			{
-				//do the growing animation, hopping
-				playerScript.hopInPlace();
-			}
-		}
+            if (!leapMode) {        // Normal mode without Leap enabled
+			    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+			    //check if up is valid & not blocked by rocks
+			    if (gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1))
+			    {
+				    //move player
+				    player.GetComponent<Player>().moveUp();
+				    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+				    // play walking sound
+				    aSrc[0].PlayOneShot(crack, 1.0f);
+				    //add to prior keys list
+				    //im.addToPriorKeys(im.getMoveUpKey());
+			    }
+			    else playerScript.hopInPlace();
+            }
+            else                        // Leap mode enabled
+            {
+                Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+                //check if up is valid & not blocked by rocks
+                if (gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2))
+                {
+                    //move player
+                    player.GetComponent<Player>().moveUp2();
+                    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    // play walking sound
+                    aSrc[0].PlayOneShot(crack, 1.0f);
+                    //add to prior keys list
+                    //im.addToPriorKeys(im.getMoveUpKey());
+                    handleLeap();
+                }
+                else playerScript.hopInPlace();
+                leapMode = false;
+            }
+        }
 		else if (Input.GetKeyUp(im.getMoveDownKey()) && !playerScript.isBusy())
 		{
-			//if backtracked accept changes
-			gbm.moveWhileBacktrack();
-			//player's y is flipped
-			Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
-			//check if move is valid
-			if (gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1))
-			{
-				//move player
-				player.GetComponent<Player>().moveDown();
-				gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-				// play walking sound
-				aSrc[0].PlayOneShot(crack, 1.0f);
-				//add to prior keys list
-				//im.addToPriorKeys(im.getMoveDownKey());
-			}
-			else
-			{
-				//do the growing animation, hopping
-				playerScript.hopInPlace();
-			}
-		}
+            if (!leapMode) { 
+			    //if backtracked accept changes
+			    gbm.moveWhileBacktrack();
+			    //player's y is flipped
+			    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+			    //check if move is valid
+			    if (gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1))
+			    {
+				    //move player
+				    player.GetComponent<Player>().moveDown();
+				    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+				    // play walking sound
+				    aSrc[0].PlayOneShot(crack, 1.0f);
+				    //add to prior keys list
+				    //im.addToPriorKeys(im.getMoveDownKey());
+			    }
+			    else playerScript.hopInPlace();
+            }
+            else
+            {
+                //if backtracked accept changes
+                gbm.moveWhileBacktrack();
+                //player's y is flipped
+                Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+                //check if move is valid
+                if (gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2))
+                {
+                    //move player
+                    player.GetComponent<Player>().moveDown2();
+                    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    // play walking sound
+                    aSrc[0].PlayOneShot(crack, 1.0f);
+                    //add to prior keys list
+                    //im.addToPriorKeys(im.getMoveDownKey());
+                    handleLeap();
+                }
+                else playerScript.hopInPlace();
+                leapMode = false;
+            }
+        }
 		else if (Input.GetKeyUp(im.getMoveLeftKey()) && !playerScript.isBusy())
 		{
-			//if backtracked accept changes
-			gbm.moveWhileBacktrack();
-			//player's y is flipped
-			Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
-			//check if move is valid
-			if (gbm.canMoveTo((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y))
-			{
-				//move player
-				player.GetComponent<Player>().moveLeft();
-				gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-				// play walking sound
-				aSrc[0].PlayOneShot(crack, 1.0f);
-				//add to prior keys list
-				//im.addToPriorKeys(im.getMoveLeftKey());
-			}
-			else
-			{
-				//do the growing animation, hopping
-				playerScript.hopInPlace();
-			}
-		}
+            if (!leapMode) { 
+			    //if backtracked accept changes
+			    gbm.moveWhileBacktrack();
+			    //player's y is flipped
+			    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+			    //check if move is valid
+			    if (gbm.canMoveTo((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y))
+			    {
+				    //move player
+				    player.GetComponent<Player>().moveLeft();
+				    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+				    // play walking sound
+				    aSrc[0].PlayOneShot(crack, 1.0f);
+				    //add to prior keys list
+				    //im.addToPriorKeys(im.getMoveLeftKey());
+			    }
+			    else playerScript.hopInPlace();
+            }
+            else
+            {
+                //if backtracked accept changes
+                gbm.moveWhileBacktrack();
+                //player's y is flipped
+                Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+                //check if move is valid
+                if (gbm.canMoveTo((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y))
+                {
+                    //move player
+                    player.GetComponent<Player>().moveLeft2();
+                    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    // play walking sound
+                    aSrc[0].PlayOneShot(crack, 1.0f);
+                    //add to prior keys list
+                    //im.addToPriorKeys(im.getMoveLeftKey());
+                    handleLeap();
+                }
+                else playerScript.hopInPlace();
+                leapMode = false;
+            }
+        }
 		else if (Input.GetKeyUp(im.getMoveRightKey()) && !playerScript.isBusy())
 		{
-			//if backtracked accept changes
-			gbm.moveWhileBacktrack();
-			//check if move valid - player's y is flipped
-			Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
-            //check if at goal      //only move to next level when you press right and are at goal
-            if (gbm.getGoal() == playerBoardPosition) handleClearedFloor();
-			//check if move valid
-			else if (gbm.canMoveTo((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))
-			{
-				//move player
-				player.GetComponent<Player>().moveRight();
-				gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-				// play walking sound
-				aSrc[0].PlayOneShot(crack, 1.0f);
-				//add to prior keys list
-				//im.addToPriorKeys(im.getMoveRightKey());
-			}
-			else
-			{
-				//do the growing animation, hopping
-				playerScript.hopInPlace();
-			}
-		}
+            if (!leapMode) { 
+			    //if backtracked accept changes
+			    gbm.moveWhileBacktrack();
+			    //check if move valid - player's y is flipped
+			    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+                //check if at goal      //only move to next level when you press right and are at goal
+                if (gbm.getGoal() == playerBoardPosition) handleClearedFloor();
+			    //check if move valid
+			    else if (gbm.canMoveTo((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))
+			    {
+				    //move player
+				    player.GetComponent<Player>().moveRight();
+				    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+				    // play walking sound
+				    aSrc[0].PlayOneShot(crack, 1.0f);
+				    //add to prior keys list
+				    //im.addToPriorKeys(im.getMoveRightKey());
+			    }
+			    else playerScript.hopInPlace();
+            }
+            else
+            {
+                //if backtracked accept changes
+                gbm.moveWhileBacktrack();
+                //check if move valid - player's y is flipped
+                Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+                //check if at goal      //only move to next level when you press right and are at goal
+                if (gbm.getGoal() == playerBoardPosition) handleClearedFloor();
+                //check if move valid
+                else if (gbm.canMoveTo((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y))
+                {
+                    //move player
+                    player.GetComponent<Player>().moveRight2();
+                    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    // play walking sound
+                    aSrc[0].PlayOneShot(crack, 1.0f);
+                    //add to prior keys list
+                    //im.addToPriorKeys(im.getMoveRightKey());
+                    handleLeap();
+                }
+                else playerScript.hopInPlace();
+                leapMode = false;
+            }
+        }
 		else if (!playerScript.didJump() && Input.GetKeyUp(im.getJumpKey()) && !playerScript.isBusy())
 		{
 			//check if move valid - player's y is flipped
@@ -462,6 +585,7 @@ public class GameManager : MonoBehaviour {
 		else if (Input.GetKeyUp(im.getForwardTrackKey())) { handleForwardTrack(); } 
 		else if (Input.GetKeyUp(im.getPeekKey())) { handlePeek(); }
         else if (Input.GetKeyUp(im.getDebugKey())) { debug(); }
+        else if (Input.GetKeyUp(im.getJumpOverModeKey()) && !playerScript.isBusy()) { toggleLeapMode(); }
 	}
 
 	//reset
@@ -471,7 +595,10 @@ public class GameManager : MonoBehaviour {
 		playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
 		//reset player jumped
 		playerScript.notJump();
+        playerScript.notLeap();
 		handledPlayerJump = false;
+        handledPlayerLeap = false;
+        leapMode = false;
 		gbm.resetBoard(level == LEVEL_START);
 		//player lands on start
 		gbm.steppedOn((int)gbm.getStart().x, (int)gbm.getStart().y);
@@ -492,8 +619,10 @@ public class GameManager : MonoBehaviour {
 		//player
 		playerScript.reset((int)gbm.getStart().x, (int)(gbm.getCurrentHeight() - gbm.getStart().y - 1));
 		handledPlayerJump = false;
-		//reset entrance/exit
-		entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+        handledPlayerLeap = false;
+        leapMode = false;
+        //reset entrance/exit
+        entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
 	}
 

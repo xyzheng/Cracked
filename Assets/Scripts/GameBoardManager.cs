@@ -197,10 +197,7 @@ public class GameBoardManager : MonoBehaviour
             updateTile(x, y);
         }
     }
-    public bool busy()
-    {
-        return state != State.IDLE;
-    }
+    public bool busy() { return state != State.IDLE; }
     public bool isPeeking() { return peeking; }
     public Vector2 getStart() { return bbm.getStart(); }
     public Vector2 getGoal() { return bbm.getGoal(); }
@@ -232,10 +229,7 @@ public class GameBoardManager : MonoBehaviour
         }
         return false;
     }
-    public void clearedCurrentBoard()
-    {
-        state = State.CLEARED_BOARD;
-    }
+    public void clearedCurrentBoard() { state = State.CLEARED_BOARD; }
     public void damageCurrentBoard(int x, int y)
     {
         if (bbm.damageCurrentBoard(x, y))
@@ -767,6 +761,3 @@ public class GameBoardManager : MonoBehaviour
         drawRocks();
     }
 }
-
-
-

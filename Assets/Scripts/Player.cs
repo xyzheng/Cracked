@@ -4,7 +4,8 @@ using System.Collections;
 public class Player : MonoBehaviour {
 	protected Vector2 position;
 	protected bool jumped;
-	//protected bool landed;
+    //protected bool landed;
+    protected bool leaped;
 	protected bool busy;
 	
 	//animation stuff
@@ -24,7 +25,8 @@ public class Player : MonoBehaviour {
 		position = new Vector2(); //start at 0,0 in origin; in terms of board, y is flipped
 		transform.position = new Vector3(transform.position.x, transform.position.y, -2f);
 		jumped = false;
-		//landed = false;
+        //landed = false;
+        leaped = false;
 		busy = false;
 		currentState = AnimationState.IDLE;
         baseColor = GetComponent<SpriteRenderer>().color;
@@ -82,6 +84,18 @@ public class Player : MonoBehaviour {
 			currentState = AnimationState.HOP_NORTH;
 		}
 	}
+    public void moveUp2()
+    {
+        if (!busy)
+        {
+            //landed = false;
+            busy = true;
+            position = new Vector2(position.x, position.y + 2);
+            //update position
+            //gameObject.GetComponent<Transform>().position = new Vector3(position.x, position.y, gameObject.GetComponent<Transform>().position.z);
+            currentState = AnimationState.HOP_NORTH;
+        }
+    }
 	public void moveDown()
 	{
 		if (!busy)
@@ -94,7 +108,19 @@ public class Player : MonoBehaviour {
 			currentState = AnimationState.HOP_SOUTH;
 		}
 	}
-	public void moveLeft()
+    public void moveDown2()
+    {
+        if (!busy)
+        {
+            //landed = false;
+            busy = true;
+            position = new Vector2(position.x, position.y - 2);
+            //update position
+            //gameObject.GetComponent<Transform>().position = new Vector3(position.x, position.y, gameObject.GetComponent<Transform>().position.z);
+            currentState = AnimationState.HOP_SOUTH;
+        }
+    }
+    public void moveLeft()
 	{
 		if (!busy)
 		{
@@ -106,7 +132,19 @@ public class Player : MonoBehaviour {
 			currentState = AnimationState.HOP_WEST;
 		}
 	}
-	public void moveRight()
+    public void moveLeft2()
+    {
+        if (!busy)
+        {
+            //landed = false;
+            busy = true;
+            position = new Vector2(position.x - 2, position.y);
+            //update position
+            //gameObject.GetComponent<Transform>().position = new Vector3(position.x, position.y, gameObject.GetComponent<Transform>().position.z);
+            currentState = AnimationState.HOP_WEST;
+        }
+    }
+    public void moveRight()
 	{
 		if (!busy)
 		{
@@ -118,7 +156,19 @@ public class Player : MonoBehaviour {
 			currentState = AnimationState.HOP_EAST;
 		}
 	}
-	public void hopInPlace() {
+    public void moveRight2()
+    {
+        if (!busy)
+        {
+            //landed = false;
+            busy = true;
+            position = new Vector2(position.x + 2, position.y);
+            //update position
+            //gameObject.GetComponent<Transform>().position = new Vector3(position.x, position.y, gameObject.GetComponent<Transform>().position.z);
+            currentState = AnimationState.HOP_EAST;
+        }
+    }
+    public void hopInPlace() {
 		if (!busy)
 		{
             //landed = false;
@@ -136,14 +186,25 @@ public class Player : MonoBehaviour {
 			currentState = AnimationState.JUMP_UP;
             // play jump audio
             GameManager.aSrc[3].PlayOneShot(GameManager.jump, 1.0f);
-		}
-	}
+        }
+    }
+    public void leap()
+    {
+        if (!busy)
+        {
+            leaped = true;
+            busy = true;
+            currentState = AnimationState.JUMP_UP;
+            GameManager.aSrc[3].PlayOneShot(GameManager.jump, 1.0f);
+        }
+    }
 	//getters
 	public Vector2 getPosition()
 	{
 		return position;
 	}
 	public bool didJump() { return jumped; }
+    public bool didLeap() { return leaped; }
 	//public bool didLand() { return landed; }
 	public bool isBusy() { return busy; }
 	//setters
@@ -164,15 +225,22 @@ public class Player : MonoBehaviour {
 		jumped = false;
 		//landed = false;
 		busy = false;
-		currentState = AnimationState.IDLE;
-	}
-	public void reset(int startX, int startY)
+        currentState = AnimationState.IDLE;
+    }
+    public void notLeap()
+    {
+        leaped = false;
+        busy = false;
+        currentState = AnimationState.IDLE;
+    }
+    public void reset(int startX, int startY)
 	{
 		busy = false;
 		currentState = AnimationState.IDLE;
 		
 		jumped = false;
-		//landed = false;
+        //landed = false;
+        leaped = false;
 		position = new Vector2(startX, startY);
         currentState = AnimationState.IDLE;
 		//update position
