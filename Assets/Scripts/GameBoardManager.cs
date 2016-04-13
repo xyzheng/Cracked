@@ -386,7 +386,6 @@ public class GameBoardManager : MonoBehaviour
     //drawstuff
     private void drawTiles()
     {
-
         sAnchor = new Vector2(bbm.getStart().x, bbm.getCurrentHeight() - bbm.getStart().y);
         eAnchor = new Vector2(sAnchor.x + bbm.getCurrentWidth() - minWidth, bbm.getCurrentHeight() - (bbm.getCurrentHeight() / 2) - 1.0f);
         drawCurrentTiles();
@@ -786,6 +785,7 @@ public class GameBoardManager : MonoBehaviour
         // redraw the rocks
         clearRocks();
         drawCurrentRocks();
+        drawNextRocks();
     }
     public void removeRock(int x, int y)
     {

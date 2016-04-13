@@ -17,7 +17,10 @@ public class GameManager : MonoBehaviour {
     bool leapMode;
     public GameObject entrance;
 	public GameObject exit;
-	public Text levelText;
+    public GameObject jumpIcon;
+    public GameObject leapIcon;
+    public GameObject pushIcon;
+    public Text levelText;
 	//basic ui
 	public GameObject backtrack;
 	private BackTrack btScript;
