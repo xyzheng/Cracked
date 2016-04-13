@@ -20,6 +20,7 @@ public class InputManager {
     protected KeyCode backTrack; //go back a floor
     protected KeyCode forwardTrack;
     protected KeyCode debug;
+    protected KeyCode toggleLeap;
 
 	// Use this for initialization
 	public InputManager () {
@@ -39,6 +40,7 @@ public class InputManager {
         //priorkeys
         //priorKeys = new List<KeyCode>();
         debug = KeyCode.X;
+        toggleLeap = KeyCode.LeftShift;
     }
 
     //getters
@@ -54,6 +56,7 @@ public class InputManager {
     public KeyCode getBacktrackKey() { return backTrack; }
     public KeyCode getForwardTrackKey() { return forwardTrack; }
     public KeyCode getDebugKey() { return debug; }
+    public KeyCode getToggleLeapKey() { return toggleLeap; }
 
     //setters
     public void rebindMoveUpKey(KeyCode newKey) { moveUp = newKey; }

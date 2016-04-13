@@ -8,6 +8,7 @@ public class SwapBoards
     protected List<Board> boards;
     protected Board current; //current
     protected Board next; //next Board
+//    public int repeatedFloor;
     //getter
     public int getCurrentWidth() { return current.getWidth(); }
     public int getCurrentHeight() { return current.getHeight(); }
@@ -15,7 +16,23 @@ public class SwapBoards
     public int getNextHeight() { return next.getHeight(); }
     public bool didBackTrack() { return currentBoardIndex != boards.Count - 1; }
     public bool backTrackPossible() { return currentBoardIndex - 1 >= 0; }
-    public bool forwardTrackPossible() { return currentBoardIndex + 1 < boards.Count; } 
+    public bool forwardTrackPossible() { return currentBoardIndex + 1 < boards.Count; }
+/*    public int testRepeatedLevel()
+    {
+        int floorNum = 0;
+        foreach (Board i in boards)
+        {
+            floorNum++;
+            for (int x = 0; x < getCurrentWidth(); x++)
+            {
+                for (int y = 0; y < getCurrentHeight(); y++)
+                {
+                    if (i.getValueAt(x, y) != current.getValueAt(x, y)) return 0;
+                }
+            }
+        }
+        return floorNum;
+    } */
     //setter
     public virtual void reset()
     {
@@ -31,24 +48,32 @@ public class SwapBoards
     }
     public virtual void clearedCurrentBoard()
     {
-        //swap current and next
         current = next.getCopy();
         //add this as a new board start
         boards.Add(current.getCopy());
         //clear futureboard
         next = new Board();
         //update currentboard index
-        currentBoardIndex = boards.Count - 1;
+        //repeatedFloor = testRepeatedLevel();
+        //if (repeatedFloor == 0) currentBoardIndex = boards.Count - 1;
+        //else currentBoardIndex = repeatedFloor;
     }
     public virtual void backTrack()
     {
         //check there is a board to backtrack to
         if (currentBoardIndex - 1 >= 0)
         {
-            //make the last board the current
-            currentBoardIndex -= 1;
-            current = boards[currentBoardIndex].getCopy();
-            //clear nex
+            //if (repeatedFloor == 0) { 
+                //make the last board the current
+                currentBoardIndex -= 1;
+                current = boards[currentBoardIndex].getCopy();
+            //}
+            //else
+            //{
+            //    currentBoardIndex = repeatedFloor;
+            //    current = boards[repeatedFloor].getCopy();
+            //}
+            //clear next
             next.reset();
         }
     }
@@ -57,9 +82,11 @@ public class SwapBoards
         //check there is a board to forwardTrack to
         if (currentBoardIndex + 1 < boards.Count)
         {
-            //make the last board the current
-            currentBoardIndex += 1;
-            current = boards[currentBoardIndex].getCopy();
+//            if (repeatedFloor == 0) { 
+                //make the last board the current
+                currentBoardIndex += 1;
+                current = boards[currentBoardIndex].getCopy();
+//            }
             //clear next
             next.reset();
         }
@@ -95,6 +122,7 @@ public class BoardManager : SwapBoards
         boards = new List<Board>();
         boards.Add(current.getCopy());
         currentBoardIndex = 0;
+        //repeatedFloor = 0;
 	}
     //getters
     public Vector2 getStart() { return starts[currentBoardIndex]; }

@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour {
 	bool handledPlayerJump;
     bool handledPlayerLeap;
     bool leapMode;
-	public GameObject entrance;
+    public GameObject entrance;
 	public GameObject exit;
 	public Text levelText;
 	//basic ui
@@ -46,6 +46,9 @@ public class GameManager : MonoBehaviour {
 	private Toggle soundToggle;
 	private Toggle musicToggle;
 
+    // rock push var
+    bool rockPushed;
+
 	//called before all Start()
 	void Awake()
 	{
@@ -60,14 +63,15 @@ public class GameManager : MonoBehaviour {
 		handledPlayerJump = false;
         handledPlayerLeap = false;
         leapMode = false;
-		// set up audio variables
-		// 0: crack, 1: hole, 2: fall, 3: jump
-		aSrc = GetComponents<AudioSource>();
+        // set up audio variables
+        // 0: crack, 1: hole, 2: fall, 3: jump
+        aSrc = GetComponents<AudioSource>();
 		crack = aSrc[0].clip;
 		hole = aSrc[1].clip;
 		fall = aSrc[2].clip;
 		jump = aSrc[3].clip;
-		//soundSlider = GameObject.Find("Sound Slider").GetComponent<Slider>();
+        //soundSlider = GameObject.Find("Sound Slider").GetComponent<Slider>();
+        rockPushed = false;
 	}
 
 	// Main update loop
@@ -190,8 +194,9 @@ public class GameManager : MonoBehaviour {
         playerScript.notLeap();
 		handledPlayerJump = false;
         handledPlayerLeap = false;
-		//reset entrance/exit
-		entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+        rockPushed = false;
+        //reset entrance/exit
+        entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
 		//ui stuff
 		levelText.text = "Floor\n" + level.ToString();
@@ -267,31 +272,25 @@ public class GameManager : MonoBehaviour {
 		}
 	}
     public void handleLeap()        // healthyness isn't checked here because it is checked outside the function
-    {                               // we only call handleLeap if our destination is valid and healthy
+    {                               // we only call handleLeap if our destination is healthy (uncracked floor)
         handledPlayerLeap = true;
-        //get player pos
-        int playerBoardPosX = (int)playerScript.getPosition().x;
-        int playerBoardPosY = gbm.getCurrentHeight() - (int)playerScript.getPosition().y - 1;
-        //at player pos
-        int x = playerBoardPosX;
-        int y = playerBoardPosY;
-        if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
-        //up from player pos
-        x = playerBoardPosX;
-        y = playerBoardPosY - 1;
-        if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
-        //down
-        x = playerBoardPosX;
-        y = playerBoardPosY + 1;
-        if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
-        //left 
-        x = playerBoardPosX - 1;
-        y = playerBoardPosY;
-        if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
-        //right
-        x = playerBoardPosX + 1;
-        y = playerBoardPosY;
-        if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
+        //int playerBoardPosX = (int)playerScript.getPosition().x;        //get player pos
+        //int playerBoardPosY = gbm.getCurrentHeight() - (int)playerScript.getPosition().y - 1;
+        //int x = playerBoardPosX;            //at player pos
+        //int y = playerBoardPosY;
+        //if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
+        //x = playerBoardPosX;              //up from player pos
+        //y = playerBoardPosY - 1;
+        //if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
+        //x = playerBoardPosX;              //down
+        //y = playerBoardPosY + 1;
+        //if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
+        //x = playerBoardPosX - 1;          //left
+        //y = playerBoardPosY;
+        //if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
+        //x = playerBoardPosX + 1;          //right
+        //y = playerBoardPosY;
+        //if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
     }
     public void toggleLeapMode()
     {
@@ -301,7 +300,7 @@ public class GameManager : MonoBehaviour {
             else leapMode = true;
         }
     }
-	public void handleBacktrack()
+    public void handleBacktrack()
 	{
 		if (gbm.backtrack())
 		{
@@ -317,15 +316,14 @@ public class GameManager : MonoBehaviour {
 		playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
 		playerScript.notJump();
         playerScript.notLeap();
-		handledPlayerJump = false;
+        handledPlayerJump = false;
         handledPlayerLeap = false;
         leapMode = false;
+        rockPushed = false;
         //clear prior keys list
         //im.clearPriorKeys();
         //change floor
-        //if (gbm.bbm.repeatedFloor == 0)
         level -= 1;
-        //else level = gbm.bbm.repeatedFloor;
 		//reset entrance/exit
 		entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
@@ -348,10 +346,12 @@ public class GameManager : MonoBehaviour {
 		//reset player
 		playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
 		playerScript.notJump();
-        playerScript.notLeap();
 		handledPlayerJump = false;
+        playerScript.notLeap();
+        handledPlayerJump = false;
         handledPlayerLeap = false;
         leapMode = false;
+        rockPushed = false;
         //clear prior keys list
         //im.clearPriorKeys();
         //change floor
@@ -376,6 +376,7 @@ public class GameManager : MonoBehaviour {
 		pausePanel.SetActive(true);
 		state = GameState.PAUSE;
 	}
+
 	public void handleUnpause() {
 		if (Input.GetKeyUp (KeyCode.Escape)) {
 			pausePanel.SetActive(false);
@@ -387,37 +388,39 @@ public class GameManager : MonoBehaviour {
 	public void handlePlayInput()
 	{
 		if (Input.GetKeyUp(im.getMoveUpKey()) && !playerScript.isBusy()) {
-			//if backtracked accept changes
-			gbm.moveWhileBacktrack();
-			//player's y is flipped
-            if (!leapMode) {        // Normal mode without Leap enabled
-			    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
-			    //check if up is valid & not blocked by rocks
-			    if (gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1))
-			    {
-				    //move player
-				    player.GetComponent<Player>().moveUp();
-				    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-				    // play walking sound
-				    aSrc[0].PlayOneShot(crack, 1.0f);
-				    //add to prior keys list
-				    //im.addToPriorKeys(im.getMoveUpKey());
-			    }
-			    else playerScript.hopInPlace();
-            }
-            else                        // Leap mode enabled
-            {
-                Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
-                //check if up is valid & not blocked by rocks
-                if (gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2))
+			gbm.moveWhileBacktrack();			//if backtracked accept changes
+            //player's y is flipped
+            Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+            if (!leapMode)
+            {        // Normal mode: Leap mode is off
+                if (gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1))  //check if up is valid & not blocked by rocks
                 {
-                    //move player
-                    player.GetComponent<Player>().moveUp2();
+                    player.GetComponent<Player>().moveUp();                 //move player
                     gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                    // play walking sound
-                    aSrc[0].PlayOneShot(crack, 1.0f);
-                    //add to prior keys list
-                    //im.addToPriorKeys(im.getMoveUpKey());
+				    aSrc[0].PlayOneShot(crack, 1.0f);                   // play walking sound
+                    //im.addToPriorKeys(im.getMoveUpKey());				    //add to prior keys list
+                }
+                else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)
+                    && gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2))
+                {
+                    rockPushed = true;      // can move a block up
+                    gbm.removeRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1);
+                    gbm.pushRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2);
+                    gbm.handleSingleRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2);
+                    player.GetComponent<Player>().moveUp();                    // move player
+                    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    aSrc[0].PlayOneShot(crack, 1.0f);                    // play walking sound
+                }
+                else playerScript.hopInPlace();     //do the growing animation, hopping
+            }
+            else               // Leap mode is on
+            {
+                if (gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2))  //check if up is valid & not blocked by rocks
+                {
+                    player.GetComponent<Player>().moveUp2();        //move player 2 tiles
+                    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    aSrc[0].PlayOneShot(crack, 1.0f);       // play walking sound
+                    //im.addToPriorKeys(im.getMoveUpKey());         //add to prior keys list
                     handleLeap();
                 }
                 else playerScript.hopInPlace();
@@ -426,131 +429,124 @@ public class GameManager : MonoBehaviour {
         }
 		else if (Input.GetKeyUp(im.getMoveDownKey()) && !playerScript.isBusy())
 		{
-            if (!leapMode) { 
-			    //if backtracked accept changes
-			    gbm.moveWhileBacktrack();
-			    //player's y is flipped
-			    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
-			    //check if move is valid
-			    if (gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1))
-			    {
-				    //move player
-				    player.GetComponent<Player>().moveDown();
-				    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-				    // play walking sound
-				    aSrc[0].PlayOneShot(crack, 1.0f);
-				    //add to prior keys list
-				    //im.addToPriorKeys(im.getMoveDownKey());
-			    }
-			    else playerScript.hopInPlace();
-            }
-            else
+			gbm.moveWhileBacktrack();           //if backtracked accept changes
+            //player's y is flipped
+            Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+            if (!leapMode)
             {
-                //if backtracked accept changes
-                gbm.moveWhileBacktrack();
-                //player's y is flipped
-                Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
-                //check if move is valid
-                if (gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2))
+                if (gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1))          //check if move is valid
                 {
-                    //move player
-                    player.GetComponent<Player>().moveDown2();
+				    player.GetComponent<Player>().moveDown();               //move player
                     gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                    // play walking sound
-                    aSrc[0].PlayOneShot(crack, 1.0f);
-                    //add to prior keys list
-                    //im.addToPriorKeys(im.getMoveDownKey());
+				    aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                    //im.addToPriorKeys(im.getMoveDownKey());                //add to prior keys list
+                }
+                else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)
+                    && gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2))
+                {
+                    rockPushed = true;                // can move a block down
+                    gbm.removeRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1);
+                    gbm.pushRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2);
+                    gbm.handleSingleRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2);
+                    player.GetComponent<Player>().moveDown();                // move player
+                    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
+                }
+                else playerScript.hopInPlace();     //do the growing animation, hopping
+            }
+            else        // Leap mode on
+            {
+                if (gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2))
+                {
+                    player.GetComponent<Player>().moveDown2();               //move player 2 tiles
+                    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
                     handleLeap();
                 }
-                else playerScript.hopInPlace();
+                else playerScript.hopInPlace();     //do the growing animation, hopping
                 leapMode = false;
             }
         }
 		else if (Input.GetKeyUp(im.getMoveLeftKey()) && !playerScript.isBusy())
 		{
-            if (!leapMode) { 
-			    //if backtracked accept changes
-			    gbm.moveWhileBacktrack();
-			    //player's y is flipped
-			    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
-			    //check if move is valid
-			    if (gbm.canMoveTo((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y))
-			    {
-				    //move player
-				    player.GetComponent<Player>().moveLeft();
-				    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-				    // play walking sound
-				    aSrc[0].PlayOneShot(crack, 1.0f);
-				    //add to prior keys list
-				    //im.addToPriorKeys(im.getMoveLeftKey());
-			    }
-			    else playerScript.hopInPlace();
-            }
-            else
+			//if backtracked accept changes
+			gbm.moveWhileBacktrack();
+		    //player's y is flipped
+		    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+            if (!leapMode)
             {
-                //if backtracked accept changes
-                gbm.moveWhileBacktrack();
-                //player's y is flipped
-                Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
-                //check if move is valid
-                if (gbm.canMoveTo((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y))
+                if (gbm.canMoveTo((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y))          //check if move is valid
                 {
-                    //move player
-                    player.GetComponent<Player>().moveLeft2();
+				    player.GetComponent<Player>().moveLeft();               //move player
                     gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                    // play walking sound
-                    aSrc[0].PlayOneShot(crack, 1.0f);
-                    //add to prior keys list
-                    //im.addToPriorKeys(im.getMoveLeftKey());
+				    aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                    //im.addToPriorKeys(im.getMoveLeftKey());                //add to prior keys list
+                }
+                else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)
+                    && gbm.currentIsHealthyAt((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y))
+                {
+                    rockPushed = true;                // can move a block left
+                    gbm.removeRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y);
+                    gbm.pushRock((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y);
+                    gbm.handleSingleRock((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y);
+                    player.GetComponent<Player>().moveLeft();                // move player
+                    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
+                }
+                else playerScript.hopInPlace();     //do the growing animation, hopping
+            }
+            else        // Leap mode on
+            {
+                if (gbm.currentIsHealthyAt((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y))          //check if move is valid
+                {
+                    player.GetComponent<Player>().moveLeft2();               //move player 2 tiles
+                    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
                     handleLeap();
                 }
-                else playerScript.hopInPlace();
+                else playerScript.hopInPlace();     //do the growing animation, hopping
                 leapMode = false;
             }
         }
 		else if (Input.GetKeyUp(im.getMoveRightKey()) && !playerScript.isBusy())
 		{
-            if (!leapMode) { 
-			    //if backtracked accept changes
-			    gbm.moveWhileBacktrack();
-			    //check if move valid - player's y is flipped
-			    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
-                //check if at goal      //only move to next level when you press right and are at goal
-                if (gbm.getGoal() == playerBoardPosition) handleClearedFloor();
-			    //check if move valid
-			    else if (gbm.canMoveTo((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))
-			    {
-				    //move player
-				    player.GetComponent<Player>().moveRight();
-				    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-				    // play walking sound
-				    aSrc[0].PlayOneShot(crack, 1.0f);
-				    //add to prior keys list
-				    //im.addToPriorKeys(im.getMoveRightKey());
-			    }
-			    else playerScript.hopInPlace();
-            }
-            else
+			gbm.moveWhileBacktrack();			//if backtracked accept changes
+			//check if move valid - player's y is flipped
+			Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+            //check if at goal      //only move to next level when you press right and are at goal
+            if (gbm.getGoal() == playerBoardPosition) handleClearedFloor();
+            if (!leapMode)
             {
-                //if backtracked accept changes
-                gbm.moveWhileBacktrack();
-                //check if move valid - player's y is flipped
-                Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
-                //check if at goal      //only move to next level when you press right and are at goal
-                if (gbm.getGoal() == playerBoardPosition) handleClearedFloor();
-                //check if move valid
-                else if (gbm.canMoveTo((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y))
+                if (gbm.canMoveTo((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))         //check if move valid
                 {
-                    //move player
-                    player.GetComponent<Player>().moveRight2();
+                    player.GetComponent<Player>().moveRight();                //move player
                     gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                    // play walking sound
-                    aSrc[0].PlayOneShot(crack, 1.0f);
-                    //add to prior keys list
-                    //im.addToPriorKeys(im.getMoveRightKey());
+                    aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                    //im.addToPriorKeys(im.getMoveRightKey());                //add to prior keys list
+                }
+                else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)
+                    && gbm.currentIsHealthyAt((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y))
+                {
+                    rockPushed = true;                // can move a block right
+                    gbm.removeRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y);
+                    gbm.pushRock((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y);
+                    gbm.handleSingleRock((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y);
+                    player.GetComponent<Player>().moveRight();                // move player
+                    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
+                }
+                else playerScript.hopInPlace();      //do the growing animation, hopping
+            }
+            else        // Leap mode on
+            {
+                if (gbm.currentIsHealthyAt((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y))         //check if move valid
+                {
+                    player.GetComponent<Player>().moveRight2();                //move player
+                    gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
                     handleLeap();
                 }
-                else playerScript.hopInPlace();
+                else playerScript.hopInPlace();      //do the growing animation, hopping
                 leapMode = false;
             }
         }
@@ -585,21 +581,22 @@ public class GameManager : MonoBehaviour {
 		else if (Input.GetKeyUp(im.getForwardTrackKey())) { handleForwardTrack(); } 
 		else if (Input.GetKeyUp(im.getPeekKey())) { handlePeek(); }
         else if (Input.GetKeyUp(im.getDebugKey())) { debug(); }
-        else if (Input.GetKeyUp(im.getJumpOverModeKey()) && !playerScript.isBusy()) { toggleLeapMode(); }
-	}
+        else if (Input.GetKeyUp(im.getToggleLeapKey()) && !playerScript.isBusy()) { toggleLeapMode(); }
+        // rockPushed = false; // uncomment for unlimited pushing
+    }
 
-	//reset
-	public void resetBoard()
+    //reset
+    public void resetBoard()
 	{
 		//reset player position
 		playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
 		//reset player jumped
 		playerScript.notJump();
-        playerScript.notLeap();
 		handledPlayerJump = false;
         handledPlayerLeap = false;
         leapMode = false;
-		gbm.resetBoard(level == LEVEL_START);
+        rockPushed = false;
+        gbm.resetBoard(level == LEVEL_START);
 		//player lands on start
 		gbm.steppedOn((int)gbm.getStart().x, (int)gbm.getStart().y);
 		//clear prior keys list
@@ -621,6 +618,7 @@ public class GameManager : MonoBehaviour {
 		handledPlayerJump = false;
         handledPlayerLeap = false;
         leapMode = false;
+        rockPushed = false;
         //reset entrance/exit
         entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
@@ -629,9 +627,9 @@ public class GameManager : MonoBehaviour {
     public void debug()
     {
         resetGame();
-        gbm.bbm.nextPlaceRockAt(1, 2);
-        gbm.bbm.nextPlaceRockAt(2, 1);
-        gbm.bbm.nextPlaceRockAt(3, 2);
+        gbm.bbm.nextPlaceRockAt(2, 3);
+        gbm.bbm.damageNextBoard(2, 1);
+        gbm.bbm.damageNextBoard(2, 1);
     }
 
     //sound slider
