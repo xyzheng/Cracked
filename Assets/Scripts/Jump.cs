@@ -3,24 +3,69 @@ using System.Collections;
 
 public class Jump : MonoBehaviour {
 
-    protected bool click;
-    protected bool fade;
-	// Use this for initialization
-	void Start () {
-        click = false;
+    private bool fade;
+    private bool busy;
+    private const int jumpingFrames = 15;
+    private enum AnimationState { IDLE, JUMP_UP, JUMP_DOWN }
+    AnimationState currentState;
+    private const float BASE_SIZE = 1.0f;
+    private const float MAX_SIZE = 2.0f;
+    float currentSize = 1.0f;
+
+    // Use this for initialization
+    void Start()
+    {
         fade = false;
-	}
+        busy = false;
+        currentState = AnimationState.IDLE;
+    }
 
-    public bool clicked() { return click; }
+    void Update()
+    {
+        if (busy && jump()) { makeTransparent(); }
+    }
 
+    //move
+    public void startJump()
+    {
+        busy = true;
+        currentState = AnimationState.JUMP_UP;
+    }
+    private bool jump()
+    {
+        float deltaSize = (MAX_SIZE - BASE_SIZE) / jumpingFrames;
+        if (currentState == AnimationState.JUMP_UP)
+        {
+            currentSize += deltaSize;
+            if (currentSize >= MAX_SIZE)
+            {
+                currentState = AnimationState.JUMP_DOWN;
+                currentSize = MAX_SIZE;
+            }
+        }
+        else if (currentState == AnimationState.JUMP_DOWN)
+        {
+            currentSize -= deltaSize * 3;
+            if (currentSize < BASE_SIZE)
+            {
+                busy = false;
+                currentState = AnimationState.IDLE;
+                currentSize = BASE_SIZE;
+            }
+        }
+        transform.localScale = new Vector3(currentSize, currentSize, transform.localScale.z);
+        return !busy;
+    }
+
+    //fade
     public void makeTransparent()
     {
-        if (!fade) {
+        if (!fade)
+        {
             GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
             fade = true;
         }
     }
-
     public void makeFullColor()
     {
         if (fade)
@@ -30,27 +75,10 @@ public class Jump : MonoBehaviour {
         }
     }
 
+    //position
     public void setPosition(float x, float y, float z)
     {
         transform.position = new Vector3(x, y, z);
     }
-
-    public void unclick()
-    {
-        click = false;
-    }
-
-    public void reset()
-    {
-        click = false;
-        fade = false;
-    }
-
-    //mouseclick on this object
-    void onMouseUp()
-    {
-        click = true;
-    }
-
 }
 

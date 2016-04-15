@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameBoardManager : MonoBehaviour
 {
@@ -19,10 +20,14 @@ public class GameBoardManager : MonoBehaviour
     private float N_ROCK_Z = 1;
     public GameObject[][] mRocks;
 
+    //for synching rock anim
+    private List<KeyValuePair<Vector2, Vector2>> movingRocks;
+    private int delayCount;
+    private const int DELAY = 10;
+
     //minimap
     private Vector2 sAnchor;
     private Vector2 eAnchor;
-    private float maxWidth = 2f;
     private float baseWidth = 1f;
     private float minWidth = 0.25f;
 
@@ -51,6 +56,8 @@ public class GameBoardManager : MonoBehaviour
         for (int i = 0; i < bbm.getNextWidth(); i++) { mTiles[i] = new GameObject[bbm.getNextHeight()]; }
         mRocks = new GameObject[bbm.getCurrentWidth()][];
         for (int i = 0; i < bbm.getNextWidth(); i++) { mRocks[i] = new GameObject[bbm.getNextHeight()]; }
+        movingRocks = new List<KeyValuePair<Vector2,Vector2>>();
+        delayCount = 0;
         //draw tiles; draw rocks
         drawTiles();
         drawRocks();
@@ -65,6 +72,25 @@ public class GameBoardManager : MonoBehaviour
     //Do all procedural animation in lateupdate - conflicts with unity's animator otherwise
     void LateUpdate()
     {
+        //rocks
+        if (movingRocks.Count != 0)
+        {
+            for (int i = 0; i < movingRocks.Count; i++)
+            {
+                if (!rocks[(int)movingRocks[i].Key.x][(int)movingRocks[i].Key.y].GetComponent<Rock>().isBusy() && delayCount >= DELAY)
+                {
+                    Vector2 dest = movingRocks[i].Value;
+                    //swap
+                    rocks[(int)dest.x][(int)dest.y] = rocks[(int)movingRocks[i].Key.x][(int)movingRocks[i].Key.y];
+                    rocks[(int)movingRocks[i].Key.x][(int)movingRocks[i].Key.y] = null;
+                    handleSingleRock((int)dest.x, (int)dest.y);
+                    movingRocks.RemoveAt(i);
+                    i--;
+                    delayCount = 0;
+                } else { delayCount += 1; }
+            }
+        }
+        //tiles
         if (state != State.IDLE)
         {
             if (state == State.BACKTRACK) {
@@ -97,13 +123,11 @@ public class GameBoardManager : MonoBehaviour
             {
                 if (moveMapLeft())
                 {
-                    //tiles
+                    //clear
                     clearTiles();
-                    //rocks
                     clearRocks();
                     //place a rock at the exit
                     bbm.nextPlaceRockAt((int)bbm.getGoal().x, (int)bbm.getGoal().y);
-                    //bbm.clearedCurrentBoard(); //update rock
                     bbm.clearedCurrentBoard();
                     drawRocks();
                     drawTiles();
@@ -171,10 +195,10 @@ public class GameBoardManager : MonoBehaviour
             } 
         } else if (bbm.currentIsDamagedAt(x,y)){
             //shake rocks
-            if (bbm.currentHasRockAt(x, y + 1)) { rocks[x][y+1].GetComponent<Rock>().shakeRock(); }
-            else if (bbm.currentHasRockAt(x - 1, y)) { rocks[x - 1][y].GetComponent<Rock>().shakeRock(); }
-            else if (bbm.currentHasRockAt(x, y - 1)) { rocks[x][y - 1].GetComponent<Rock>().shakeRock(); }
-            else if (bbm.currentHasRockAt(x + 1, y)) { rocks[x+1][y].GetComponent<Rock>().shakeRock(); }
+            if (bbm.currentHasRockAt(x, y + 1)) { rocks[x][y+1].GetComponent<Rock>().startShake(); }
+            else if (bbm.currentHasRockAt(x - 1, y)) { rocks[x - 1][y].GetComponent<Rock>().startShake(); }
+            else if (bbm.currentHasRockAt(x, y - 1)) { rocks[x][y - 1].GetComponent<Rock>().startShake(); }
+            else if (bbm.currentHasRockAt(x + 1, y)) { rocks[x+1][y].GetComponent<Rock>().startShake(); }
         }
        
     }
@@ -205,13 +229,17 @@ public class GameBoardManager : MonoBehaviour
     public Vector2 getStart() { return bbm.getStart(); }
     public Vector2 getGoal() { return bbm.getGoal(); }
     //setters
-    public void moveWhileBacktrack()
+    public void moveWhileBacktrack(int offOfx, int offOfy)
     {
         //if backtracked accept changes
         if (bbm.didBackTrack())
         {
             bbm.clearForwardBoards();
-            bbm.clearForwardBoards();
+            steppedOn(offOfx, offOfy);
+            clearTiles();
+            clearRocks();
+            drawTiles();
+            drawRocks();
         }
     }
     public bool backtrack()
@@ -266,9 +294,15 @@ public class GameBoardManager : MonoBehaviour
             }
             else if (i == 1)
             {
-                //rock is below (y - 1) current tile
+                //rock is below current tile
                 rX = x;
                 rY = y + 1;
+                //Debug.Log("rx:" + rX + " ry:" + rY);
+                //Debug.Log(bbm.currentIsValidAt(x, y));
+                //Debug.Log(bbm.currentIsDestroyedAt(x, y));
+                //Debug.Log(bbm.currentIsValidAt(rX, rY) && rocks[rX][rY] != null);
+                //Debug.Log(!bbm.nextHasRockAt(x, y));
+                //Debug.Log(bbm.currentIsValidAt(rX, rY) && rocks[rX][rY] != null && !rocks[rX][rY].GetComponent<Rock>().isBusy());
             }
             else if (i == 2)
             {
@@ -278,9 +312,15 @@ public class GameBoardManager : MonoBehaviour
             }
             else if (i == 3)
             {
-                //rock is above (y + 1) current tile
+                //rock is above current tile
                 rX = x;
                 rY = y - 1;
+                //Debug.Log("rx:" + rX + " ry:" + rY);
+                //Debug.Log(bbm.currentIsValidAt(x, y));
+                //Debug.Log(bbm.currentIsDestroyedAt(x, y));
+                //Debug.Log(bbm.currentIsValidAt(rX, rY) && rocks[rX][rY] != null);
+                //Debug.Log(!bbm.nextHasRockAt(x, y));
+                //Debug.Log(bbm.currentIsValidAt(rX, rY) && rocks[rX][rY] != null && !rocks[rX][rY].GetComponent<Rock>().isBusy());
             }
             else if (i == 4)
             {
@@ -290,27 +330,28 @@ public class GameBoardManager : MonoBehaviour
             }
             //main rock drop
             if (bbm.currentIsValidAt(x, y) && bbm.currentIsDestroyedAt(x, y)
-                && (bbm.currentIsValidAt(rX, rY) && rocks[rX][rY] != null) && !bbm.nextHasRockAt(x, y))
+                && (bbm.currentIsValidAt(rX, rY) && rocks[rX][rY] != null) && !bbm.nextHasRockAt(x, y)
+                && (bbm.currentIsValidAt(rX, rY) && !rocks[rX][rY].GetComponent<Rock>().isBusy()))
             {
                 if (i == 0)
                 {
-                    StartCoroutine(rocks[rX][rY].GetComponent<Rock>().scaleRock(0.5f));
+                    StartCoroutine(rocks[rX][rY].GetComponent<Rock>().scale(0.5f));
                 }
                 if (i == 1)
                 {
-                    StartCoroutine(rocks[rX][rY].GetComponent<Rock>().moveAndScaleRock(new Vector3(rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y + 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
+                    StartCoroutine(rocks[rX][rY].GetComponent<Rock>().moveAndScale(new Vector3(rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y + 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
                 }
                 if (i == 2)
                 {
-                    StartCoroutine(rocks[rX][rY].GetComponent<Rock>().moveAndScaleRock(new Vector3(rocks[rX][rY].transform.position.x + 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
+                    StartCoroutine(rocks[rX][rY].GetComponent<Rock>().moveAndScale(new Vector3(rocks[rX][rY].transform.position.x + 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
                 }
                 if (i == 3)
                 {
-                    StartCoroutine(rocks[rX][rY].GetComponent<Rock>().moveAndScaleRock(new Vector3(rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y - 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
+                    StartCoroutine(rocks[rX][rY].GetComponent<Rock>().moveAndScale(new Vector3(rocks[rX][rY].transform.position.x, rocks[rX][rY].transform.position.y - 1.0f, rocks[rX][rY].transform.position.z), 0.5f));
                 }
                 if (i == 4)
                 {
-                    StartCoroutine(rocks[rX][rY].GetComponent<Rock>().moveAndScaleRock(new Vector3(rocks[rX][rY].transform.position.x - 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
+                    StartCoroutine(rocks[rX][rY].GetComponent<Rock>().moveAndScale(new Vector3(rocks[rX][rY].transform.position.x - 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
                 }
                 //Destroy(rocks[rX][rY]);
                 rocks[rX][rY] = null;
@@ -336,16 +377,30 @@ public class GameBoardManager : MonoBehaviour
     }
     public void handleSingleRock(int x, int y)      // calls drop rock on all holes adj to a specific rock
     {
-        if (bbm.currentIsDestroyedAt(x, y)) dropRocks(x, y);            // at Position
-        if (bbm.currentIsDestroyedAt(x, y + 1)) dropRocks(x, y + 1);    // below Pos
+        if (bbm.currentIsDestroyedAt(x, y))
+        {
+            dropRocks(x, y);            // at Position
+        }
+        if (bbm.currentIsDestroyedAt(x, y + 1))
+        {
+            dropRocks(x, y + 1);    // below Pos
+
+        }
         if (bbm.currentIsDestroyedAt(x - 1, y)) dropRocks(x - 1, y);    // left of Pos
-        if (bbm.currentIsDestroyedAt(x, y - 1)) dropRocks(x, y - 1);    // above Pos
+        if (bbm.currentIsDestroyedAt(x, y - 1))
+        {
+            dropRocks(x, y - 1);    // above Pos
+        }
         if (bbm.currentIsDestroyedAt(x + 1, y)) dropRocks(x + 1, y);    // right of Pos
     }
     //clearstuff
-    public void clearTiles()
+    private void clearTiles()
     {
-        //destroy all instantiated objects
+        clearCurrentTiles();
+        clearNextTiles();
+    }
+    private void clearCurrentTiles()
+    {
         for (int i = 0; i < tiles.Length; i++)
         {
             for (int j = 0; j < tiles[i].Length; j++)
@@ -354,6 +409,9 @@ public class GameBoardManager : MonoBehaviour
                 tiles[i][j] = null;
             }
         }
+    }
+    private void clearNextTiles()
+    {
         for (int i = 0; i < mTiles.Length; i++)
         {
             for (int j = 0; j < mTiles[i].Length; j++)
@@ -363,9 +421,13 @@ public class GameBoardManager : MonoBehaviour
             }
         }
     }
-    public void clearRocks()
+    private void clearRocks()
     {
-        //destroy all instantiated objects
+        clearCurrentRocks();
+        clearNextRocks();
+    }
+    private void clearCurrentRocks()
+    {
         for (int i = 0; i < rocks.Length; i++)
         {
             for (int j = 0; j < rocks[i].Length; j++)
@@ -374,6 +436,9 @@ public class GameBoardManager : MonoBehaviour
                 rocks[i][j] = null;
             }
         }
+    }
+    private void clearNextRocks()
+    {
         for (int i = 0; i < mRocks.Length; i++)
         {
             for (int j = 0; j < mRocks[i].Length; j++)
@@ -384,6 +449,11 @@ public class GameBoardManager : MonoBehaviour
         }
     }
     //drawstuff
+    private void drawBoard()
+    {
+        drawTiles();
+        drawRocks();
+    }
     private void drawTiles()
     {
         sAnchor = new Vector2(bbm.getStart().x, bbm.getCurrentHeight() - bbm.getStart().y);
@@ -403,21 +473,19 @@ public class GameBoardManager : MonoBehaviour
                 if (bbm.currentIsHealthyAt(i, j))
                 {
                     tiles[i][j] = (GameObject)Instantiate(tile, new Vector3(i, y, TILE_Z), Quaternion.identity);
-                    if (bbm.nextIsDamagedAt(i, j)) { tiles[i][j].GetComponent<Tile>().stepTile(); }
+                    if (bbm.nextIsDamagedAt(i, j)) { tiles[i][j].GetComponent<Tile>().forceSteppedTile(); }
                 }
                 else if (bbm.currentIsDamagedAt(i, j))
                 {
                     tiles[i][j] = (GameObject)Instantiate(tile, new Vector3(i, y, TILE_Z), Quaternion.identity);
                     Tile script = tiles[i][j].GetComponent<Tile>();
-                    script.stepTile();
-                    script.crackTile();
+                    script.forceCrackedTile();
                 }
                 else if (bbm.currentIsDestroyedAt(i, j))
                 {
                     tiles[i][j] = (GameObject)Instantiate(tile, new Vector3(i, y, TILE_Z), Quaternion.identity);
                     Tile script = tiles[i][j].GetComponent<Tile>();
-                    script.crackTile();
-                    script.breakTile();
+                    script.forceBrokenTile();
                 }
             }
         }
@@ -433,7 +501,6 @@ public class GameBoardManager : MonoBehaviour
                 if (bbm.nextIsDamagedAt(i, j))
                 {
                     Tile script = mTiles[i][j].GetComponent<Tile>();
-                    script.stepTile();
                     script.crackTile();
                 }
                 else if (bbm.nextIsDestroyedAt(i, j))
@@ -454,24 +521,20 @@ public class GameBoardManager : MonoBehaviour
     }
     private void drawCurrentRocks()
     {
-        //add to tiles list and instantiate them - board is flipped
         for (int i = 0; i < bbm.getCurrentWidth(); i++)
         {
             for (int j = 0; j < bbm.getCurrentHeight(); j++)
             {
-                //remove rock if it exists && flip y
                 if (bbm.currentHasRockAt(i, j)) { rocks[i][j] = (GameObject)Instantiate(rock, new Vector3(i, bbm.getCurrentHeight() - j - 1, -1), Quaternion.identity); }
             }
         }
     }
     private void drawNextRocks()
     {
-        //add to tiles list and instantiate them - board is flipped
         for (int i = 0; i < bbm.getNextWidth(); i++)
         {
             for (int j = 0; j < bbm.getNextHeight(); j++)
             {
-                //remove rock if it exists && flip y
                 if (bbm.nextHasRockAt(i, j)) { mRocks[i][j] = (GameObject)Instantiate(mRock, new Vector3(eAnchor.x + (i * minWidth), eAnchor.y + ((bbm.getCurrentHeight() - j - 1) * minWidth), N_ROCK_Z), Quaternion.identity); }
             }
         }
@@ -498,6 +561,7 @@ public class GameBoardManager : MonoBehaviour
             mRocks[x][y] = (GameObject)Instantiate(mRock, new Vector3(eAnchor.x + (x * minWidth), eAnchor.y + ((bbm.getCurrentHeight() - y - 1) * minWidth), N_ROCK_Z), Quaternion.identity);
         }
     }
+
     //zoom
     public void goDown()
     {
@@ -705,51 +769,6 @@ public class GameBoardManager : MonoBehaviour
         state = State.UNPEEKING;
         nextTileWidth = baseWidth;
     }
-    //fade
-    //public void fadeTiles()
-    //{
-    //    state = State.UNPEEKING;
-    //}
-    //private void fade()
-    //{
-    //    //calc color
-    //    color = new Color(1f, 1f, 1f, color.a - (1f - 0.5f) / fadeFrames);
-    //    //done
-    //    if (color.a <= 0.5)
-    //    {
-    //        state = State.IDLE;
-    //        color = new Vector4(1f, 1f, 1f, 0.5f);
-    //    }
-    //    for (int i = 0; i < tiles.Length; i++)
-    //    {
-    //        for (int j = 0; j < tiles[i].Length; j++)
-    //        {
-    //            tiles[i][j].GetComponent<SpriteRenderer>().color = color;
-    //        }
-    //    }
-    //}
-    //public void unfadeTiles()
-    //{
-    //    state = State.PEEKING;
-    //}
-    //private void unfade()
-    //{
-    //    //calc color
-    //    color = new Color(1f, 1f, 1f, color.a + (1f - 0.5f) / fadeFrames);
-    //    //done
-    //    if (color.a >= 1f)
-    //    {
-    //        state = State.IDLE;
-    //        color = new Vector4(1f, 1f, 1f, 1f);
-    //    }
-    //    for (int i = 0; i < tiles.Length; i++)
-    //    {
-    //        for (int j = 0; j < tiles[i].Length; j++)
-    //        {
-    //            tiles[i][j].GetComponent<SpriteRenderer>().color = color;
-    //        }
-    //    }
-    //}
     //reset
     public void resetBoard(bool placeRockAtExit)
     {
@@ -777,22 +796,19 @@ public class GameBoardManager : MonoBehaviour
     public bool hasRock(int x, int y)
     {
         return bbm.currentHasRockAt(x, y);
+
     }
-    public void pushRock(int x, int y)
+    public void pushRock(int sx, int sy, int dx, int dy)
     {
-        // move rock to pos (x,y)
-        bbm.currentPlaceRockAt(x, y);
-        // redraw the rocks
-        clearRocks();
-        drawCurrentRocks();
-        drawNextRocks();
-    }
-    public void removeRock(int x, int y)
-    {
-        // remove rock at current place
-        bbm.currentRemoveAt(x, y);
-        // destroy rock
-        Destroy(rocks[x][y]);
-        rocks[x][y] = null;
+        if (bbm.currentHasRockAt(sx, sy))
+        {
+            // move rock to pos (dx,dy) from (sx, sy)
+            bbm.currentRemoveAt(sx, sy);
+            bbm.currentPlaceRockAt(dx, dy);
+            // push rock
+            StartCoroutine(rocks[sx][sy].GetComponent<Rock>().move(new Vector3(rocks[sx][sy].transform.position.x + (dx - sx), rocks[sx][sy].transform.position.y - (dy - sy), rocks[sx][sy].transform.position.z), 0.5f));
+            //synching animations
+            movingRocks.Add(new KeyValuePair<Vector2, Vector2>(new Vector2(sx, sy), new Vector2(dx, dy)));
+        }
     }
 }

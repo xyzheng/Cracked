@@ -3,15 +3,11 @@ using System.Collections;
 
 public class BackTrack : MonoBehaviour {
 
-    protected bool click;
-    protected bool fade;
+    private bool fade;
 	// Use this for initialization
 	void Start () {
-        click = false;
         fade = false;
 	}
-
-    public bool clicked() { return click; }
 
     public void makeTransparent()
     {
@@ -34,22 +30,4 @@ public class BackTrack : MonoBehaviour {
     {
         transform.position = new Vector3(x, y, z);
     }
-
-    public void unclick()
-    {
-        click = false;
-    }
-
-    public void reset()
-    {
-        click = false;
-        fade = false;
-    }
-
-    //mouseclick on this object
-    void onMouseUp()
-    {
-        click = true;
-    }
-
 }
