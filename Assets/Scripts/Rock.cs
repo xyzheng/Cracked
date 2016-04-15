@@ -2,27 +2,39 @@
 using System.Collections;
 
 public class Rock : MonoBehaviour {
-
-    private bool shake;
+    private bool busy;
+    private bool shaking;
     private Vector3 orig;
-    private float deltaPos;
-
+    private const float deltaPos = 0.1f;
+    //init
     void Start(){
-        shake = false;
-        deltaPos = 0.1f;
+        shaking = false;
         orig = transform.position;
     }
+    //update
+    public void FixedUpdate() { if (shaking) { shake(); } }
 
-    public void FixedUpdate()
+    //getter
+    public bool isBusy() { return busy; }
+    //movement
+    public IEnumerator move (Vector3 destination, float time)
     {
-        if (shake)
+        busy = true;
+        shaking = false;
+        float moveElapsedTime = 0;
+        Vector3 startingPos = transform.position;
+        while (moveElapsedTime < time)
         {
-            sh();
+            transform.position = Vector3.Lerp(startingPos, destination, (moveElapsedTime / (time / 4)));
+            moveElapsedTime += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
         }
+        orig = destination;
+        busy = false;
     }
-
-	public IEnumerator moveAndScaleRock (Vector3 destination, float time) {
-        shake = false;
+	public IEnumerator moveAndScale (Vector3 destination, float time) {
+        busy = true;
+        shaking = false;
 		//float deltaPosition = 1.0f / 5.0f;
 		float moveElapsedTime = 0;
 		Vector3 startingPos = transform.position;
@@ -41,10 +53,11 @@ public class Rock : MonoBehaviour {
 			yield return new WaitForEndOfFrame();
 		}
 		Destroy (this);
+        busy = false;
 	}
-
-	public IEnumerator scaleRock (float time) {
-        shake = false;
+	public IEnumerator scale (float time) {
+        busy = true;
+        shaking = false;
 		float scaleElapsedTime = 0;
 		Vector3 startingScale = transform.localScale;
 		Vector3 endingScale = new Vector3 (0.0f, 0.0f, 0.0f);
@@ -55,15 +68,14 @@ public class Rock : MonoBehaviour {
 			yield return new WaitForEndOfFrame();
 		}
 		Destroy (this);
+        busy = false;
 	}
-
-    public void shakeRock(){
-        shake = true; 
-    } 
-    private void sh()
+    //shake
+    public void startShake(){ shaking = true;  }
+    public void stopShake()
     {
-        transform.position = new Vector3(orig.x + Random.Range(-deltaPos, deltaPos) / 5,
-                                         orig.y + Random.Range(-deltaPos, deltaPos) / 7.5f,
-                                         orig.z);
+        shaking = false;
+        transform.position = orig;
     }
+    private void shake() { transform.position = new Vector3(orig.x + Random.Range(-deltaPos, deltaPos) / 5, orig.y + Random.Range(-deltaPos, deltaPos) / 7.5f, orig.z); }
 }

@@ -1,41 +1,41 @@
 fileFormatVersion: 2
-guid: a8fb8096aac1dd0408006c962dae0f09
-timeCreated: 1459525173
+guid: 0439f5ba0dddc0f4faed8a1531eac989
+timeCreated: 1460667713
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: Step5
     21300002: Crack5
     21300004: Break1
-    21300006: SCrack5
-    21300008: SBreak1
+    21300006: sCrack5
+    21300008: sBreak1
     21300010: Tile
     21300012: Entrance1
     21300014: Step4
     21300016: Crack4
     21300018: Break2
-    21300020: SCrack4
-    21300022: SBreak2
+    21300020: sCrack4
+    21300022: sBreak2
     21300024: Hole
     21300026: Step3
     21300028: Crack3
     21300030: Break3
-    21300032: SCrack3
-    21300034: SBreak3
+    21300032: sCrack3
+    21300034: sBreak3
     21300036: Rock
     21300038: Exit2
     21300040: Step2
     21300042: Crack2
     21300044: Break4
-    21300046: SCrack2
-    21300048: SBreak4
+    21300046: sCrack2
+    21300048: sBreak4
     21300050: Player
     21300052: Entrance2
     21300054: Step1
     21300056: Crack1
     21300058: Break5
-    21300060: SCrack1
-    21300062: SBreak5
+    21300060: sCrack1
+    21300062: sBreak5
     21300064: Exit1
   serializedVersion: 2
   mipmaps:
@@ -128,7 +128,7 @@ TextureImporter:
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: 64}
-    - name: SCrack5
+    - name: sCrack5
       rect:
         serializedVersion: 2
         x: 399
@@ -143,7 +143,7 @@ TextureImporter:
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: 64}
-    - name: SBreak1
+    - name: sBreak1
       rect:
         serializedVersion: 2
         x: 531
@@ -239,7 +239,7 @@ TextureImporter:
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: 64}
-    - name: SCrack4
+    - name: sCrack4
       rect:
         serializedVersion: 2
         x: 399
@@ -254,7 +254,7 @@ TextureImporter:
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: 64}
-    - name: SBreak2
+    - name: sBreak2
       rect:
         serializedVersion: 2
         x: 531
@@ -329,7 +329,7 @@ TextureImporter:
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: 64}
-    - name: SCrack3
+    - name: sCrack3
       rect:
         serializedVersion: 2
         x: 399
@@ -344,7 +344,7 @@ TextureImporter:
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: 64}
-    - name: SBreak3
+    - name: sBreak3
       rect:
         serializedVersion: 2
         x: 531
@@ -439,7 +439,7 @@ TextureImporter:
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: 64}
-    - name: SCrack2
+    - name: sCrack2
       rect:
         serializedVersion: 2
         x: 399
@@ -454,7 +454,7 @@ TextureImporter:
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: 64}
-    - name: SBreak4
+    - name: sBreak4
       rect:
         serializedVersion: 2
         x: 531
@@ -549,7 +549,7 @@ TextureImporter:
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: 64}
-    - name: SCrack1
+    - name: sCrack1
       rect:
         serializedVersion: 2
         x: 399
@@ -564,7 +564,7 @@ TextureImporter:
         - {x: -64, y: -64}
         - {x: 64, y: -64}
         - {x: 64, y: 64}
-    - name: SBreak5
+    - name: sBreak5
       rect:
         serializedVersion: 2
         x: 531

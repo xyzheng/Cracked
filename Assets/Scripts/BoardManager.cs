@@ -15,7 +15,14 @@ public class SwapBoards
     public int getNextHeight() { return next.getHeight(); }
     public bool didBackTrack() { return currentBoardIndex != boards.Count - 1; }
     public bool backTrackPossible() { return currentBoardIndex - 1 >= 0; }
-    public bool forwardTrackPossible() { return currentBoardIndex + 1 < boards.Count; } 
+    public bool forwardTrackPossible() { return currentBoardIndex + 1 < boards.Count; }
+    public Board getBoard(int index)
+    {
+        if (index >= 0 && index < boards.Count){
+            return boards[index].getCopy();
+        }
+        return null;
+    }
     //setter
     public virtual void reset()
     {
@@ -48,8 +55,8 @@ public class SwapBoards
             //make the last board the current
             currentBoardIndex -= 1;
             current = boards[currentBoardIndex].getCopy();
-            //clear nex
-            next.reset();
+            //make next the next
+            next = boards[currentBoardIndex + 1].getCopy();
         }
     }
     public virtual void forwardTrack()
@@ -60,8 +67,9 @@ public class SwapBoards
             //make the last board the current
             currentBoardIndex += 1;
             current = boards[currentBoardIndex].getCopy();
-            //clear next
-            next.reset();
+            //make next next unless at end then clear next
+            if (currentBoardIndex == boards.Count - 1) { next.reset(); }
+            else { next = boards[currentBoardIndex + 1].getCopy(); }
         }
 
     }
@@ -71,6 +79,7 @@ public class SwapBoards
         {
             boards.RemoveAt(i);
         }
+        next.reset();
     }
 }
 
