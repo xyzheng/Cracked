@@ -213,6 +213,7 @@ public class GameManager : MonoBehaviour {
         leapScript.makeFullColor();
         leapScript.untoggle();
         pushScript.makeFullColor();
+        pushScript.stopShake();
         jumpScript.makeFullColor();
 
 	}
@@ -348,6 +349,7 @@ public class GameManager : MonoBehaviour {
         leapScript.makeFullColor();
         leapScript.untoggle();
         pushScript.makeFullColor();
+        pushScript.stopShake();
         jumpScript.makeFullColor();
 	}
 	public void handleForwardTrack()
@@ -384,6 +386,7 @@ public class GameManager : MonoBehaviour {
         leapScript.makeFullColor();
         leapScript.untoggle();
         pushScript.makeFullColor();
+        pushScript.stopShake();
         jumpScript.makeFullColor();
 	}
 	public void handlePeek()
@@ -467,7 +470,11 @@ public class GameManager : MonoBehaviour {
                 }
                 else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)
                     && gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2)
+<<<<<<< HEAD
 					&& !gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2))
+=======
+                    && !gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2))
+>>>>>>> 98dc63810c36dd423db5be9459af2b3d8e1b6fd9
                 {
                     rockPushed = true;                // can move a block down
 
@@ -514,7 +521,11 @@ public class GameManager : MonoBehaviour {
                 }
                 else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)
                     && gbm.currentIsHealthyAt((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y)
+<<<<<<< HEAD
 					&& !gbm.hasRock((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y))
+=======
+                    && !gbm.hasRock((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y))
+>>>>>>> 98dc63810c36dd423db5be9459af2b3d8e1b6fd9
                 {
                     rockPushed = true;                // can move a block left
 
@@ -569,7 +580,11 @@ public class GameManager : MonoBehaviour {
                 }
                 else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)
                     && gbm.currentIsHealthyAt((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y)
+<<<<<<< HEAD
 					&& !gbm.hasRock((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y) )
+=======
+                    && !gbm.hasRock((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y))
+>>>>>>> 98dc63810c36dd423db5be9459af2b3d8e1b6fd9
                 {
                     rockPushed = true;                // can move a block right
 
@@ -645,6 +660,7 @@ public class GameManager : MonoBehaviour {
         leapScript.makeFullColor();
         leapScript.untoggle();
         pushScript.makeFullColor();
+        pushScript.stopShake();
         jumpScript.makeFullColor();
 	}
 	public void resetGame()
@@ -669,6 +685,7 @@ public class GameManager : MonoBehaviour {
         leapScript.makeFullColor();
         leapScript.untoggle();
         pushScript.makeFullColor();
+        pushScript.stopShake();
         jumpScript.makeFullColor();
 	}
 
