@@ -22,8 +22,6 @@ public class GameBoardManager : MonoBehaviour
 
     //for synching rock anim
     private List<KeyValuePair<Vector2, Vector2>> movingRocks;
-    private int delayCount;
-    private const int DELAY = 10;
 
     //minimap
     private Vector2 sAnchor;
@@ -57,7 +55,6 @@ public class GameBoardManager : MonoBehaviour
         mRocks = new GameObject[bbm.getCurrentWidth()][];
         for (int i = 0; i < bbm.getNextWidth(); i++) { mRocks[i] = new GameObject[bbm.getNextHeight()]; }
         movingRocks = new List<KeyValuePair<Vector2,Vector2>>();
-        delayCount = 0;
         //draw tiles; draw rocks
         drawTiles();
         drawRocks();
@@ -77,7 +74,10 @@ public class GameBoardManager : MonoBehaviour
         {
             for (int i = 0; i < movingRocks.Count; i++)
             {
-                if (!rocks[(int)movingRocks[i].Key.x][(int)movingRocks[i].Key.y].GetComponent<Rock>().isBusy() && delayCount >= DELAY)
+                if (rocks[(int)movingRocks[i].Key.x][(int)movingRocks[i].Key.y] == null){
+                    Debug.Log("Rock at x:" + (int)movingRocks[i].Key.x + " y:" + (int)movingRocks[i].Key.y + "is null");
+                }
+                else if (!rocks[(int)movingRocks[i].Key.x][(int)movingRocks[i].Key.y].GetComponent<Rock>().isBusy())
                 {
                     Vector2 dest = movingRocks[i].Value;
                     //swap
@@ -86,8 +86,7 @@ public class GameBoardManager : MonoBehaviour
                     handleSingleRock((int)dest.x, (int)dest.y);
                     movingRocks.RemoveAt(i);
                     i--;
-                    delayCount = 0;
-                } else { delayCount += 1; }
+                }
             }
         }
         //tiles
@@ -195,10 +194,60 @@ public class GameBoardManager : MonoBehaviour
             } 
         } else if (bbm.currentIsDamagedAt(x,y)){
             //shake rocks
-            if (bbm.currentHasRockAt(x, y + 1)) { rocks[x][y+1].GetComponent<Rock>().startShake(); }
-            else if (bbm.currentHasRockAt(x - 1, y)) { rocks[x - 1][y].GetComponent<Rock>().startShake(); }
-            else if (bbm.currentHasRockAt(x, y - 1)) { rocks[x][y - 1].GetComponent<Rock>().startShake(); }
-            else if (bbm.currentHasRockAt(x + 1, y)) { rocks[x+1][y].GetComponent<Rock>().startShake(); }
+            if (bbm.currentHasRockAt(x, y + 1)) {
+                //check if moving rock
+                if (rocks[x][y+1] == null){
+                    for (int i = 0; i < movingRocks.Count; i++)
+                    {
+                        if (movingRocks[i].Value.x == x && movingRocks[i].Value.y == y+1)
+                        {
+                            rocks[x][y].GetComponent<Rock>().startShake(); 
+                        }
+                    }
+                } else { rocks[x][y+1].GetComponent<Rock>().startShake(); }
+            }
+            else if (bbm.currentHasRockAt(x - 1, y))
+            {
+                if (rocks[x - 1][y] == null)
+                {
+                    for (int i = 0; i < movingRocks.Count; i++)
+                    {
+                        if (movingRocks[i].Value.x == x && movingRocks[i].Value.y == y + 1)
+                        {
+                            rocks[x][y].GetComponent<Rock>().startShake();
+                        }
+                    }
+                }
+                else { rocks[x - 1][y].GetComponent<Rock>().startShake(); }
+            }
+            else if (bbm.currentHasRockAt(x, y - 1))
+            {
+                if (rocks[x][y - 1] == null)
+                {
+                    for (int i = 0; i < movingRocks.Count; i++)
+                    {
+                        if (movingRocks[i].Value.x == x && movingRocks[i].Value.y == y + 1)
+                        {
+                            rocks[x][y].GetComponent<Rock>().startShake();
+                        }
+                    }
+                }
+                else { rocks[x][y - 1].GetComponent<Rock>().startShake(); }
+            }
+            else if (bbm.currentHasRockAt(x + 1, y))
+            {
+                if (rocks[x + 1][y] == null)
+                {
+                    for (int i = 0; i < movingRocks.Count; i++)
+                    {
+                        if (movingRocks[i].Value.x == x && movingRocks[i].Value.y == y + 1)
+                        {
+                            rocks[x][y].GetComponent<Rock>().startShake();
+                        }
+                    }
+                }
+                else { rocks[x + 1][y].GetComponent<Rock>().startShake(); }
+            }
         }
        
     }
@@ -772,10 +821,10 @@ public class GameBoardManager : MonoBehaviour
     //reset
     public void resetBoard(bool placeRockAtExit)
     {
-        //redraw
+        //clear
         clearTiles();
-        //reset rocks
         clearRocks();
+        movingRocks.Clear();
         //place a rock at the exit
         if (placeRockAtExit) { bbm.currentPlaceRockAt((int)bbm.getGoal().x, (int)bbm.getGoal().y); }
         bbm.reset(); //update board
@@ -788,6 +837,7 @@ public class GameBoardManager : MonoBehaviour
     {
         clearTiles();
         clearRocks();
+        movingRocks.Clear();
         bbm = new BoardManager();
         drawTiles();
         drawRocks();

@@ -25,6 +25,7 @@ public class Rock : MonoBehaviour {
         Vector3 startingPos = transform.position;
         while (moveElapsedTime < time)
         {
+            if (this == null) { break; }
             transform.position = Vector3.Lerp(startingPos, destination, (moveElapsedTime / (time / 4)));
             moveElapsedTime += Time.deltaTime;
             yield return new WaitForEndOfFrame();
@@ -52,7 +53,7 @@ public class Rock : MonoBehaviour {
 			scaleElapsedTime += Time.deltaTime;
 			yield return new WaitForEndOfFrame();
 		}
-		Destroy (this);
+		Destroy (gameObject);
         busy = false;
 	}
 	public IEnumerator scale (float time) {
@@ -67,15 +68,22 @@ public class Rock : MonoBehaviour {
 			scaleElapsedTime += Time.deltaTime;
 			yield return new WaitForEndOfFrame();
 		}
-		Destroy (this);
+        Destroy(gameObject);
         busy = false;
 	}
     //shake
-    public void startShake(){ shaking = true;  }
+    public void startShake(){
+        shaking = true;  
+    }
     public void stopShake()
     {
         shaking = false;
         transform.position = orig;
     }
-    private void shake() { transform.position = new Vector3(orig.x + Random.Range(-deltaPos, deltaPos) / 5, orig.y + Random.Range(-deltaPos, deltaPos) / 7.5f, orig.z); }
+    private void shake() {
+        if (!busy) { 
+            //not moving around
+            transform.position = new Vector3(orig.x + Random.Range(-deltaPos, deltaPos) / 5, orig.y + Random.Range(-deltaPos, deltaPos) / 7.5f, orig.z); 
+        }
+    }
 }
