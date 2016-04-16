@@ -467,7 +467,7 @@ public class GameManager : MonoBehaviour {
                 }
                 else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)
                     && gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2)
-                    && !gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2))
+					&& !gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2))
                 {
                     rockPushed = true;                // can move a block down
 
@@ -514,7 +514,7 @@ public class GameManager : MonoBehaviour {
                 }
                 else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)
                     && gbm.currentIsHealthyAt((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y)
-                    && !gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2))
+					&& !gbm.hasRock((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y))
                 {
                     rockPushed = true;                // can move a block left
 
@@ -569,7 +569,7 @@ public class GameManager : MonoBehaviour {
                 }
                 else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)
                     && gbm.currentIsHealthyAt((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y)
-                    && !gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2))
+					&& !gbm.hasRock((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y) )
                 {
                     rockPushed = true;                // can move a block right
 
@@ -649,6 +649,8 @@ public class GameManager : MonoBehaviour {
 	}
 	public void resetGame()
 	{
+		pausePanel.SetActive(false);
+		state = GameState.PLAY;
 		level = LEVEL_START;
 		levelText.text = "Floor\n" + level.ToString();
 		im = new InputManager();
