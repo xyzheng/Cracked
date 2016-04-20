@@ -508,7 +508,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 220934715}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1510949513}
+        m_MethodName: handleSave
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &220934715
@@ -2247,6 +2258,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8076e609332bfc64b8d17c22e004a217, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slc: {fileID: 0}
+  slcScript: {fileID: 0}
   gbmObj: {fileID: 139888, guid: 79f09ac81f7ca9d449bf2e66b2ad35c0, type: 2}
   pausePanel: {fileID: 1658787477}
   player: {fileID: 149492, guid: a8f3b533472ff114296a95f69f24491a, type: 2}
@@ -2276,7 +2289,7 @@ AudioSource:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1510949512}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 309a8d364cc9a3345bb437b56fa5b5ba, type: 3}
@@ -2498,7 +2511,7 @@ AudioSource:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1510949512}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 7da0afae92706a445800fe1a035f8e5e, type: 3}
@@ -2763,10 +2776,10 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: f3931ace4352646758ebe993fa27b678, type: 3}
-    m_FontSize: 14
+    m_FontSize: 16
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 1
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0

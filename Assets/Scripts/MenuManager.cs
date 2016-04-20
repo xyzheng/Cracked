@@ -1,23 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour {
 
 	public GameObject menuPanel;
 	public GameObject optionsPanel;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
 	public void playButton () {
-		Application.LoadLevel("Main");
+		SceneManager.LoadScene ("Main");
 	}
 
 	public void optionsButton () {

@@ -1,0 +1,17 @@
+/Users/Nick/Documents/Cracked/Temp/bin/Debug/Assembly-CSharp.dll.mdb
+/Users/Nick/Documents/Cracked/Temp/bin/Debug/Assembly-CSharp.dll
+/Users/Nick/Documents/Cracked/obj/Debug/Assembly-CSharp.dll
+/Users/Nick/Documents/Cracked/obj/Debug/Assembly-CSharp.dll.mdb
+/Users/Nick/Documents/Cracked/Temp/bin/Debug/UnityEngine.dll
+/Users/Nick/Documents/Cracked/Temp/bin/Debug/UnityEditor.dll
+/Users/Nick/Documents/Cracked/Temp/bin/Debug/UnityEngine.UI.dll
+/Users/Nick/Documents/Cracked/Temp/bin/Debug/UnityEngine.Networking.dll
+/Users/Nick/Documents/Cracked/Temp/bin/Debug/Mono.Cecil.dll
+/Users/Nick/Documents/Cracked/Temp/bin/Debug/Unity.SerializationLogic.dll
+/Users/Nick/Documents/Cracked/Temp/bin/Debug/Unity.DataContract.dll
+/Users/Nick/Documents/Cracked/Temp/bin/Debug/ICSharpCode.NRefactory.dll
+/Users/Nick/Documents/Cracked/Temp/bin/Debug/Unity.UNetWeaver.dll
+/Users/Nick/Documents/Cracked/Temp/bin/Debug/Unity.UNetWeaver.dll.mdb
+/Users/Nick/Documents/Cracked/Temp/bin/Debug/Unity.CecilTools.dll
+/Users/Nick/Documents/Cracked/Temp/bin/Debug/Mono.Cecil.Pdb.dll
+/Users/Nick/Documents/Cracked/Temp/bin/Debug/Mono.Cecil.Mdb.dll
