@@ -2,10 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[System.Serializable]
 public class SwapBoards
 {
     protected int currentBoardIndex;
-    protected List<Board> boards;
+    public List<Board> boards;
     protected Board current; //current
     protected Board next; //next Board
     //getter
@@ -83,10 +84,11 @@ public class SwapBoards
     }
 }
 
+[System.Serializable]
 public class BoardManager : SwapBoards
 {
     //health values/states of a 'tile' of a board
-    protected enum STATE { TILE, CRACK, HOLE, ROCK, ROCK_N_CRACK };
+    protected enum STATE { TILE, STEP, CRACK, HOLE, ROCK, ROCK_N_CRACK };
     //keep track of start, goal, board
     protected List<Vector2> starts;
     protected List<Vector2> goals;
@@ -109,6 +111,7 @@ public class BoardManager : SwapBoards
     public Vector2 getStart() { return starts[currentBoardIndex]; }
     public Vector2 getGoal() { return goals[currentBoardIndex]; }
     public bool currentIsValidAt(int x, int y) { return current.isValid(x, y); }
+	public bool currentIsSteppedAt(int x, int y) { return current.getValueAt(x, y) == (int)STATE.STEP; }
     public bool currentIsHealthyAt(int x, int y) { return current.getValueAt(x, y) == (int)STATE.TILE || current.getValueAt(x, y) == (int)STATE.ROCK; }
     public bool currentIsDamagedAt(int x, int y) { return current.getValueAt(x, y) == (int)STATE.CRACK || current.getValueAt(x, y) == (int)STATE.ROCK_N_CRACK; }
     public bool currentIsDestroyedAt(int x, int y) { return current.getValueAt(x, y) == (int)STATE.HOLE; }
@@ -119,6 +122,15 @@ public class BoardManager : SwapBoards
     public bool currentHasRockAt(int x, int y) { return current.getValueAt(x, y) == (int)STATE.ROCK || current.getValueAt(x, y) == (int)STATE.ROCK_N_CRACK; }
     public bool nextHasRockAt(int x, int y) { return next.getValueAt(x, y) == (int)STATE.ROCK || next.getValueAt(x, y) == (int)STATE.ROCK_N_CRACK; }
     //setters
+	public bool stepCurrentBoard(int x, int y) {
+		int value = current.getValueAt(x, y);
+		if (current.isValid(x, y)) {
+			if (value == (int)STATE.TILE) { current.setValueAtTo(x, y, (int)STATE.STEP); }
+			return true;
+		}
+		return false;
+	}
+
     public bool damageCurrentBoard(int x, int y)
     {
         int value = current.getValueAt(x, y);

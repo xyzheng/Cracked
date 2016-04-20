@@ -1,13 +1,18 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour {
 
+	//save/load controls
+	public GameObject slc;
+	public SaveLoadManager slcScript;
+
 	InputManager im;
 	public GameObject gbmObj;
-	GameBoardManager gbm;
+	public GameBoardManager gbm;
 	//prefabs
 	public GameObject pausePanel;
 	public GameObject player;
@@ -30,12 +35,12 @@ public class GameManager : MonoBehaviour {
     public GameObject pushIcon;
     private Push pushScript;
 	//States
-	enum GameState { TITLE, PAUSE, LOAD, PEEK, PLAY }
-	GameState state;
+	public enum GameState { TITLE, PAUSE, LOAD, PEEK, PLAY, LOADSAVE }
+	public static GameState state;
 	GameState priorState;
 	enum LoadState { PLAYER, NEXT, BACK, FORWARD }
 	LoadState lstate;
-	private int level;
+	public static int level;
 	private const int LEVEL_START = 0;
 
 	// audio variables
@@ -58,7 +63,16 @@ public class GameManager : MonoBehaviour {
 	//called before all Start()
 	void Awake()
 	{
-		level = LEVEL_START;
+		if ( GameObject.Find("SaveLoad Manager").GetComponent<SaveLoadManager>() != null) {
+			slcScript = GameObject.Find("SaveLoad Manager").GetComponent<SaveLoadManager>();
+		}
+		if (slcScript.fromLoad == false) {
+			level = LEVEL_START;
+		}
+		else {
+			level = slcScript.currentBoardsInfo.level;
+		}
+		//level = LEVEL_START;
 		state = GameState.TITLE;
 		im = new InputManager();
 		gbmObj = (GameObject)Instantiate(gbmObj, new Vector3(0, 0, 0), Quaternion.identity);
@@ -105,15 +119,29 @@ public class GameManager : MonoBehaviour {
             leapScript = leapIcon.GetComponent<Leap>();
             pushIcon = (GameObject)Instantiate(pushIcon, new Vector3(entrancePos.x, exitPos.y - 2, 0), Quaternion.identity);
             pushScript = pushIcon.GetComponent<Push>();
-			state = GameState.PLAY;
+			//state = GameState.PLAY;
 			//update priorstate
-			priorState = GameState.TITLE;
+			//priorState = GameState.TITLE;
+			if (slcScript.fromLoad == true) {
+				state = GameState.LOADSAVE;
+				priorState = GameState.TITLE;
+			}
+			else {
+				state = GameState.PLAY;
+			}
 		}
 		else if (state == GameState.PAUSE)
 		{
             handleUnpause();
 			//update prior state
 			priorState = GameState.PAUSE;
+		}
+		else if (state == GameState.LOADSAVE) {
+			Debug.Log (slcScript.currentBoardsInfo.playerPositionX);
+			playerScript.setPosition(new Vector2 (slcScript.currentBoardsInfo.playerPositionX, slcScript.currentBoardsInfo.playerPositionY));
+			gbm.loadGame();
+			priorState = GameState.LOADSAVE;
+			state = GameState.PLAY;
 		}
 		else if (state == GameState.PLAY)
 		{
@@ -212,8 +240,8 @@ public class GameManager : MonoBehaviour {
 		ftScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
         leapScript.makeFullColor();
         leapScript.untoggle();
-        pushScript.makeFullColor();
         pushScript.stopShake();
+		pushScript.makeFullColor();
         jumpScript.makeFullColor();
 
 	}
@@ -348,8 +376,8 @@ public class GameManager : MonoBehaviour {
 		ftScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
         leapScript.makeFullColor();
         leapScript.untoggle();
-        pushScript.makeFullColor();
         pushScript.stopShake();
+		pushScript.makeFullColor();
         jumpScript.makeFullColor();
 	}
 	public void handleForwardTrack()
@@ -385,8 +413,8 @@ public class GameManager : MonoBehaviour {
 		ftScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
         leapScript.makeFullColor();
         leapScript.untoggle();
-        pushScript.makeFullColor();
         pushScript.stopShake();
+		pushScript.makeFullColor();
         jumpScript.makeFullColor();
 	}
 	public void handlePeek()
@@ -470,7 +498,9 @@ public class GameManager : MonoBehaviour {
                 }
                 else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)
                     && gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2)
-                    && !gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2))
+
+					&& !gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2))
+
                 {
                     rockPushed = true;                // can move a block down
 
@@ -517,7 +547,9 @@ public class GameManager : MonoBehaviour {
                 }
                 else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)
                     && gbm.currentIsHealthyAt((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y)
-                    && !gbm.hasRock((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y))
+
+					&& !gbm.hasRock((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y))
+
                 {
                     rockPushed = true;                // can move a block left
 
@@ -572,7 +604,8 @@ public class GameManager : MonoBehaviour {
                 }
                 else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)
                     && gbm.currentIsHealthyAt((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y)
-                    && !gbm.hasRock((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y))
+
+					&& !gbm.hasRock((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y) )
                 {
                     rockPushed = true;                // can move a block right
 
@@ -647,12 +680,14 @@ public class GameManager : MonoBehaviour {
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
         leapScript.makeFullColor();
         leapScript.untoggle();
-        pushScript.makeFullColor();
         pushScript.stopShake();
+		pushScript.makeFullColor();
         jumpScript.makeFullColor();
 	}
 	public void resetGame()
 	{
+		pausePanel.SetActive(false);
+		state = GameState.PLAY;
 		level = LEVEL_START;
 		levelText.text = "Floor\n" + level.ToString();
 		im = new InputManager();
@@ -670,8 +705,8 @@ public class GameManager : MonoBehaviour {
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
         leapScript.makeFullColor();
         leapScript.untoggle();
-        pushScript.makeFullColor();
         pushScript.stopShake();
+		pushScript.makeFullColor();
         jumpScript.makeFullColor();
 	}
 
@@ -732,9 +767,14 @@ public class GameManager : MonoBehaviour {
 		state = GameState.PLAY;
 	}
 	public void mainMenuButton () {
-		Application.LoadLevel("MainMenu");
+		slcScript.fromLoad = false;
+		SceneManager.LoadScene ("MainMenu");
 	}
 
+	public void handleSave () {
+		slc = GameObject.Find("GlobalControl");
+		slcScript.save();
+	}
 
 
 
@@ -750,3 +790,4 @@ public class GameManager : MonoBehaviour {
         gbm.bbm.damageNextBoard(2, 1);
     }
 }
+	

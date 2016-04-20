@@ -2,8 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[System.Serializable]
 public class GameBoardManager : MonoBehaviour
 {
+
+	public SaveLoadManager slm;
     //BoardManager
     public BoardManager bbm;
     //gameobjects
@@ -44,6 +47,7 @@ public class GameBoardManager : MonoBehaviour
     // constructor
     void Start()
     {
+		slm = GameObject.Find ("SaveLoad Manager").GetComponent<SaveLoadManager>();
         bbm = new BoardManager();
         //gameobjects
         tiles = new GameObject[bbm.getCurrentWidth()][];
@@ -266,6 +270,7 @@ public class GameBoardManager : MonoBehaviour
         else if (!bbm.nextIsDamagedAt(x, y))
         {
             //did not step off a damaged tile
+			bbm.stepCurrentBoard(x, y);
             bbm.damageNextBoard(x, y);
             updateTile(x, y);
         }
@@ -861,4 +866,44 @@ public class GameBoardManager : MonoBehaviour
             movingRocks.Add(new KeyValuePair<Vector2, Vector2>(new Vector2(sx, sy), new Vector2(dx, dy)));
         }
     }
+
+	public void loadGame () {
+		//load rocks
+		for (int i=0; i<slm.currentBoardsInfo.listOfRocksX.Count; i++) {
+			//(GameObject)Instantiate(rock, new Vector3(i, bbm.getCurrentHeight() - j - 1, -1), Quaternion.identity)
+			bbm.currentPlaceRockAt (slm.currentBoardsInfo.listOfRocksX[i], slm.currentBoardsInfo.listOfRocksY[i]);
+		}
+		/*
+		for (int i=0; i<slm.currentBoardsInfo.listOfTilesX.Count; i++) {
+			//(GameObject)Instantiate(rock, new Vector3(i, bbm.getCurrentHeight() - j - 1, -1), Quaternion.identity)
+			bbm.currentPlaceRockAt (slm.currentBoardsInfo.listOfRocksX[i], slm.currentBoardsInfo.listOfRocksY[i]);
+		}
+		*/
+		//load cracked tiles
+		for (int i=0; i<slm.currentBoardsInfo.listOfTilesX.Count; i++) {
+			bbm.damageCurrentBoard (slm.currentBoardsInfo.listOfTilesX[i], slm.currentBoardsInfo.listOfTilesY[i]);
+			tiles[slm.currentBoardsInfo.listOfTilesX[i]][slm.currentBoardsInfo.listOfTilesY[i]].GetComponent<Tile>().crackTile();
+			//Debug.Log (bbm.currentIsDamagedAt(slm.currentBoardsInfo.listOfTilesX[i], slm.currentBoardsInfo.listOfTilesY[i]));
+			//bbm.nextIsDamagedAt(x,y)){ tiles[x][y].GetComponent<Tile>().stepCrackTile()
+		}
+		//load broken floors
+		for (int i=0; i<slm.currentBoardsInfo.listOfHolesX.Count; i++) {
+			bbm.damageCurrentBoard (slm.currentBoardsInfo.listOfHolesX[i], slm.currentBoardsInfo.listOfHolesY[i]);
+			bbm.damageCurrentBoard (slm.currentBoardsInfo.listOfHolesX[i], slm.currentBoardsInfo.listOfHolesY[i]);
+			tiles[slm.currentBoardsInfo.listOfHolesX[i]][slm.currentBoardsInfo.listOfHolesY[i]].GetComponent<Tile>().forceBrokenTile();
+		}
+
+		for (int i=0; i<slm.currentBoardsInfo.listOfStepOnsX.Count; i++) {
+			bbm.stepCurrentBoard (slm.currentBoardsInfo.listOfStepOnsX[i], slm.currentBoardsInfo.listOfStepOnsY[i]);
+			tiles[slm.currentBoardsInfo.listOfHolesX[i]][slm.currentBoardsInfo.listOfHolesY[i]].GetComponent<Tile>().stepTile();
+		}
+		//Debug.Log (slm.currentBoardsInfo.boards.Count);
+		/*
+		for (int i=0; i<slm.currentBoardsInfo.boards.Count; i++) {
+			bbm.boards.Add (slm.currentBoardsInfo.boards[i]);
+		}
+		*/
+		clearRocks();
+		drawCurrentRocks();
+	}
 }
