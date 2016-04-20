@@ -2261,6 +2261,7 @@ MonoBehaviour:
   slc: {fileID: 0}
   slcScript: {fileID: 0}
   gbmObj: {fileID: 139888, guid: 79f09ac81f7ca9d449bf2e66b2ad35c0, type: 2}
+  gbm: {fileID: 0}
   pausePanel: {fileID: 1658787477}
   player: {fileID: 149492, guid: a8f3b533472ff114296a95f69f24491a, type: 2}
   entrance: {fileID: 142568, guid: 927f00a0e46550c43bf547b0afae2628, type: 2}
@@ -2511,7 +2512,7 @@ AudioSource:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1510949512}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 7da0afae92706a445800fe1a035f8e5e, type: 3}
