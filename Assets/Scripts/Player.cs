@@ -14,7 +14,11 @@ public class Player : MonoBehaviour {
     private Color baseColor;
     private Color color;
 	public float size;
-	private enum AnimationState { IDLE, HOP_UP, HOP_DOWN, HOP_EAST, HOP_WEST, HOP_NORTH, HOP_SOUTH, JUMP_UP, JUMP_DOWN, FADE_IN, FADE_OUT }
+    private enum AnimationState { IDLE, HOP_UP, HOP_DOWN, HOP_EAST, HOP_WEST, HOP_NORTH, HOP_SOUTH, JUMP_UP, JUMP_DOWN, FADE_IN, FADE_OUT }
+    private int smallMoveDirection = -1;        // Used for moving slightly in a certain direction to indicate that it's an invalid move
+        // Used instead of hopping in place. If the player presses UP, and it's invalid, you move up a little, then back down
+        // -1 = Not small-moving     0 = UP       1 = RIGHT       2 = DOWN        3 = LEFT            (Clockwise starting from UP)
+    public bool duringMove = false;        // Used for outside functions to see if we are currently small-moving
 	private AnimationState state;
 	private const int HOP_IN_PLACE_FRAMES = 5;
 	private const int HOP_TO_FRAMES = 8;
@@ -36,29 +40,29 @@ public class Player : MonoBehaviour {
 	void Update () {
 		if (busy)
 		{
-			if (state == AnimationState.HOP_UP || state == AnimationState.HOP_DOWN)
-			{
-				doHopInPlace();
-			}
-			else if (state == AnimationState.HOP_SOUTH)
-			{
-				doHopToSouth();
-			}
-			else if (state == AnimationState.HOP_WEST)
-			{
-				doHopToWest();
-			}
-			else if (state == AnimationState.HOP_EAST)
-			{
-				doHopToEast();
-			}
-			else if (state == AnimationState.HOP_NORTH)
-			{
-				doHopToNorth();
-			}
-			else if (state == AnimationState.JUMP_UP || state == AnimationState.JUMP_DOWN)
-			{
-				doJump();
+            if (state == AnimationState.HOP_UP || state == AnimationState.HOP_DOWN)
+            {
+                doHopInPlace();
+            }
+            else if (state == AnimationState.HOP_SOUTH)
+            {
+                doHopToSouth();
+            }
+            else if (state == AnimationState.HOP_WEST)
+            {
+                doHopToWest();
+            }
+            else if (state == AnimationState.HOP_EAST)
+            {
+                doHopToEast();
+            }
+            else if (state == AnimationState.HOP_NORTH)
+            {
+                doHopToNorth();
+            }
+            else if (state == AnimationState.JUMP_UP || state == AnimationState.JUMP_DOWN)
+            {
+                doJump();
             }
             else if (state == AnimationState.FADE_IN)
             {
@@ -68,8 +72,10 @@ public class Player : MonoBehaviour {
             {
                 doFade();
             }
-		}
-	}
+        }
+        else if (smallMoveDirection != -1) checkSmallMove();
+        checkMove();
+    }
 	//movement
 	public void moveUp()
 	{
@@ -93,6 +99,16 @@ public class Player : MonoBehaviour {
             //update position
             //gameObject.GetComponent<Transform>().position = new Vector3(position.x, position.y, gameObject.GetComponent<Transform>().position.z);
             state = AnimationState.HOP_NORTH;
+        }
+    }
+    public void moveUpSmall()
+    {
+        if (!busy)
+        {
+            busy = true;
+            position = new Vector2(position.x, position.y + 0.4f);
+            state = AnimationState.HOP_NORTH;
+            smallMoveDirection = 0;
         }
     }
     public void moveDown()
@@ -119,6 +135,16 @@ public class Player : MonoBehaviour {
             state = AnimationState.HOP_SOUTH;
         }
     }
+    public void moveDownSmall()
+    {
+        if (!busy)
+        {
+            busy = true;
+            position = new Vector2(position.x, position.y - 0.4f);
+            state = AnimationState.HOP_SOUTH;
+            smallMoveDirection = 2;
+        }
+    }
     public void moveLeft()
     {
         if (!busy)
@@ -143,6 +169,16 @@ public class Player : MonoBehaviour {
             state = AnimationState.HOP_WEST;
         }
     }
+    public void moveLeftSmall()
+    {
+        if (!busy)
+        {
+            busy = true;
+            position = new Vector2(position.x - 0.4f, position.y);
+            state = AnimationState.HOP_WEST;
+            smallMoveDirection = 3;
+        }
+    }
     public void moveRight()
     {
         if (!busy)
@@ -165,6 +201,16 @@ public class Player : MonoBehaviour {
             //update position
             //gameObject.GetComponent<Transform>().position = new Vector3(position.x, position.y, gameObject.GetComponent<Transform>().position.z);
             state = AnimationState.HOP_EAST;
+        }
+    }
+    public void moveRightSmall()
+    {
+        if (!busy)
+        {
+            busy = true;
+            position = new Vector2(position.x + 0.4f, position.y);
+            state = AnimationState.HOP_EAST;
+            smallMoveDirection = 1;
         }
     }
     public void hopInPlace() {
@@ -197,6 +243,7 @@ public class Player : MonoBehaviour {
             GameManager.aSrc[3].PlayOneShot(GameManager.jump, 1.0f);
         }
     }
+
     //getters
     public Vector2 getPosition()
 	{
@@ -204,6 +251,7 @@ public class Player : MonoBehaviour {
 	}
 	public bool didJump() { return jumped; }
     public bool didLeap() { return leaped; }
+    public bool isIdle() { return state == AnimationState.IDLE; }
     //public bool didLand() { return landed; }
     public bool isBusy() { return busy; }
 	//setters
@@ -441,7 +489,7 @@ public class Player : MonoBehaviour {
 		//apply new size
 		transform.localScale = new Vector3(size, size, transform.localScale.z);
 	}
-	
+
 	private void doJump()
 	{
 		float deltaSize = (2.5f - 0.8f) / JUMP_FRAMES;
@@ -468,4 +516,44 @@ public class Player : MonoBehaviour {
 		}
 		transform.localScale = new Vector3(size, size, transform.localScale.z);
 	}
+
+    private void checkSmallMove()       // Used to see if we are either moving forward or backwards while small-moving
+    {
+        busy = true;
+        if (smallMoveDirection == 0)            // small-moved UP
+        {
+            position = new Vector2(position.x, position.y - 0.4f);
+            state = AnimationState.HOP_SOUTH;
+        }
+        else if (smallMoveDirection == 1)       // small-moved RIGHT
+        {
+            position = new Vector2(position.x - 0.4f, position.y);
+            state = AnimationState.HOP_WEST;
+        }
+        else if (smallMoveDirection == 2)       // small-moved DOWN
+        {
+            position = new Vector2(position.x, position.y + 0.4f);
+            state = AnimationState.HOP_NORTH;
+        }
+        else                                    // small-moved LEFT
+        {
+            position = new Vector2(position.x + 0.4f, position.y);
+            state = AnimationState.HOP_EAST;
+        }
+        smallMoveDirection = -1;
+    }
+    private void checkMove()      // Used to see if we are currently moving
+    {
+        if (position.x != Mathf.Floor(position.x))
+        {
+            duringMove = true;
+            return;
+        }
+        if (position.y != Mathf.Floor(position.y))
+        {
+            duringMove = true;
+            return;
+        }
+        duringMove = false;
+    }
 }

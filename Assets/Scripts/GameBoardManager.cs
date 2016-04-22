@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class GameBoardManager : MonoBehaviour
 {
 
-	public SaveLoadManager slm;
+	//public SaveLoadManager slm;
     //BoardManager
     public BoardManager bbm;
     //gameobjects
@@ -44,10 +44,14 @@ public class GameBoardManager : MonoBehaviour
     private float nextTileWidth;
     private int frames = 16;
 
+    // (x, y) coordinates for highlighting a tile red.      Used to indicate an invalid move.
+    int redX = -1;
+    int redY = -1;
+
     // constructor
     void Start()
     {
-		slm = GameObject.Find ("SaveLoad Manager").GetComponent<SaveLoadManager>();
+		//slm = GameObject.Find ("SaveLoad Manager").GetComponent<SaveLoadManager>();
         bbm = new BoardManager();
         //gameobjects
         tiles = new GameObject[bbm.getCurrentWidth()][];
@@ -173,10 +177,10 @@ public class GameBoardManager : MonoBehaviour
                             }
                         }
                     }
-
                 }
             }
         }
+        if (redX != -1 && redY != -1) tiles[redX][redY].GetComponent<Renderer>().material.color = Color.red;
     }
     //getters
     public int getCurrentWidth() { return bbm.getCurrentWidth(); }
@@ -332,6 +336,23 @@ public class GameBoardManager : MonoBehaviour
         updateTile(x,y);
         //check rocks
         if (bbm.nextIsDestroyedAt(x, y)) { bbm.nextRemoveRockAt(x, y); }
+    }
+    public void setRedTile(int x, int y)
+    {
+        redX = x;
+        redY = y;
+    }
+    public void clearAllRedTiles()
+    {
+        for (int x = 0; x < getCurrentWidth(); x++)
+        {
+            for(int y = 0; y < getCurrentHeight(); y++)
+            {
+                tiles[x][y].GetComponent<Renderer>().material.color = Color.white;
+            }
+        }
+        redX = -1;
+        redY = -1;
     }
     //rocks 
     public void dropRocks(int x, int y)
@@ -866,7 +887,7 @@ public class GameBoardManager : MonoBehaviour
             movingRocks.Add(new KeyValuePair<Vector2, Vector2>(new Vector2(sx, sy), new Vector2(dx, dy)));
         }
     }
-
+    /*
 	public void loadGame () {
 		//load rocks
 		for (int i=0; i<slm.currentBoardsInfo.listOfRocksX.Count; i++) {
@@ -878,7 +899,7 @@ public class GameBoardManager : MonoBehaviour
 			//(GameObject)Instantiate(rock, new Vector3(i, bbm.getCurrentHeight() - j - 1, -1), Quaternion.identity)
 			bbm.currentPlaceRockAt (slm.currentBoardsInfo.listOfRocksX[i], slm.currentBoardsInfo.listOfRocksY[i]);
 		}
-		*/
+		*
 		//load cracked tiles
 		for (int i=0; i<slm.currentBoardsInfo.listOfTilesX.Count; i++) {
 			bbm.damageCurrentBoard (slm.currentBoardsInfo.listOfTilesX[i], slm.currentBoardsInfo.listOfTilesY[i]);
@@ -902,8 +923,8 @@ public class GameBoardManager : MonoBehaviour
 		for (int i=0; i<slm.currentBoardsInfo.boards.Count; i++) {
 			bbm.boards.Add (slm.currentBoardsInfo.boards[i]);
 		}
-		*/
+		*
 		clearRocks();
 		drawCurrentRocks();
-	}
+	} */
 }

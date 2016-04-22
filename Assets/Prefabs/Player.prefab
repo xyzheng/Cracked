@@ -40,7 +40,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88649a03f3ffb3b4e8a9d2cc36292c32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentSize: 1
+  size: 0
+  duringMove: 0
 --- !u!212 &21216506
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -68,7 +69,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300050, guid: 0439f5ba0dddc0f4faed8a1531eac989, type: 3}
-  m_Color: {r: 0.8235294, g: 0.2179931, b: 0.2179931, a: 1}
+  m_Color: {r: 0, g: 0.6509804, b: 0.91372555, a: 1}
   m_FlipX: 0
   m_FlipY: 0
 --- !u!1001 &100100000
@@ -83,6 +84,18 @@ Prefab:
       value: 
       objectReference: {fileID: 21300050, guid: 0439f5ba0dddc0f4faed8a1531eac989,
         type: 3}
+    - target: {fileID: 0}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Color.g
+      value: 0.6509804
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Color.b
+      value: 0.91372555
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 149492}
