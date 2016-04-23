@@ -22,11 +22,12 @@ public class Rock : MonoBehaviour {
         busy = true;
         shaking = false;
         float moveElapsedTime = 0;
+        int slowDown = 3;
         Vector3 startingPos = transform.position;
         while (moveElapsedTime < time)
         {
             if (this == null) { break; }
-            transform.position = Vector3.Lerp(startingPos, destination, (moveElapsedTime / (time / 4)));
+            transform.position = Vector3.Lerp(startingPos, destination, (moveElapsedTime / (time / slowDown)));
             moveElapsedTime += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
@@ -50,11 +51,11 @@ public class Rock : MonoBehaviour {
 		while (scaleElapsedTime < time) {
 			//scale the rock
 			transform.localScale = Vector3.Lerp (startingScale, endingScale, (scaleElapsedTime / (time/4)));
+            if (transform.localScale.x <= 0.2f || transform.localScale.y <= 0.2f || transform.localScale.z <= 0.2f) busy = false;
 			scaleElapsedTime += Time.deltaTime;
 			yield return new WaitForEndOfFrame();
 		}
 		Destroy (gameObject);
-        busy = false;
 	}
 	public IEnumerator scale (float time) {
         busy = true;
@@ -65,11 +66,11 @@ public class Rock : MonoBehaviour {
 		while (scaleElapsedTime < time) {
 			//scale the rock
 			transform.localScale = Vector3.Lerp (startingScale, endingScale, (scaleElapsedTime / (time/4)));
+            if (transform.localScale.x <= 0.5f || transform.localScale.y <= 0.5f || transform.localScale.z <= 0.5f) { busy = false; }
 			scaleElapsedTime += Time.deltaTime;
 			yield return new WaitForEndOfFrame();
 		}
         Destroy(gameObject);
-        busy = false;
 	}
     //shake
     public void startShake(){

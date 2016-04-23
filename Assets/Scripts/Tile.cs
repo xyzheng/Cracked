@@ -8,6 +8,8 @@ public class Tile : MonoBehaviour {
     public void crackTile() { GetComponent<Animator>().SetBool("Crack", true); }
     public void breakTile() { GetComponent<Animator>().SetBool("Break", true);  }
 
+    public void putRockInHole() { GetComponent<Animator>().SetBool("Rock", true); }
+
     //skip animation
     public void forceSteppedTile() { GetComponent<Animator>().SetBool("FStep", true); }
     public void forceSteppedCrackedTile() { GetComponent<Animator>().SetBool("FSCrack", true); }

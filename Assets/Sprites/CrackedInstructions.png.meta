@@ -1,17 +1,17 @@
 fileFormatVersion: 2
-guid: d3f1002b36172cb4cb140914ea24b735
-timeCreated: 1460157386
+guid: b79f1bee8946f5140bcd62b9eaf09197
+timeCreated: 1461386608
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: CrackedInstructions_0
-    21300002: CrackedInstructions_1
-    21300004: Backtrack
-    21300006: ForwardTrack
-    21300008: CrackedInstructions_4
-    21300010: CrackedInstructions_5
-    21300012: CrackedInstructions_6
-    21300014: CrackedInstructions_7
+    21300000: reset
+    21300002: pause
+    21300004: bt
+    21300006: ft
+    21300008: eye1
+    21300010: eye2
+    21300012: eye3
+    21300014: eye4
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -58,7 +58,7 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: CrackedInstructions_0
+    - name: reset
       rect:
         serializedVersion: 2
         x: 0
@@ -66,7 +66,7 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
       - - {x: 59, y: 64}
@@ -81,12 +81,7 @@ TextureImporter:
         - {x: 55, y: -64}
         - {x: 64, y: -37}
         - {x: 64, y: 55}
-      - - {x: -21, y: 27}
-        - {x: -21, y: -26}
-        - {x: 20, y: -26}
-        - {x: 20, y: 28}
-        - {x: -19, y: 28}
-    - name: CrackedInstructions_1
+    - name: pause
       rect:
         serializedVersion: 2
         x: 134
@@ -94,7 +89,7 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
       - - {x: -52, y: 64}
@@ -110,32 +105,7 @@ TextureImporter:
         - {x: -7, y: 40}
         - {x: 34, y: 22}
         - {x: 38, y: -15}
-      - - {x: -36, y: 19}
-        - {x: -36, y: -17}
-        - {x: -8, y: -17}
-        - {x: -8, y: 19}
-      - - {x: 9, y: 11}
-        - {x: -2, y: 11}
-        - {x: -8, y: 8}
-        - {x: -8, y: -16}
-        - {x: -7, y: -17}
-        - {x: 9, y: -17}
-        - {x: 15, y: -16}
-        - {x: 15, y: 1}
-        - {x: 14, y: 6}
-      - - {x: 38, y: -2}
-        - {x: 40, y: 4}
-        - {x: 40, y: 6}
-        - {x: 34, y: 11}
-        - {x: 21, y: 11}
-        - {x: 15, y: 5}
-        - {x: 15, y: -12}
-        - {x: 19, y: -17}
-        - {x: 35, y: -17}
-        - {x: 40, y: -16}
-        - {x: 40, y: -4}
-        - {x: 32, y: -3}
-    - name: Backtrack
+    - name: bt
       rect:
         serializedVersion: 2
         x: 2
@@ -154,7 +124,7 @@ TextureImporter:
         - {x: 64, y: -51}
         - {x: 64, y: 37}
         - {x: 4, y: 64}
-    - name: ForwardTrack
+    - name: ft
       rect:
         serializedVersion: 2
         x: 136
@@ -173,7 +143,7 @@ TextureImporter:
         - {x: 64, y: -3}
         - {x: 64, y: 5}
         - {x: 22, y: 64}
-    - name: CrackedInstructions_4
+    - name: eye1
       rect:
         serializedVersion: 2
         x: 0
@@ -181,7 +151,7 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
       - - {x: -36, y: 64}
@@ -193,7 +163,7 @@ TextureImporter:
         - {x: 64, y: -43}
         - {x: 64, y: 38}
         - {x: 54, y: 64}
-    - name: CrackedInstructions_5
+    - name: eye2
       rect:
         serializedVersion: 2
         x: 132
@@ -201,7 +171,7 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
       - - {x: -36, y: 64}
@@ -213,44 +183,46 @@ TextureImporter:
         - {x: 64, y: -43}
         - {x: 64, y: 38}
         - {x: 54, y: 64}
-    - name: CrackedInstructions_6
+    - name: eye3
       rect:
         serializedVersion: 2
         x: 268
         y: 287
         width: 128
-        height: 129
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -60, y: 64.5}
-        - {x: -64, y: 45.5}
-        - {x: -64, y: -50.5}
-        - {x: -52, y: -64.5}
-        - {x: 57, y: -64.5}
-        - {x: 64, y: -51.5}
-        - {x: 64, y: 28.5}
-        - {x: 52, y: 64.5}
-    - name: CrackedInstructions_7
-      rect:
-        serializedVersion: 2
-        x: 400
-        y: 288
-        width: 129
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
-      - - {x: -35.5, y: 64}
-        - {x: -64.5, y: 43}
-        - {x: -64.5, y: -60}
-        - {x: -63.5, y: -64}
-        - {x: 58.5, y: -64}
-        - {x: 64.5, y: -56}
-        - {x: 64.5, y: 35}
-        - {x: 49.5, y: 64}
+      - - {x: -36, y: 64}
+        - {x: -64, y: 37}
+        - {x: -64, y: -37}
+        - {x: -36, y: -64}
+        - {x: 31, y: -64}
+        - {x: 45, y: -62}
+        - {x: 64, y: -43}
+        - {x: 64, y: 38}
+        - {x: 54, y: 64}
+    - name: eye4
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 288
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -36, y: 64}
+        - {x: -64, y: 37}
+        - {x: -64, y: -37}
+        - {x: -36, y: -64}
+        - {x: 31, y: -64}
+        - {x: 45, y: -62}
+        - {x: 64, y: -43}
+        - {x: 64, y: 38}
+        - {x: 54, y: 64}
     outline: []
   spritePackingTag: 
   userData: 

@@ -53,6 +53,8 @@ public class GameBoardManager : MonoBehaviour
     {
 		//slm = GameObject.Find ("SaveLoad Manager").GetComponent<SaveLoadManager>();
         bbm = new BoardManager();
+        //place a rock at the exit
+        bbm.nextPlaceRockAt((int)bbm.getGoal().x, (int)bbm.getGoal().y);
         //gameobjects
         tiles = new GameObject[bbm.getCurrentWidth()][];
         for (int i = 0; i < bbm.getCurrentWidth(); i++) { tiles[i] = new GameObject[bbm.getCurrentHeight()]; }
@@ -77,7 +79,7 @@ public class GameBoardManager : MonoBehaviour
     //Do all procedural animation in lateupdate - conflicts with unity's animator otherwise
     void LateUpdate()
     {
-        //rocks
+        //push rocks
         if (movingRocks.Count != 0)
         {
             for (int i = 0; i < movingRocks.Count; i++)
@@ -103,8 +105,11 @@ public class GameBoardManager : MonoBehaviour
             if (state == State.BACKTRACK) {
                 if (moveBoardRight())
                 {
+                    movingRocks.Clear();
                     //backtrack a level
                     bbm.backTrack();
+                    //place a rock at the exit
+                    bbm.nextPlaceRockAt((int)bbm.getGoal().x, (int)bbm.getGoal().y);
                     //draw objects
                     clearTiles();
                     drawTiles();
@@ -116,8 +121,11 @@ public class GameBoardManager : MonoBehaviour
             else if (state == State.FORWARDTRACK) {
                 if (moveMapLeft())
                 {
+                    movingRocks.Clear();
                     //forwardtrack a level
                     bbm.forwardTrack();
+                    //place a rock at the exit
+                    bbm.nextPlaceRockAt((int)bbm.getGoal().x, (int)bbm.getGoal().y);
                     //drawobjects
                     clearTiles();
                     drawTiles();
@@ -130,12 +138,13 @@ public class GameBoardManager : MonoBehaviour
             {
                 if (moveMapLeft())
                 {
+                    movingRocks.Clear();
                     //clear
                     clearTiles();
                     clearRocks();
+                    bbm.clearedCurrentBoard();
                     //place a rock at the exit
                     bbm.nextPlaceRockAt((int)bbm.getGoal().x, (int)bbm.getGoal().y);
-                    bbm.clearedCurrentBoard();
                     drawRocks();
                     drawTiles();
                     handleRocks(); //check to remove edge case
@@ -293,6 +302,8 @@ public class GameBoardManager : MonoBehaviour
         if (bbm.didBackTrack())
         {
             bbm.clearForwardBoards();
+            //place a rock at the exit
+            bbm.nextPlaceRockAt((int)bbm.getGoal().x, (int)bbm.getGoal().y);
             steppedOn(offOfx, offOfy);
             clearTiles();
             clearRocks();
@@ -435,6 +446,7 @@ public class GameBoardManager : MonoBehaviour
                 if (!bbm.nextIsDestroyedAt(x, y)) { 
                     bbm.nextPlaceRockAt(x, y);
                     updateRock(x, y);
+                    updateTile(x, y);
                 }
             }
         }
@@ -621,7 +633,16 @@ public class GameBoardManager : MonoBehaviour
             if (bbm.nextIsDamagedAt(x,y)){ tiles[x][y].GetComponent<Tile>().stepCrackTile(); }
             else { tiles[x][y].GetComponent<Tile>().crackTile(); }
         }
-        else if (bbm.currentIsDestroyedAt(x, y)) { tiles[x][y].GetComponent<Tile>().breakTile(); }
+        else if (bbm.currentIsDestroyedAt(x, y)) {
+            if (bbm.nextHasRockAt(x, y))
+            {
+                tiles[x][y].GetComponent<Tile>().putRockInHole();
+            }
+            else
+            {
+                tiles[x][y].GetComponent<Tile>().breakTile();
+            }
+        }
         //next board
         if (bbm.nextIsDamagedAt(x, y)) {
             tiles[x][y].GetComponent<Tile>().stepTile();
@@ -851,9 +872,11 @@ public class GameBoardManager : MonoBehaviour
         clearTiles();
         clearRocks();
         movingRocks.Clear();
+        bbm.reset(); //update board
         //place a rock at the exit
         if (placeRockAtExit) { bbm.currentPlaceRockAt((int)bbm.getGoal().x, (int)bbm.getGoal().y); }
-        bbm.reset(); //update board
+        //place a rock at the exit
+        bbm.nextPlaceRockAt((int)bbm.getGoal().x, (int)bbm.getGoal().y);
         //draw
         drawRocks();
         drawTiles();
@@ -865,6 +888,8 @@ public class GameBoardManager : MonoBehaviour
         clearRocks();
         movingRocks.Clear();
         bbm = new BoardManager();
+        //place a rock at the exit
+        bbm.nextPlaceRockAt((int)bbm.getGoal().x, (int)bbm.getGoal().y);
         drawTiles();
         drawRocks();
     }
