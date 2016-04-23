@@ -5,6 +5,7 @@ public class Jump : MonoBehaviour {
 
     private bool fade;
     private bool busy;
+    private bool red;
     private const int jumpingFrames = 15;
     private enum AnimationState { IDLE, JUMP_UP, JUMP_DOWN }
     AnimationState currentState;
@@ -74,7 +75,18 @@ public class Jump : MonoBehaviour {
             fade = false;
         }
     }
-
+    public void makeRed()
+    {
+        GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, 1f);
+        red = true;
+    }
+    public void unRed()
+    {
+        GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
+        red = false;
+    }
+    public bool isRed() { return red; }
+    public bool isFaded() { return fade; }
     //position
     public void setPosition(float x, float y, float z)
     {

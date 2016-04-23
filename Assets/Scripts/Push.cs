@@ -5,8 +5,9 @@ public class Push : MonoBehaviour {
 
     private bool fade;
     private bool busy;
+    public bool red;
     private Vector3 orig;
-    private const float deltaPos = 0.4f;
+    private const float deltaPos = 0.2f;
 
     // Use this for initialization
     void Start()
@@ -16,7 +17,7 @@ public class Push : MonoBehaviour {
         orig = transform.position;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (busy) { shake(); }
     }
@@ -51,7 +52,18 @@ public class Push : MonoBehaviour {
             fade = false;
         }
     }
-
+    public void makeRed()
+    {
+        GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, 1f);
+        red = true;
+    }
+    public void unRed()
+    {
+        GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
+        red = false;
+    }
+    public bool isRed() { return red; }
+    public bool isFaded() { return fade; }
     //setter
     public void setPosition(float x, float y, float z)
     {
