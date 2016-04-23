@@ -252,7 +252,7 @@ RectTransform:
   m_RootOrder: 7
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 253.6, y: -133.9}
+  m_AnchoredPosition: {x: 253.1, y: -133.7}
   m_SizeDelta: {x: 33, y: 47.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &52575684
@@ -340,7 +340,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_UiScaleMode: 1
-  m_ReferencePixelsPerUnit: 64
+  m_ReferencePixelsPerUnit: 128
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 640, y: 480}
   m_ScreenMatchMode: 0
@@ -357,14 +357,14 @@ Canvas:
   m_GameObject: {fileID: 175789996}
   m_Enabled: 1
   serializedVersion: 2
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_Camera: {fileID: 1248903493}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: 1741357969
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!224 &175790000
@@ -1038,8 +1038,8 @@ RectTransform:
   m_RootOrder: 6
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 117, y: 187.3}
-  m_SizeDelta: {x: 50.3, y: 28.3}
+  m_AnchoredPosition: {x: 123.8, y: 182.76}
+  m_SizeDelta: {x: 63.8, y: 37.384}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &432359782
 MonoBehaviour:
@@ -1181,7 +1181,7 @@ Prefab:
     - target: {fileID: 21231840, guid: 4cc38e77e998b034d84ef3a3eac9ad65, type: 2}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300008, guid: ec7dbe24e8898834985db4abd9a483b6,
+      objectReference: {fileID: 21300008, guid: b79f1bee8946f5140bcd62b9eaf09197,
         type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 4cc38e77e998b034d84ef3a3eac9ad65, type: 2}
@@ -1334,7 +1334,7 @@ RectTransform:
   m_RootOrder: 5
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -109.5, y: 185.88}
+  m_AnchoredPosition: {x: -109.7, y: 185.68}
   m_SizeDelta: {x: 27.4, y: 40.65}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &773442047
@@ -2406,7 +2406,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6764706, g: 0.6764706, b: 0.6764706, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -3075,7 +3075,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6784314, g: 0.6784314, b: 0.6784314, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
