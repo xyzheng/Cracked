@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿/*
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -94,7 +95,7 @@ public class SaveLoadManager : MonoBehaviour {
 				}
 			}
 		}
-*/
+*
 		for (int i=0; i<copy.gbm.tiles.Length; i++) {
 			for (int j=0; j<copy.gbm.tiles[i].Length; j++) {
 				//Debug.Log (copy.gbm.rocks[i][j].gameObject.transform.position);
@@ -135,9 +136,9 @@ public class SaveLoadManager : MonoBehaviour {
 				}
 			}
 		}
-*/	
+*
 		for (int i=0; i<copy.gbm.bbm.boards.Count; i++) {
-			currentBoardsInfo.boards.Add (copy.gbm.bbm.boards[i]);
+			currentBoardsInfo.boards.Add(copy.gbm.bbm.boards[i]);
 		}
 		//Debug.Log (currentBoardsInfo.boards.Count);
 
@@ -173,7 +174,7 @@ public class SaveLoadManager : MonoBehaviour {
 					gameSavedText = c;
 				}
 			}
-			*/
+			*
 		}
 		else if (Application.loadedLevelName == "MainMenu") {
 			//Debug.Log (GameObject.Find("Load Button").ToString());
@@ -216,3 +217,4 @@ public class BoardInfo {
 	public List<Board> boards;
 
 }
+*/
