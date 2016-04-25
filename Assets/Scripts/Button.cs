@@ -32,7 +32,7 @@ public class Button : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
 
 	public void OnPointerExit (PointerEventData e) {
 		buttonText.fontSize = 20;	
-		if (isPlaying) {
+		if (isPlaying && hoverSound != null) {
 			hoverSound.Stop();
 		}
 	}
