@@ -96,6 +96,7 @@ GameObject:
   - 222: {fileID: 5841708}
   - 114: {fileID: 5841707}
   - 114: {fileID: 5841706}
+  - 114: {fileID: 5841709}
   m_Layer: 5
   m_Name: Back Button
   m_TagString: Untagged
@@ -206,6 +207,17 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 5841704}
+--- !u!114 &5841709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 5841704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe6fb7f1457c34ac09a451ff28c048b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &59692178
 GameObject:
   m_ObjectHideFlags: 0
@@ -567,6 +579,7 @@ GameObject:
   - 222: {fileID: 541550091}
   - 114: {fileID: 541550090}
   - 114: {fileID: 541550089}
+  - 114: {fileID: 541550092}
   m_Layer: 5
   m_Name: Load Button
   m_TagString: Untagged
@@ -631,7 +644,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 764682936}
+      - m_Target: {fileID: 0}
         m_MethodName: load
         m_Mode: 1
         m_Arguments:
@@ -677,6 +690,17 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 541550087}
+--- !u!114 &541550092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 541550087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe6fb7f1457c34ac09a451ff28c048b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &558295739
 GameObject:
   m_ObjectHideFlags: 0
@@ -1036,6 +1060,7 @@ GameObject:
   - 224: {fileID: 620000252}
   - 222: {fileID: 620000254}
   - 114: {fileID: 620000253}
+  - 225: {fileID: 620000255}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -1096,6 +1121,17 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 620000251}
+--- !u!225 &620000255
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 620000251}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &699936537
 GameObject:
   m_ObjectHideFlags: 0
@@ -1107,6 +1143,7 @@ GameObject:
   - 222: {fileID: 699936541}
   - 114: {fileID: 699936540}
   - 114: {fileID: 699936539}
+  - 114: {fileID: 699936542}
   m_Layer: 5
   m_Name: Play Button
   m_TagString: Untagged
@@ -1217,6 +1254,17 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 699936537}
+--- !u!114 &699936542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 699936537}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe6fb7f1457c34ac09a451ff28c048b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &764682934
 GameObject:
   m_ObjectHideFlags: 0
@@ -1225,14 +1273,13 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 764682935}
-  - 114: {fileID: 764682936}
   m_Layer: 0
   m_Name: SaveLoad Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &764682935
 Transform:
   m_ObjectHideFlags: 0
@@ -1245,23 +1292,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
---- !u!114 &764682936
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 764682934}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 935e4c9ee20dd4ef298ee5aa61663e2d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentBoardsInfo:
-    playerPositionX: 0
-    playerPositionY: 0
-    level: 0
-  gameInfo: {fileID: 0}
-  fromLoad: 0
 --- !u!1 &821308049
 GameObject:
   m_ObjectHideFlags: 0
@@ -1311,7 +1341,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0.019607844}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0.019607844}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -1480,11 +1510,9 @@ MonoBehaviour:
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 1
-    m_VerticalOverflow: 0
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'Play
-
-'
+  m_Text: Play
 --- !u!222 &844369933
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1554,12 +1582,10 @@ MonoBehaviour:
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'Options
-
-'
+  m_Text: Options
 --- !u!222 &862117739
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1717,6 +1743,8 @@ GameObject:
   m_Component:
   - 4: {fileID: 1086952876}
   - 114: {fileID: 1086952875}
+  - 82: {fileID: 1086952877}
+  - 114: {fileID: 1086952878}
   m_Layer: 0
   m_Name: Menu Manager
   m_TagString: Untagged
@@ -1749,6 +1777,93 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
+--- !u!82 &1086952877
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1086952874}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 3c7d0e4ad2d5644ffbcb79bf317d87d1, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+--- !u!114 &1086952878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1086952874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aae79e9b7c4484fe09277510ae147fb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fadingPanel: {fileID: 0}
+  isFading: 0
 --- !u!1 &1103128611
 GameObject:
   m_ObjectHideFlags: 0
@@ -2225,12 +2340,10 @@ MonoBehaviour:
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'Load
-
-'
+  m_Text: Load
 --- !u!222 &1642459666
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2719,6 +2832,7 @@ GameObject:
   - 222: {fileID: 2096095254}
   - 114: {fileID: 2096095253}
   - 114: {fileID: 2096095252}
+  - 114: {fileID: 2096095255}
   m_Layer: 5
   m_Name: Options Button
   m_TagString: Untagged
@@ -2829,6 +2943,17 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2096095250}
+--- !u!114 &2096095255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2096095250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe6fb7f1457c34ac09a451ff28c048b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2138442587
 GameObject:
   m_ObjectHideFlags: 0
@@ -2892,12 +3017,10 @@ MonoBehaviour:
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'Back
-
-'
+  m_Text: Back
 --- !u!222 &2138442590
 CanvasRenderer:
   m_ObjectHideFlags: 0
