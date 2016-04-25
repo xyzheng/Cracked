@@ -6,9 +6,14 @@ public class MenuManager : MonoBehaviour {
 
 	public GameObject menuPanel;
 	public GameObject optionsPanel;
+	Fade fadeScript;
+
+	public void Start () {
+		fadeScript = GetComponent<Fade>();
+	}
 
 	public void playButton () {
-		SceneManager.LoadScene ("Main");
+		StartCoroutine(fadeScript.fadeOut());
 	}
 
 	public void optionsButton () {
@@ -19,6 +24,12 @@ public class MenuManager : MonoBehaviour {
 	public void backButton () {
 		menuPanel.SetActive(true);
 		optionsPanel.SetActive(false);
+	}
+
+	void Update () {
+		if (fadeScript.fadingPanel.alpha == 0) {
+			SceneManager.LoadScene ("Main");
+		}
 	}
 
 }

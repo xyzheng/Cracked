@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
@@ -34,6 +35,7 @@ public class GameManager : MonoBehaviour {
     public GameObject reset;
     public GameObject eye;
     private Eye eyeScript;
+	private Fade fadeScript;
 	//States
 	enum GameState { TITLE, PAUSE, LOAD, PEEK, PLAY }
 	GameState state;
@@ -83,6 +85,7 @@ public class GameManager : MonoBehaviour {
 		jump = aSrc[3].clip;
         //soundSlider = GameObject.Find("Sound Slider").GetComponent<Slider>();
         rockPushed = false;
+		fadeScript = GetComponent<Fade>();
 	}
 
 	// Main update loop
@@ -120,6 +123,9 @@ public class GameManager : MonoBehaviour {
 		}
 		else if (state == GameState.PAUSE)
 		{
+			if (fadeScript.fadingPanel.alpha == 1) {
+				SceneManager.LoadScene ("MainMenu");
+			}
             handleUnpause();
 			//update prior state
 			priorState = GameState.PAUSE;
@@ -777,7 +783,7 @@ public class GameManager : MonoBehaviour {
         handleIcons();
 	}
 	public void resetGame()
-	{
+	{ 
 		level = LEVEL_START;
 		levelText.text = "Floor\n" + level.ToString();
         nextLevelText.text = "Floor: " + (level + 1).ToString();
@@ -859,7 +865,7 @@ public class GameManager : MonoBehaviour {
 		state = GameState.PLAY;
 	}
 	public void mainMenuButton () {
-		Application.LoadLevel("MainMenu");
+		StartCoroutine(fadeScript.gameFadeToBlack());
 	}
 
     public void debug()
