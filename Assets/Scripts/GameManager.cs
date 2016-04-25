@@ -31,8 +31,6 @@ public class GameManager : MonoBehaviour {
     private Leap leapScript;
     public GameObject pushIcon;
     private Push pushScript;
-    public GameObject pause;
-    public GameObject reset;
     public GameObject eye;
     private Eye eyeScript;
 	private Fade fadeScript;
@@ -114,8 +112,6 @@ public class GameManager : MonoBehaviour {
             leapScript = leapIcon.GetComponent<Leap>();
             pushIcon = (GameObject)Instantiate(pushIcon, new Vector3(entrancePos.x, exitPos.y - 2, 0), Quaternion.identity);
             pushScript = pushIcon.GetComponent<Push>();
-            reset = (GameObject)Instantiate(reset, new Vector3(entrancePos.x + 1.5f, exitPos.y + 1, 0), Quaternion.identity);
-            pause = (GameObject)Instantiate(pause, new Vector3(exitPos.x - 1.5f, exitPos.y + 1, 0), Quaternion.identity);
             eyeScript = eye.GetComponent<Eye>();
 			state = GameState.PLAY;
 			//update priorstate

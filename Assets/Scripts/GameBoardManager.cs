@@ -416,7 +416,8 @@ public class GameBoardManager : MonoBehaviour
             }
             //main rock drop
             if (bbm.currentIsValidAt(x, y) && bbm.currentIsDestroyedAt(x, y)
-                && (bbm.currentIsValidAt(rX, rY) && rocks[rX][rY] != null) && !bbm.nextHasRockAt(x, y)
+                && (bbm.currentIsValidAt(rX, rY) && rocks[rX][rY] != null) 
+                && (!bbm.nextHasRockAt(x, y) || (bbm.getGoal().x == x && bbm.getGoal().y == y))
                 && (bbm.currentIsValidAt(rX, rY) && !rocks[rX][rY].GetComponent<Rock>().isBusy()))
             {
                 if (i == 0)
@@ -636,6 +637,7 @@ public class GameBoardManager : MonoBehaviour
         else if (bbm.currentIsDestroyedAt(x, y)) {
             if (bbm.nextHasRockAt(x, y))
             {
+                tiles[x][y].GetComponent<Tile>().breakTile();
                 tiles[x][y].GetComponent<Tile>().putRockInHole();
             }
             else
