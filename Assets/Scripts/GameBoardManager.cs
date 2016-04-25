@@ -17,6 +17,8 @@ public class GameBoardManager : MonoBehaviour
     public GameObject[][] tiles;
     public GameObject[][] mTiles;
     public GameObject[][] rocks;
+    public int rocksInGoal;
+    private int MAX_ROCK_IN_GOAL = 1;
     private float TILE_Z = 0;
     private float ROCK_Z = -1;
     private float N_TILE_Z = 2;
@@ -65,6 +67,7 @@ public class GameBoardManager : MonoBehaviour
         mRocks = new GameObject[bbm.getCurrentWidth()][];
         for (int i = 0; i < bbm.getNextWidth(); i++) { mRocks[i] = new GameObject[bbm.getNextHeight()]; }
         movingRocks = new List<KeyValuePair<Vector2,Vector2>>();
+        rocksInGoal = 0;
         //draw tiles; draw rocks
         drawTiles();
         drawRocks();
@@ -110,6 +113,7 @@ public class GameBoardManager : MonoBehaviour
                     bbm.backTrack();
                     //place a rock at the exit
                     bbm.nextPlaceRockAt((int)bbm.getGoal().x, (int)bbm.getGoal().y);
+                    rocksInGoal = 0;
                     //draw objects
                     clearTiles();
                     drawTiles();
@@ -126,6 +130,7 @@ public class GameBoardManager : MonoBehaviour
                     bbm.forwardTrack();
                     //place a rock at the exit
                     bbm.nextPlaceRockAt((int)bbm.getGoal().x, (int)bbm.getGoal().y);
+                    rocksInGoal = 0;
                     //drawobjects
                     clearTiles();
                     drawTiles();
@@ -145,6 +150,7 @@ public class GameBoardManager : MonoBehaviour
                     bbm.clearedCurrentBoard();
                     //place a rock at the exit
                     bbm.nextPlaceRockAt((int)bbm.getGoal().x, (int)bbm.getGoal().y);
+                    rocksInGoal = 0;
                     drawRocks();
                     drawTiles();
                     handleRocks(); //check to remove edge case
@@ -417,9 +423,13 @@ public class GameBoardManager : MonoBehaviour
             //main rock drop
             if (bbm.currentIsValidAt(x, y) && bbm.currentIsDestroyedAt(x, y)
                 && (bbm.currentIsValidAt(rX, rY) && rocks[rX][rY] != null) 
-                && (!bbm.nextHasRockAt(x, y) || (bbm.getGoal().x == x && bbm.getGoal().y == y))
+                && (!bbm.nextHasRockAt(x, y) || (rocksInGoal < MAX_ROCK_IN_GOAL && bbm.getGoal().x == x && bbm.getGoal().y == y))
                 && (bbm.currentIsValidAt(rX, rY) && !rocks[rX][rY].GetComponent<Rock>().isBusy()))
             {
+                if (bbm.getGoal().x == x && bbm.getGoal().y == y)
+                {
+                    rocksInGoal += 1;
+                }
                 if (i == 0)
                 {
                     StartCoroutine(rocks[rX][rY].GetComponent<Rock>().scale(0.5f));
@@ -879,6 +889,7 @@ public class GameBoardManager : MonoBehaviour
         if (placeRockAtExit) { bbm.currentPlaceRockAt((int)bbm.getGoal().x, (int)bbm.getGoal().y); }
         //place a rock at the exit
         bbm.nextPlaceRockAt((int)bbm.getGoal().x, (int)bbm.getGoal().y);
+        rocksInGoal = 0;
         //draw
         drawRocks();
         drawTiles();
