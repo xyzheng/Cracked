@@ -50,6 +50,20 @@ public class GameBoardManager : MonoBehaviour
     int redX = -1;
     int redY = -1;
 
+    // (x , y) coordinates to show a player what can / can't be leapt to.       Additional int for the color (red = invalid) (green = valid)
+    int leapX1 = -1;
+    int leapY1 = -1;
+    int leapColor1 = -1;        // Red = 0      Green = 1
+    int leapX2 = -1;
+    int leapY2 = -1;
+    int leapColor2 = -1;        // Red = 0      Green = 1
+    int leapX3 = -1;
+    int leapY3 = -1;
+    int leapColor3 = -1;        // Red = 0      Green = 1
+    int leapX4 = -1;
+    int leapY4 = -1;
+    int leapColor4 = -1;        // Red = 0      Green = 1
+
     // constructor
     void Start()
     {
@@ -196,6 +210,26 @@ public class GameBoardManager : MonoBehaviour
             }
         }
         if (redX != -1 && redY != -1) tiles[redX][redY].GetComponent<Renderer>().material.color = Color.red;
+        if (leapX1 != -1 && leapY1 != -1 && leapColor1 != -1)
+        {
+            if (leapColor1 == 0) { tiles[leapX1][leapY1].GetComponent<Renderer>().material.color = Color.red; }
+            else if (leapColor1 == 1) { tiles[leapX1][leapY1].GetComponent<Renderer>().material.color = Color.green; }
+        }
+        if (leapX2 != -1 && leapY2 != -1 && leapColor2 != -1)
+        {
+            if (leapColor2 == 0) { tiles[leapX2][leapY2].GetComponent<Renderer>().material.color = Color.red; }
+            else if (leapColor2 == 1) { tiles[leapX2][leapY2].GetComponent<Renderer>().material.color = Color.green; }
+        }
+        if (leapX3 != -1 && leapY3 != -1 && leapColor3 != -1)
+        {
+            if (leapColor3 == 0) { tiles[leapX3][leapY3].GetComponent<Renderer>().material.color = Color.red; }
+            else if (leapColor3 == 1) { tiles[leapX3][leapY3].GetComponent<Renderer>().material.color = Color.green; }
+        }
+        if (leapX4 != -1 && leapY4 != -1 && leapColor4 != -1)
+        {
+            if (leapColor4 == 0) { tiles[leapX4][leapY4].GetComponent<Renderer>().material.color = Color.red; }
+            else if (leapColor4 == 1) { tiles[leapX4][leapY4].GetComponent<Renderer>().material.color = Color.green; }
+        }
     }
     //getters
     public int getCurrentWidth() { return bbm.getCurrentWidth(); }
@@ -359,17 +393,69 @@ public class GameBoardManager : MonoBehaviour
         redX = x;
         redY = y;
     }
-    public void clearAllRedTiles()
+    public void clearAllTileColors()
     {
         for (int x = 0; x < getCurrentWidth(); x++)
         {
-            for(int y = 0; y < getCurrentHeight(); y++)
+            for (int y = 0; y < getCurrentHeight(); y++)
             {
                 tiles[x][y].GetComponent<Renderer>().material.color = Color.white;
             }
         }
         redX = -1;
         redY = -1;
+        leapX1 = -1;
+        leapY1 = -1;
+        leapColor1 = -1;
+        leapX2 = -1;
+        leapY2 = -1;
+        leapColor2 = -1;
+        leapX3 = -1;
+        leapY3 = -1;
+        leapColor3 = -1;
+        leapX4 = -1;
+        leapY4 = -1;
+        leapColor4 = -1;
+    }
+    public void setLeapTile1(int x, int y)
+    {
+        if (bbm.currentIsValidAt(x, y) && !bbm.currentIsDestroyedAt(x, y))
+        {
+            if (bbm.currentIsHealthyAt(x, y)) { leapColor1 = 1; }
+            else if (bbm.currentIsDamagedAt(x, y)) { leapColor1 = 0; }
+            leapX1 = x;
+            leapY1 = y;
+        }
+    }
+    public void setLeapTile2(int x, int y)
+    {
+        if (bbm.currentIsValidAt(x, y) && !bbm.currentIsDestroyedAt(x, y))
+        {
+            if (bbm.currentIsHealthyAt(x, y)) { leapColor2 = 1; }
+            else if (bbm.currentIsDamagedAt(x, y)) { leapColor2 = 0; }
+            leapX2 = x;
+            leapY2 = y;
+        }
+    }
+    public void setLeapTile3(int x, int y)
+    {
+        if (bbm.currentIsValidAt(x, y) && !bbm.currentIsDestroyedAt(x, y))
+        {
+            if (bbm.currentIsHealthyAt(x, y)) { leapColor3 = 1; }
+            else if (bbm.currentIsDamagedAt(x, y)) { leapColor3 = 0; }
+            leapX3 = x;
+            leapY3 = y;
+        }
+    }
+    public void setLeapTile4(int x, int y)
+    {
+        if (bbm.currentIsValidAt(x, y) && !bbm.currentIsDestroyedAt(x, y))
+        {
+            if (bbm.currentIsHealthyAt(x, y)) { leapColor4 = 1; }
+            else if (bbm.currentIsDamagedAt(x, y)) { leapColor4 = 0; }
+            leapX4 = x;
+            leapY4 = y;
+        }
     }
     //rocks 
     public void dropRocks(int x, int y)
