@@ -31,8 +31,8 @@ public class GameBoardManager : MonoBehaviour
     //minimap
     private Vector2 sAnchor;
     private Vector2 eAnchor;
-    private float baseWidth = 1f;
-    private float minWidth = 0.25f;
+    private const float BASE_TILE_WIDTH = 1f;
+    private const float MIN_TILE_WIDTH = 0.25f;
 
     //peeking
     private bool peeking;
@@ -90,8 +90,8 @@ public class GameBoardManager : MonoBehaviour
         color = new Vector4(1f, 1f, 1f, 1f);
         //zoom
         state = State.IDLE;
-        currentTileWidth = baseWidth;
-        nextTileWidth = minWidth;
+        currentTileWidth = BASE_TILE_WIDTH;
+        nextTileWidth = MIN_TILE_WIDTH;
     }
     //Do all procedural animation in lateupdate - conflicts with unity's animator otherwise
     void LateUpdate()
@@ -179,11 +179,11 @@ public class GameBoardManager : MonoBehaviour
                         for (int j = 0; j < mTiles[i].Length; j++)
                         {
                             mTiles[i][j].transform.position = new Vector3(i, getCurrentHeight() - j - 1, TILE_Z - 2);
-                            mTiles[i][j].transform.localScale = new Vector3(baseWidth, baseWidth, transform.localScale.z);
+                            mTiles[i][j].transform.localScale = new Vector3(BASE_TILE_WIDTH, BASE_TILE_WIDTH, transform.localScale.z);
                             if (mRocks[i][j] != null)
                             {
                                 mRocks[i][j].transform.position = new Vector3(i, getCurrentHeight() - j - 1, ROCK_Z - 2);
-                                mRocks[i][j].transform.localScale = new Vector3(baseWidth, baseWidth, transform.localScale.z);
+                                mRocks[i][j].transform.localScale = new Vector3(BASE_TILE_WIDTH, BASE_TILE_WIDTH, transform.localScale.z);
                             }
                         }
                     }
@@ -193,16 +193,18 @@ public class GameBoardManager : MonoBehaviour
             {
                 if (moveMapRight())
                 {
+                    currentTileWidth = BASE_TILE_WIDTH;
+                    nextTileWidth = MIN_TILE_WIDTH;
                     for (int i = 0; i < mTiles.Length; i++)
                     {
                         for (int j = 0; j < mTiles[i].Length; j++)
                         {
-                            mTiles[i][j].transform.position = new Vector3(eAnchor.x + (i * minWidth), eAnchor.y + ((bbm.getNextHeight() - j - 1) * minWidth), N_TILE_Z);
-                            mTiles[i][j].transform.localScale = new Vector3(minWidth, minWidth, transform.localScale.z);
+                            mTiles[i][j].transform.position = new Vector3(eAnchor.x + (i * MIN_TILE_WIDTH), eAnchor.y + ((bbm.getNextHeight() - j - 1) * MIN_TILE_WIDTH), N_TILE_Z);
+                            mTiles[i][j].transform.localScale = new Vector3(MIN_TILE_WIDTH, MIN_TILE_WIDTH, transform.localScale.z);
                             if (mRocks[i][j] != null)
                             {
-                                mRocks[i][j].transform.position = new Vector3(eAnchor.x + (i * minWidth), eAnchor.y + ((bbm.getNextHeight() - j - 1) * minWidth), N_TILE_Z);
-                                mRocks[i][j].transform.localScale = new Vector3(minWidth, minWidth, transform.localScale.z);
+                                mRocks[i][j].transform.position = new Vector3(eAnchor.x + (i * MIN_TILE_WIDTH), eAnchor.y + ((bbm.getNextHeight() - j - 1) * MIN_TILE_WIDTH), N_ROCK_Z);
+                                mRocks[i][j].transform.localScale = new Vector3(MIN_TILE_WIDTH, MIN_TILE_WIDTH, transform.localScale.z);
                             }
                         }
                     }
@@ -372,6 +374,8 @@ public class GameBoardManager : MonoBehaviour
     public void clearedCurrentBoard()
     {
         state = State.CLEARED_BOARD;
+        currentTileWidth = BASE_TILE_WIDTH;
+        nextTileWidth = MIN_TILE_WIDTH;
     }
     public void damageCurrentBoard(int x, int y)
     {
@@ -640,8 +644,8 @@ public class GameBoardManager : MonoBehaviour
     }
     private void drawTiles()
     {
-        sAnchor = new Vector2(bbm.getStart().x, bbm.getCurrentHeight() - bbm.getStart().y);
-        eAnchor = new Vector2(sAnchor.x + bbm.getCurrentWidth() - minWidth, bbm.getCurrentHeight() - (bbm.getCurrentHeight() / 2) - 1.0f);
+        sAnchor = new Vector2(bbm.getStart().x, bbm.getCurrentHeight() - bbm.getStart().y - 1);
+        eAnchor = new Vector2(sAnchor.x + bbm.getCurrentWidth() - MIN_TILE_WIDTH, bbm.getCurrentHeight() - (bbm.getStart().y) + MIN_TILE_WIDTH);
         drawCurrentTiles();
         drawNextTiles();
     }
@@ -681,7 +685,7 @@ public class GameBoardManager : MonoBehaviour
         {
             for (int j = 0; j < bbm.getNextHeight(); j++)
             {
-                mTiles[i][j] = (GameObject)Instantiate(mTile, new Vector3(eAnchor.x + (i * minWidth), eAnchor.y + ((bbm.getNextHeight() - j - 1) * minWidth), N_TILE_Z), Quaternion.identity);
+                mTiles[i][j] = (GameObject)Instantiate(mTile, new Vector3(eAnchor.x + (i * MIN_TILE_WIDTH), eAnchor.y + ((bbm.getNextHeight() - j - 1) * MIN_TILE_WIDTH), N_TILE_Z), Quaternion.identity);
                 if (bbm.nextIsDamagedAt(i, j))
                 {
                     Tile script = mTiles[i][j].GetComponent<Tile>();
@@ -698,8 +702,8 @@ public class GameBoardManager : MonoBehaviour
     }
     private void drawRocks()
     {
-        sAnchor = new Vector2(bbm.getStart().x, bbm.getCurrentHeight() - bbm.getStart().y);
-        eAnchor = new Vector2(sAnchor.x + bbm.getCurrentWidth() - minWidth, bbm.getCurrentHeight() - (bbm.getCurrentHeight()/2) - 1.0f);
+        sAnchor = new Vector2(bbm.getStart().x, bbm.getCurrentHeight() - bbm.getStart().y - 1);
+        eAnchor = new Vector2(sAnchor.x + bbm.getCurrentWidth() - MIN_TILE_WIDTH, bbm.getCurrentHeight() - (bbm.getStart().y) + MIN_TILE_WIDTH);
         drawCurrentRocks();
         drawNextRocks();
     }
@@ -719,7 +723,7 @@ public class GameBoardManager : MonoBehaviour
         {
             for (int j = 0; j < bbm.getNextHeight(); j++)
             {
-                if (bbm.nextHasRockAt(i, j)) { mRocks[i][j] = (GameObject)Instantiate(mRock, new Vector3(eAnchor.x + (i * minWidth), eAnchor.y + ((bbm.getCurrentHeight() - j - 1) * minWidth), N_ROCK_Z), Quaternion.identity); }
+                if (bbm.nextHasRockAt(i, j)) { mRocks[i][j] = (GameObject)Instantiate(mRock, new Vector3(eAnchor.x + (i * MIN_TILE_WIDTH), eAnchor.y + ((bbm.getCurrentHeight() - j - 1) * MIN_TILE_WIDTH), N_ROCK_Z), Quaternion.identity); }
             }
         }
     }
@@ -752,7 +756,7 @@ public class GameBoardManager : MonoBehaviour
     {
         //next
         if (bbm.nextHasRockAt(x,y) && mRocks[x][y] == null){
-            mRocks[x][y] = (GameObject)Instantiate(mRock, new Vector3(eAnchor.x + (x * minWidth), eAnchor.y + ((bbm.getCurrentHeight() - y - 1) * minWidth), N_ROCK_Z), Quaternion.identity);
+            mRocks[x][y] = (GameObject)Instantiate(mRock, new Vector3(eAnchor.x + (x * MIN_TILE_WIDTH), eAnchor.y + ((bbm.getCurrentHeight() - y - 1) * MIN_TILE_WIDTH), N_ROCK_Z), Quaternion.identity);
         }
     }
 
@@ -760,33 +764,38 @@ public class GameBoardManager : MonoBehaviour
     public void goDown()
     {
         state = State.FORWARDTRACK;
-        currentTileWidth = baseWidth;
-        nextTileWidth = minWidth;
+        currentTileWidth = BASE_TILE_WIDTH;
+        nextTileWidth = MIN_TILE_WIDTH;
     }
     private bool moveMapLeft() {
         Vector2 delta = (sAnchor - eAnchor) / frames;
-        float x = mTiles[0][0].transform.position.x + delta.x;
-        float y = mTiles[0][0].transform.position.y - delta.y;
+        float x = mTiles[0][bbm.getCurrentHeight() - 1].transform.position.x + delta.x;
+        float y = mTiles[0][bbm.getCurrentHeight() - 1].transform.position.y + delta.y;
+        //Debug.Log("a" + x.ToString() + "b" + y.ToString() + "c" + sAnchor.ToString() + "d" + eAnchor.ToString());
         //done
-        if (nextTileWidth >= baseWidth || x < sAnchor.x || y < sAnchor.y)
+        Debug.Log(nextTileWidth);
+        if (nextTileWidth >= BASE_TILE_WIDTH || x < sAnchor.x || y < sAnchor.y)
         {
+            Debug.Log("a" + x.ToString() + "b" + y.ToString() + "c" + sAnchor.ToString() + "d" + eAnchor.ToString());
             state = State.IDLE;
-            nextTileWidth = minWidth;
+            nextTileWidth = BASE_TILE_WIDTH;
         }
         else
         {
-            float deltaSize = (baseWidth - minWidth)/frames;
+            float deltaSize = (BASE_TILE_WIDTH - MIN_TILE_WIDTH)/frames;
             nextTileWidth += deltaSize;
             //transform
             for (int i = 0; i < mTiles.Length; i++)
             {
                 for (int j = 0; j < mTiles[i].Length; j++)
                 {
-                    mTiles[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y - (j * nextTileWidth), TILE_Z - 2);
+                    //mTiles[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y - (j * nextTileWidth), TILE_Z - 2);
+                    mTiles[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y + ((bbm.getNextHeight() - j - 1) * nextTileWidth), TILE_Z - 2);
                     mTiles[i][j].transform.localScale = new Vector3(nextTileWidth, nextTileWidth, transform.localScale.z);
                     if (mRocks[i][j] != null)
                     {
-                        mRocks[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y - (j * nextTileWidth), ROCK_Z - 2);
+                        //mRocks[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y - (j * nextTileWidth), ROCK_Z - 2);
+                        mRocks[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y + ((bbm.getNextHeight() - j - 1) * nextTileWidth), ROCK_Z - 2);
                         mRocks[i][j].transform.localScale = new Vector3(nextTileWidth, nextTileWidth, transform.localScale.z);
                     }
                 }
@@ -841,7 +850,8 @@ public class GameBoardManager : MonoBehaviour
     public void goUp()
     {
         state = State.BACKTRACK;
-        currentTileWidth = baseWidth;
+        currentTileWidth = BASE_TILE_WIDTH;
+        nextTileWidth = MIN_TILE_WIDTH;
     }
     //private void zoomIn()
     //{
@@ -891,28 +901,29 @@ public class GameBoardManager : MonoBehaviour
     private bool moveBoardRight()
     {
         Vector2 delta = (eAnchor - sAnchor) / frames;
-        float x = tiles[0][0].transform.position.x + delta.x;
-        float y = tiles[0][0].transform.position.y - delta.y;
+        float x = tiles[0][bbm.getCurrentHeight() - 1].transform.position.x + delta.x;
+        float y = tiles[0][bbm.getCurrentHeight() - 1].transform.position.y + delta.y;
+        //Debug.Log("a" + x.ToString() + "b" + y.ToString() + "c" + sAnchor.ToString() + "d" + eAnchor.ToString());
         //done
-        if (currentTileWidth <= minWidth || x > eAnchor.x || y < eAnchor.y )
+        if (currentTileWidth <= MIN_TILE_WIDTH || x > eAnchor.x || y > eAnchor.y )
         {
             state = State.IDLE;
-            currentTileWidth = baseWidth;
+            currentTileWidth = BASE_TILE_WIDTH;
         }
         else
         {
-            float deltaSize = (baseWidth - minWidth) / frames;
+            float deltaSize = (BASE_TILE_WIDTH - MIN_TILE_WIDTH) / frames;
             currentTileWidth -= deltaSize;
             //transform
             for (int i = 0; i < tiles.Length; i++)
             {
                 for (int j = 0; j < tiles[i].Length; j++)
                 {
-                    tiles[i][j].transform.position = new Vector3(x + (i * currentTileWidth), y - (j * currentTileWidth), TILE_Z - 2);
+                    tiles[i][j].transform.position = new Vector3(x + (i * currentTileWidth), y + ((bbm.getNextHeight() - j - 1) * currentTileWidth), TILE_Z - 2);
                     tiles[i][j].transform.localScale = new Vector3(currentTileWidth, currentTileWidth, transform.localScale.z);
                     if (rocks[i][j] != null)
                     {
-                        rocks[i][j].transform.position = new Vector3(x + (i * currentTileWidth), y - (j * currentTileWidth), ROCK_Z - 2);
+                        rocks[i][j].transform.position = new Vector3(x + (i * currentTileWidth), y + ((bbm.getNextHeight() - j - 1) * currentTileWidth), ROCK_Z - 2);
                         rocks[i][j].transform.localScale = new Vector3(currentTileWidth, currentTileWidth, transform.localScale.z);
                     }
                 }
@@ -923,28 +934,31 @@ public class GameBoardManager : MonoBehaviour
     private bool moveMapRight()
     {
         Vector2 delta = (eAnchor - sAnchor) / frames;
-        float x = mTiles[0][0].transform.position.x + delta.x;
-        float y = mTiles[0][0].transform.position.y - delta.y;
+        float x = mTiles[0][bbm.getCurrentHeight() - 1].transform.position.x + delta.x;
+        float y = mTiles[0][bbm.getCurrentHeight() - 1].transform.position.y + delta.y;
+        //Debug.Log("moving map" + x.ToString() + "b" + y.ToString() + "c" + sAnchor.ToString() + "d" + eAnchor.ToString());
         //done
-        if (nextTileWidth <= minWidth || x > eAnchor.x || y < eAnchor.y)
+        if (nextTileWidth <= MIN_TILE_WIDTH || x > eAnchor.x || y > eAnchor.y)
         {
             state = State.IDLE;
-            nextTileWidth = minWidth;
+            nextTileWidth = MIN_TILE_WIDTH;
         }
         else
         {
-            float deltaSize = (baseWidth - minWidth) / frames;
+            float deltaSize = (BASE_TILE_WIDTH - MIN_TILE_WIDTH) / frames;
             nextTileWidth -= deltaSize;
             //transform
             for (int i = 0; i < mTiles.Length; i++)
             {
                 for (int j = 0; j < mTiles[i].Length; j++)
                 {
-                    mTiles[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y - (j * nextTileWidth), TILE_Z - 2);
+                    //mTiles[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y - (j * nextTileWidth), TILE_Z - 2);
+                    mTiles[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y + ((bbm.getNextHeight() - j - 1) * nextTileWidth), TILE_Z - 2);
                     mTiles[i][j].transform.localScale = new Vector3(nextTileWidth, nextTileWidth, transform.localScale.z);
                     if (mRocks[i][j] != null)
                     {
-                        mRocks[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y - (j * nextTileWidth), ROCK_Z - 2);
+                        //mRocks[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y - (j * nextTileWidth), ROCK_Z - 2);
+                        mRocks[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y + ((bbm.getNextHeight() - j - 1) * nextTileWidth), ROCK_Z - 2);
                         mRocks[i][j].transform.localScale = new Vector3(nextTileWidth, nextTileWidth, transform.localScale.z);
                     }
                 }
@@ -956,12 +970,13 @@ public class GameBoardManager : MonoBehaviour
     {
         peeking = true;
         state = State.PEEKING;
+        currentTileWidth = BASE_TILE_WIDTH;
+        nextTileWidth = MIN_TILE_WIDTH;
     }
     public void unpeek()
     {
         peeking = false;
         state = State.UNPEEKING;
-        nextTileWidth = baseWidth;
     }
     //reset
     public void resetBoard(bool placeRockAtExit)
