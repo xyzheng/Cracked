@@ -327,8 +327,9 @@ public class GameManager : MonoBehaviour {
     }
     public void toggleLeapMode()
     {
-        if (!handledPlayerLeap && !leapScript.isRed()) { 
+        if (!handledPlayerLeap) { 
             leapMode = !leapMode;
+            if (leapMode) handleLeapTileColors((int)playerScript.getPosition().x, gbm.getCurrentHeight() - (int)playerScript.getPosition().y - 1);
             leapScript.toggle(); 
         }
     }
@@ -427,7 +428,6 @@ public class GameManager : MonoBehaviour {
         if (gbm.bbm.currentIsDamagedAt((int)pos.x, (int)pos.y))
         {
             if (!pushScript.isFaded()) { pushScript.makeRed(); }
-            if (!leapScript.isFaded()) { leapScript.makeRed(); }
             if (!jumpScript.isFaded()) { jumpScript.makeRed(); }
         }
         else
@@ -437,12 +437,19 @@ public class GameManager : MonoBehaviour {
             if (!jumpScript.isFaded()) { jumpScript.unRed(); }
         }
     }
-	//keyboard input
-	public void handlePlayInput()
+    public void handleLeapTileColors(int x, int y)
+    {
+        if (gbm.bbm.currentIsValidAt(x + 2, y)) gbm.setLeapTile1(x + 2, y);
+        if (gbm.bbm.currentIsValidAt(x - 2, y)) gbm.setLeapTile2(x - 2, y);
+        if (gbm.bbm.currentIsValidAt(x, y + 2)) gbm.setLeapTile3(x, y + 2);
+        if (gbm.bbm.currentIsValidAt(x, y - 2)) gbm.setLeapTile4(x, y - 2);
+    }
+    //keyboard input
+    public void handlePlayInput()
 	{
         if (Input.GetKeyUp(im.getMoveUpKey()) && !playerScript.isBusy())
         {
-            gbm.clearAllRedTiles();     // Remove all red tiles when another key is pressed
+            gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
             //player's y is flipped
             Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
             //if backtracked accept changes
@@ -483,7 +490,7 @@ public class GameManager : MonoBehaviour {
                 else {
                     playerScript.moveUpSmall();
                     if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1))
-                      { gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1); }
+                    { gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1); }
                 }
             }
             else {
@@ -503,15 +510,17 @@ public class GameManager : MonoBehaviour {
                     leapScript.toggle();
                     //playerScript.hopInPlace();
                     playerScript.moveUpSmall();
-                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)) {
-                        gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2); }
+                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2))
+                    {
+                        gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2);
+                    }
                 }
                 leapMode = false;
             }
         }
         else if (Input.GetKeyUp(im.getMoveDownKey()) && !playerScript.isBusy())
         {
-            gbm.clearAllRedTiles();     // Remove all red tiles when another key is pressed
+            gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
             //player's y is flipped
             Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
             //if backtracked accept changes
@@ -546,8 +555,10 @@ public class GameManager : MonoBehaviour {
                 //else playerScript.hopInPlace();     //do the growing animation, hopping
                 else {
                     playerScript.moveDownSmall();
-                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)) {
-                        gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1); }
+                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1))
+                    {
+                        gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1);
+                    }
                 }
             }
             else        // Leap mode on
@@ -568,15 +579,17 @@ public class GameManager : MonoBehaviour {
                     leapScript.toggle();
                     //playerScript.hopInPlace();     //do the growing animation, hopping
                     playerScript.moveDownSmall();
-                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2)) {
-                        gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2); }
+                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2))
+                    {
+                        gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2);
+                    }
                 }
                 leapMode = false;
             }
         }
         else if (Input.GetKeyUp(im.getMoveLeftKey()) && !playerScript.isBusy())
         {
-            gbm.clearAllRedTiles();     // Remove all red tiles when another key is pressed
+            gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
             //player's y is flipped
             Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
             //if backtracked accept changes
@@ -615,8 +628,10 @@ public class GameManager : MonoBehaviour {
                 //else playerScript.hopInPlace();     //do the growing animation, hopping
                 else {
                     playerScript.moveLeftSmall();
-                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)) {
-                        gbm.setRedTile((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y); }
+                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y))
+                    {
+                        gbm.setRedTile((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y);
+                    }
                 }
             }
             else        // Leap mode on
@@ -637,22 +652,24 @@ public class GameManager : MonoBehaviour {
                     leapScript.toggle();
                     //playerScript.hopInPlace();     //do the growing animation, hopping
                     playerScript.moveLeftSmall();
-                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y)) {
-                        gbm.setRedTile((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y); }
+                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y))
+                    {
+                        gbm.setRedTile((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y);
+                    }
                 }
                 leapMode = false;
             }
         }
         else if (Input.GetKeyUp(im.getMoveRightKey()) && !playerScript.isBusy())
         {
-            gbm.clearAllRedTiles();     // Remove all red tiles when another key is pressed
+            gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
             //check if move valid - player's y is flipped
             Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
             //if backtracked accept changes
             gbm.moveWhileBacktrack((int)playerBoardPosition.x, (int)playerBoardPosition.y);
             //check if at goal      //only move to next level when you press right and are at goal
             if (gbm.getGoal() == playerBoardPosition) handleClearedFloor();
-            else if (!leapMode)
+            if (!leapMode)
             {
                 if (gbm.canMoveTo((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))         //check if move valid
                 {
@@ -681,8 +698,10 @@ public class GameManager : MonoBehaviour {
                 //else playerScript.hopInPlace();      //do the growing animation, hopping
                 else {
                     playerScript.moveRightSmall();
-                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)) {
-                        gbm.setRedTile((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y); }
+                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))
+                    {
+                        gbm.setRedTile((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y);
+                    }
                 }
             }
             else        // Leap mode on
@@ -703,15 +722,17 @@ public class GameManager : MonoBehaviour {
                     leapScript.toggle();
                     //playerScript.hopInPlace();
                     playerScript.moveRightSmall();
-                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y)) {
-                        gbm.setRedTile((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y); }
+                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y))
+                    {
+                        gbm.setRedTile((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y);
+                    }
                 }
                 leapMode = false;
             }
         }
         else if (!playerScript.didJump() && Input.GetKeyUp(im.getJumpKey()) && !playerScript.isBusy())
         {
-            gbm.clearAllRedTiles();     // Remove all red tiles when another key is pressed
+            gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
             //check if move valid - player's y is flipped
             Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
             if (gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y))
@@ -731,23 +752,27 @@ public class GameManager : MonoBehaviour {
         }
         else if (Input.GetKeyUp(im.getResetBoardKey()))
         {
-            gbm.clearAllRedTiles();     // Remove all red tiles when another key is pressed
+            gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
             resetBoard();
         }
         else if (Input.GetKeyUp(im.getPauseKey()) && state == GameState.PLAY) { handlePause(); }
         else if (Input.GetKeyUp(im.getBacktrackKey()))
         {
-            gbm.clearAllRedTiles();     // Remove all red tiles when another key is pressed
+            gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
             handleBacktrack();
         }
         else if (Input.GetKeyUp(im.getForwardTrackKey()))
         {
-            gbm.clearAllRedTiles();     // Remove all red tiles when another key is pressed
+            gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
             handleForwardTrack();
         }
         else if (Input.GetKeyUp(im.getPeekKey())) { handlePeek(); }
         else if (Input.GetKeyUp(im.getDebugKey())) { debug(); }
-        else if (Input.GetKeyUp(im.getToggleLeapKey()) && !playerScript.isBusy()) { toggleLeapMode(); }
+        else if (Input.GetKeyUp(im.getToggleLeapKey()) && !playerScript.isBusy())
+        {
+            gbm.clearAllTileColors();
+            toggleLeapMode();
+        }
         // rockPushed = false; // uncomment for unlimited pushing
     }
 
@@ -758,7 +783,8 @@ public class GameManager : MonoBehaviour {
 		playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
 		//reset player jumped
 		playerScript.notJump();
-		handledPlayerJump = false;
+        playerScript.notLeap();
+        handledPlayerJump = false;
         handledPlayerLeap = false;
         leapMode = false;
         rockPushed = false;
@@ -777,7 +803,8 @@ public class GameManager : MonoBehaviour {
         jumpScript.makeFullColor();
         //update icons
         handleIcons();
-	}
+        gbm.clearAllTileColors();
+    }
 	public void resetGame()
 	{ 
 		level = LEVEL_START;
@@ -789,7 +816,9 @@ public class GameManager : MonoBehaviour {
 		gbm.steppedOn((int)gbm.getStart().x, (int)gbm.getStart().y);
 		//player
 		playerScript.reset((int)gbm.getStart().x, (int)(gbm.getCurrentHeight() - gbm.getStart().y - 1));
-		handledPlayerJump = false;
+        playerScript.notJump();
+        playerScript.notLeap();
+        handledPlayerJump = false;
         handledPlayerLeap = false;
         leapMode = false;
         rockPushed = false;
@@ -803,7 +832,8 @@ public class GameManager : MonoBehaviour {
         jumpScript.makeFullColor();
         //update icons
         handleIcons();
-	}
+        gbm.clearAllTileColors();
+    }
 
     /* SOUND */
     //sound slider
