@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour {
         //soundSlider = GameObject.Find("Sound Slider").GetComponent<Slider>();
         rockPushed = false;
 		fadeScript = GetComponent<Fade>();
-	}
+    }
 
 	// Main update loop
 	void Update () {
@@ -148,8 +148,8 @@ public class GameManager : MonoBehaviour {
 					if (playerScript.didJump() && !handledPlayerJump) { 
                         handleJump();
                         //update icons
-                        handleIcons();
                     }
+                    handleIcons();
                     // There should be no red tiles highlighted when the player is idle (or "is not busy")
                 }
 				//check ui
@@ -422,19 +422,60 @@ public class GameManager : MonoBehaviour {
         eyeScript.blink();
         playerScript.fadePlayer();
 	}
+    public void unColorIcons()
+    {
+        if (!pushScript.isFaded()) { pushScript.unColor(); }
+        if (!leapScript.isFaded()) { leapScript.unColor(); }
+        if (!jumpScript.isFaded()) { jumpScript.unColor(); }
+    }
     public void handleIcons()
     {
         Vector2 pos = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
-        if (gbm.bbm.currentIsDamagedAt((int)pos.x, (int)pos.y))
+        //if (gbm.bbm.currentIsDamagedAt((int)pos.x, (int)pos.y))       // Michael: "Red = invalid"
+        //{
+        //    if (!pushScript.isFaded()) { pushScript.makeRed(); }
+        //    //if (!leapScript.isFaded()) { leapScript.makeRed(); }    // You can leap while ON a crack. You can't leap TO a crack.
+        //    if (!jumpScript.isFaded()) { jumpScript.makeRed(); }
+        //}
+        //else
+        //{
+        //    if (!pushScript.isFaded()) { pushScript.unColor(); }
+        //    if (!leapScript.isFaded()) { leapScript.unColor(); }
+        //    if (!jumpScript.isFaded()) { jumpScript.unColor(); }
+        //}
+        if (gbm.bbm.currentIsDamagedAt((int)pos.x, (int)pos.y))          // Franky: "Green = usable, Red when you use invalidly, White = neutral"
         {
-            if (!pushScript.isFaded()) { pushScript.makeRed(); }
-            if (!jumpScript.isFaded()) { jumpScript.makeRed(); }
+            if (!pushScript.isFaded()) { pushScript.unColor(); }
+            if (!jumpScript.isFaded()) { jumpScript.unColor(); }
         }
         else
         {
-            if (!pushScript.isFaded()) { pushScript.unRed(); }
-            if (!leapScript.isFaded()) { leapScript.unRed(); }
-            if (!jumpScript.isFaded()) { jumpScript.unRed(); }
+            if (!pushScript.isFaded()) { pushScript.makeGreen(); }
+            if (!jumpScript.isFaded()) { jumpScript.makeGreen(); }
+        }
+        if (!leapScript.isFaded())
+        { 
+            if (!gbm.bbm.currentHasRockAt((int)pos.x + 2, (int)pos.y) && gbm.bbm.currentIsHealthyAt((int)pos.x + 2, (int)pos.y))
+            {
+                leapScript.makeGreen();
+                return;
+            }
+            if (!gbm.bbm.currentHasRockAt((int)pos.x - 2, (int)pos.y) && gbm.bbm.currentIsHealthyAt((int)pos.x - 2, (int)pos.y))
+            {
+                leapScript.makeGreen();
+                return;
+            }
+            if (!gbm.bbm.currentHasRockAt((int)pos.x, (int)pos.y + 2) && gbm.bbm.currentIsHealthyAt((int)pos.x, (int)pos.y + 2))
+            {
+                leapScript.makeGreen();
+                return;
+            }
+            if (!gbm.bbm.currentHasRockAt((int)pos.x, (int)pos.y - 2) && gbm.bbm.currentIsHealthyAt((int)pos.x, (int)pos.y - 2))
+            {
+                leapScript.makeGreen();
+                return;
+            }
+            leapScript.unColor();
         }
     }
     public void handleLeapTileColors(int x, int y)
@@ -489,8 +530,10 @@ public class GameManager : MonoBehaviour {
                 //else playerScript.hopInPlace();        //invalid move
                 else {
                     playerScript.moveUpSmall();
-                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1))
-                    { gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1); }
+                    if (!pushScript.isFaded() && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)) pushScript.makeRed();
+                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)
+                    && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1))
+                        { gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1); }
                 }
             }
             else {
@@ -508,12 +551,12 @@ public class GameManager : MonoBehaviour {
                 {
                     //can't leap
                     leapScript.toggle();
+                    leapScript.makeRed();
                     //playerScript.hopInPlace();
                     playerScript.moveUpSmall();
-                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2))
-                    {
-                        gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2);
-                    }
+                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)
+                    && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2))
+                        { gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2); }
                 }
                 leapMode = false;
             }
@@ -555,10 +598,10 @@ public class GameManager : MonoBehaviour {
                 //else playerScript.hopInPlace();     //do the growing animation, hopping
                 else {
                     playerScript.moveDownSmall();
-                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1))
-                    {
-                        gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1);
-                    }
+                    if (!pushScript.isFaded() && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)) pushScript.makeRed();
+                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)
+                    && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1))
+                        { gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1); }
                 }
             }
             else        // Leap mode on
@@ -577,12 +620,12 @@ public class GameManager : MonoBehaviour {
                 {
                     //can't leap
                     leapScript.toggle();
+                    leapScript.makeRed();
                     //playerScript.hopInPlace();     //do the growing animation, hopping
                     playerScript.moveDownSmall();
-                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2))
-                    {
-                        gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2);
-                    }
+                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2)
+                    && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2))
+                        { gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2); }
                 }
                 leapMode = false;
             }
@@ -618,20 +661,16 @@ public class GameManager : MonoBehaviour {
                     player.GetComponent<Player>().moveLeft();                // move player
                     //update icons
                     handleIcons();
-                    gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y);
-
                     if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
                     aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
-
-                    gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y);
                 }
                 //else playerScript.hopInPlace();     //do the growing animation, hopping
                 else {
                     playerScript.moveLeftSmall();
-                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y))
-                    {
-                        gbm.setRedTile((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y);
-                    }
+                    if (!pushScript.isFaded() && gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)) pushScript.makeRed();
+                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)
+                    && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y))
+                        { gbm.setRedTile((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y); }
                 }
             }
             else        // Leap mode on
@@ -650,12 +689,12 @@ public class GameManager : MonoBehaviour {
                 {
                     //can't leap
                     leapScript.toggle();
+                    leapScript.makeRed();
                     //playerScript.hopInPlace();     //do the growing animation, hopping
                     playerScript.moveLeftSmall();
-                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y))
-                    {
-                        gbm.setRedTile((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y);
-                    }
+                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y)
+                    && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))
+                        { gbm.setRedTile((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y); }
                 }
                 leapMode = false;
             }
@@ -698,10 +737,10 @@ public class GameManager : MonoBehaviour {
                 //else playerScript.hopInPlace();      //do the growing animation, hopping
                 else {
                     playerScript.moveRightSmall();
-                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))
-                    {
-                        gbm.setRedTile((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y);
-                    }
+                    if (!pushScript.isFaded() && gbm.hasRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)) pushScript.makeRed();
+                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)
+                    && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))
+                        { gbm.setRedTile((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y); }
                 }
             }
             else        // Leap mode on
@@ -720,12 +759,12 @@ public class GameManager : MonoBehaviour {
                 {
                     //can't leap
                     leapScript.toggle();
+                    leapScript.makeRed();
                     //playerScript.hopInPlace();
                     playerScript.moveRightSmall();
-                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y))
-                    {
-                        gbm.setRedTile((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y);
-                    }
+                    if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y)
+                    && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y))
+                        { gbm.setRedTile((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y); }
                 }
                 leapMode = false;
             }
@@ -747,6 +786,7 @@ public class GameManager : MonoBehaviour {
             else
             {
                 playerScript.hopInPlace();
+                jumpScript.makeRed();
                 gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y);
             }
         }
@@ -802,8 +842,8 @@ public class GameManager : MonoBehaviour {
         pushScript.makeFullColor();
         jumpScript.makeFullColor();
         //update icons
-        handleIcons();
         gbm.clearAllTileColors();
+        handleIcons();
     }
 	public void resetGame()
 	{ 
@@ -831,8 +871,8 @@ public class GameManager : MonoBehaviour {
         pushScript.makeFullColor();
         jumpScript.makeFullColor();
         //update icons
-        handleIcons();
         gbm.clearAllTileColors();
+        handleIcons();
     }
 
     /* SOUND */
