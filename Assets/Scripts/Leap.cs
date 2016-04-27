@@ -6,7 +6,7 @@ public class Leap : MonoBehaviour {
     private bool fade;
     private bool busy;
     private bool toggled;
-    private bool red;
+    private int color = -1;      // -1 = white       // 0 = red      // 1 = green
     private Vector3 orig;
     private Vector3 togglePos;
     private const float DELTA_X = 0.75f;
@@ -112,14 +112,19 @@ public class Leap : MonoBehaviour {
     public void makeRed()
     {
         GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, 1f);
-        red = true;
+        color = 0;
     }
-    public void unRed()
+    public void makeGreen()
+    {
+        GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f, 1f);
+        color = 1;
+    }
+    public void unColor()
     {
         GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
-        red = false;
+        color = -1;
     }
-    public bool isRed() { return red; }
+    public int getColor() { return color; }
     public bool isFaded() { return fade; }
     //position
     public void setPosition(float x, float y, float z)
