@@ -317,7 +317,7 @@ public class GameBoardManager : MonoBehaviour
             //break the floor
             bbm.damageCurrentBoard(x, y);
             // play sound for making a hole
-            GameManager.aSrc[1].PlayOneShot(GameManager.hole, 1.0f);
+            GameManager.aSrc[0].PlayOneShot(GameManager.crack, 0.5f);
             updateTile(x, y);
             //check rocks
             dropRocks(x, y);
@@ -543,6 +543,8 @@ public class GameBoardManager : MonoBehaviour
                 //Destroy(rocks[rX][rY]);
                 rocks[rX][rY] = null;
                 bbm.currentRemoveAt(rX, rY);
+                // play rock fall sound
+                GameManager.aSrc[2].PlayOneShot(GameManager.fall, 1.0f);
                 //next board has no rock, place it there unless it has a hole
                 if (!bbm.nextIsDestroyedAt(x, y)) { 
                     bbm.nextPlaceRockAt(x, y);
@@ -1017,6 +1019,8 @@ public class GameBoardManager : MonoBehaviour
     {
         if (bbm.currentHasRockAt(sx, sy))
         {
+            // play rock push sound
+            GameManager.aSrc[5].PlayOneShot(GameManager.push, 1.0f);
             // move rock to pos (dx,dy) from (sx, sy)
             bbm.currentRemoveAt(sx, sy);
             bbm.currentPlaceRockAt(dx, dy);

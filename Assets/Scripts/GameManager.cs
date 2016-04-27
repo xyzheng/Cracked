@@ -49,10 +49,13 @@ public class GameManager : MonoBehaviour {
 	public static AudioClip hole;
 	public static AudioClip fall;
 	public static AudioClip jump;
-	//public static AudioSource music;
+    public static AudioClip push;
+    public static AudioClip leap;
+    public AudioClip bgm;
+    //public static AudioSource music;
 
-	//sliders and toggles
-	private Slider soundSlider;
+    //sliders and toggles
+    private Slider soundSlider;
 	private Slider musicSlider;
 	private Toggle soundToggle;
 	private Toggle musicToggle;
@@ -81,6 +84,11 @@ public class GameManager : MonoBehaviour {
 		hole = aSrc[1].clip;
 		fall = aSrc[2].clip;
 		jump = aSrc[3].clip;
+        push = aSrc[5].clip;
+        leap = aSrc[6].clip;
+        bgm = aSrc[7].clip;
+        // play bgm from the start
+        aSrc[7].PlayOneShot(bgm, 1.0f);
         //soundSlider = GameObject.Find("Sound Slider").GetComponent<Slider>();
         rockPushed = false;
 		fadeScript = GetComponent<Fade>();
@@ -305,6 +313,8 @@ public class GameManager : MonoBehaviour {
 	}
     public void handleLeap()        // healthyness isn't checked here because it is checked outside the function
     {                               // we only call handleLeap if our destination is healthy (uncracked floor)
+        // play leap sound
+        aSrc[6].PlayOneShot(leap, 1.0f);
         handledPlayerLeap = true;
         leapScript.startJump();
         //int playerBoardPosX = (int)playerScript.getPosition().x;        //get player pos
@@ -506,8 +516,6 @@ public class GameManager : MonoBehaviour {
                     //update icons
                     handleIcons();
                     if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                    //sound
-                    aSrc[0].PlayOneShot(crack, 1.0f);
                 }
                 else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)
                     //&& gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)
@@ -524,8 +532,6 @@ public class GameManager : MonoBehaviour {
                     //update icons
                     handleIcons();
                     if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                    //sound
-                    aSrc[0].PlayOneShot(crack, 1.0f);
                 }
                 //else playerScript.hopInPlace();        //invalid move
                 else {
@@ -544,7 +550,6 @@ public class GameManager : MonoBehaviour {
                     //update icons
                     handleIcons();
                     if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                    aSrc[0].PlayOneShot(crack, 1.0f);       // play walking sound
                     handleLeap();
                 }
                 else
@@ -576,7 +581,6 @@ public class GameManager : MonoBehaviour {
                     //update icons
                     handleIcons();
                     if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                    aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
                     //im.addToPriorKeys(im.getMoveDownKey());                //add to prior keys list
                 }
                 else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)
@@ -593,7 +597,6 @@ public class GameManager : MonoBehaviour {
                     //update icons
                     handleIcons();
                     if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                    aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
                 }
                 //else playerScript.hopInPlace();     //do the growing animation, hopping
                 else {
@@ -613,7 +616,6 @@ public class GameManager : MonoBehaviour {
                     //update icons
                     handleIcons();
                     if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                    aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
                     handleLeap();
                 }
                 else
@@ -645,7 +647,6 @@ public class GameManager : MonoBehaviour {
                     //update icons
                     handleIcons();
                     if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                    aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
                     //im.addToPriorKeys(im.getMoveLeftKey());                //add to prior keys list
                 }
                 else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)
@@ -662,7 +663,6 @@ public class GameManager : MonoBehaviour {
                     //update icons
                     handleIcons();
                     if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                    aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
                 }
                 //else playerScript.hopInPlace();     //do the growing animation, hopping
                 else {
@@ -682,7 +682,6 @@ public class GameManager : MonoBehaviour {
                     //update icons
                     handleIcons();
                     if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                    aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
                     handleLeap();
                 }
                 else
@@ -716,7 +715,6 @@ public class GameManager : MonoBehaviour {
                     //update icons
                     handleIcons();
                     if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                    aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
                     //im.addToPriorKeys(im.getMoveRightKey());                //add to prior keys list
                 }
                 else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)
@@ -732,7 +730,6 @@ public class GameManager : MonoBehaviour {
                     //update icons
                     handleIcons();
                     if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                    aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
                 }
                 //else playerScript.hopInPlace();      //do the growing animation, hopping
                 else {
@@ -752,7 +749,6 @@ public class GameManager : MonoBehaviour {
                     //update icons
                     handleIcons();
                     if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                    aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
                     handleLeap();
                 }
                 else
@@ -879,7 +875,7 @@ public class GameManager : MonoBehaviour {
     //sound slider
     public void updateSoundSlider () {
 		soundSlider = GameObject.Find("Sound Slider").GetComponent<Slider>();
-		for (int i=0; i<aSrc.Length; i++) {
+		for (int i=0; i<aSrc.Length-1; i++) {
 			aSrc[i].volume = soundSlider.value;
 		}
 	}
@@ -887,7 +883,7 @@ public class GameManager : MonoBehaviour {
 	public void toggleSound () {
 		soundToggle = GameObject.Find("Sound Toggle").GetComponent<Toggle>();
 		soundSlider = GameObject.Find("Sound Slider").GetComponent<Slider>();
-		for (int i=0; i<aSrc.Length; i++) {
+		for (int i=0; i<aSrc.Length-1; i++) { // last one should be bgm
 			if (!soundToggle.isOn) {
 				aSrc[i].volume = 0f;
 			}
@@ -899,16 +895,16 @@ public class GameManager : MonoBehaviour {
 	//music slider
 	public void updateMusicSlider () {
 		musicSlider = GameObject.Find("Music Slider").GetComponent<Slider>();
-		//	music.volume = musicSlider.value;
+		aSrc[7].volume = musicSlider.value;
 	}
 	public void toggleMusic () {
 		musicToggle = GameObject.Find("Music Toggle").GetComponent<Toggle>();
 		musicSlider = GameObject.Find("Music Slider").GetComponent<Slider>();
 		if (!musicToggle.isOn) {
-			//music.volume = 0f;
+			aSrc[7].volume = 0f;
 		}
 		else {
-			//	music.volume = musicSlider.value;
+            aSrc[7].volume = musicSlider.value;
 		}
 	}
 

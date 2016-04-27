@@ -68,13 +68,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\BackTrack.cs" />
     <Compile Include="Assets\Scripts\Board.cs" />
     <Compile Include="Assets\Scripts\BoardManager.cs" />
+    <Compile Include="Assets\Scripts\Button.cs" />
+    <Compile Include="Assets\Scripts\Eye.cs" />
+    <Compile Include="Assets\Scripts\Fade.cs" />
+    <Compile Include="Assets\Scripts\ForwardTrack.cs" />
     <Compile Include="Assets\Scripts\GameBoardManager.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\InputManager.cs" />
+    <Compile Include="Assets\Scripts\Jump.cs" />
+    <Compile Include="Assets\Scripts\Leap.cs" />
+    <Compile Include="Assets\Scripts\MenuManager.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
+    <Compile Include="Assets\Scripts\Push.cs" />
     <Compile Include="Assets\Scripts\Rock.cs" />
+    <Compile Include="Assets\Scripts\SaveLoadManager.cs" />
     <Compile Include="Assets\Scripts\Tile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
