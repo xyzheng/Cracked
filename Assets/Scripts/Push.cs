@@ -5,7 +5,7 @@ public class Push : MonoBehaviour {
 
     private bool fade;
     private bool busy;
-    public int color = -1;   // -1 = white       // 0 = red      // 1 = green
+    private int color = -1;   // -1 = white       // 0 = red      // 1 = green
     private Vector3 orig;
     private const float deltaPos = 0.2f;
 
@@ -59,7 +59,7 @@ public class Push : MonoBehaviour {
     }
     public void makeGreen()
     {
-        GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f, 1f);
+        GetComponent<SpriteRenderer>().color = new Color(0.0f, 162f / 255f, 232f / 255f, 1f);
         color = 1;
     }
     public void unColor()

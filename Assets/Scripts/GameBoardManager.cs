@@ -215,22 +215,26 @@ public class GameBoardManager : MonoBehaviour
         if (leapX1 != -1 && leapY1 != -1 && leapColor1 != -1)
         {
             if (leapColor1 == 0) { tiles[leapX1][leapY1].GetComponent<Renderer>().material.color = Color.red; }
-            else if (leapColor1 == 1) { tiles[leapX1][leapY1].GetComponent<Renderer>().material.color = Color.green; }
+            else if (leapColor1 == 1)
+                { tiles[leapX1][leapY1].GetComponent<Renderer>().material.color = new Color(0.0f, 162f / 255f, 232f / 255f, 1f); }
         }
         if (leapX2 != -1 && leapY2 != -1 && leapColor2 != -1)
         {
             if (leapColor2 == 0) { tiles[leapX2][leapY2].GetComponent<Renderer>().material.color = Color.red; }
-            else if (leapColor2 == 1) { tiles[leapX2][leapY2].GetComponent<Renderer>().material.color = Color.green; }
+            else if (leapColor2 == 1)
+                { tiles[leapX2][leapY2].GetComponent<Renderer>().material.color = new Color(0.0f, 162f / 255f, 232f / 255f, 1f); }
         }
         if (leapX3 != -1 && leapY3 != -1 && leapColor3 != -1)
         {
             if (leapColor3 == 0) { tiles[leapX3][leapY3].GetComponent<Renderer>().material.color = Color.red; }
-            else if (leapColor3 == 1) { tiles[leapX3][leapY3].GetComponent<Renderer>().material.color = Color.green; }
+            else if (leapColor3 == 1)
+                { tiles[leapX3][leapY3].GetComponent<Renderer>().material.color = new Color(0.0f, 162f / 255f, 232f / 255f, 1f); }
         }
         if (leapX4 != -1 && leapY4 != -1 && leapColor4 != -1)
         {
             if (leapColor4 == 0) { tiles[leapX4][leapY4].GetComponent<Renderer>().material.color = Color.red; }
-            else if (leapColor4 == 1) { tiles[leapX4][leapY4].GetComponent<Renderer>().material.color = Color.green; }
+            else if (leapColor4 == 1)
+                { tiles[leapX4][leapY4].GetComponent<Renderer>().material.color = new Color(0.0f, 162f / 255f, 232f / 255f, 1f); }
         }
     }
     //getters
@@ -1021,7 +1025,7 @@ public class GameBoardManager : MonoBehaviour
             bbm.currentRemoveAt(sx, sy);
             bbm.currentPlaceRockAt(dx, dy);
             // push rock
-            StartCoroutine(rocks[sx][sy].GetComponent<Rock>().move(new Vector3(rocks[sx][sy].transform.position.x + (dx - sx), rocks[sx][sy].transform.position.y - (dy - sy), rocks[sx][sy].transform.position.z), 0.5f));
+            StartCoroutine(rocks[sx][sy].GetComponent<Rock>().move(new Vector3(rocks[sx][sy].transform.position.x + (dx - sx), rocks[sx][sy].transform.position.y - (dy - sy), rocks[sx][sy].transform.position.z), 0.35f));
             //synching animations
             movingRocks.Add(new KeyValuePair<Vector2, Vector2>(new Vector2(sx, sy), new Vector2(dx, dy)));
         }
