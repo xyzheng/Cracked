@@ -425,8 +425,8 @@ public class GameBoardManager : MonoBehaviour
     {
         if (bbm.currentIsValidAt(x, y) && !bbm.currentIsDestroyedAt(x, y))
         {
-            if (bbm.currentIsHealthyAt(x, y) && !hasRock(x, y)) { leapColor1 = 1; }
-            else { leapColor1 = 0; }
+            if (bbm.currentIsHealthyAt(x, y)) { leapColor1 = 1; }
+            else if (bbm.currentIsDamagedAt(x, y)) { leapColor1 = 0; }
             leapX1 = x;
             leapY1 = y;
         }
@@ -435,8 +435,8 @@ public class GameBoardManager : MonoBehaviour
     {
         if (bbm.currentIsValidAt(x, y) && !bbm.currentIsDestroyedAt(x, y))
         {
-            if (bbm.currentIsHealthyAt(x, y) && !hasRock(x, y)) { leapColor2 = 1; }
-            else { leapColor2 = 0; }
+            if (bbm.currentIsHealthyAt(x, y)) { leapColor2 = 1; }
+            else if (bbm.currentIsDamagedAt(x, y)) { leapColor2 = 0; }
             leapX2 = x;
             leapY2 = y;
         }
@@ -445,8 +445,8 @@ public class GameBoardManager : MonoBehaviour
     {
         if (bbm.currentIsValidAt(x, y) && !bbm.currentIsDestroyedAt(x, y))
         {
-            if (bbm.currentIsHealthyAt(x, y) && !hasRock(x, y)) { leapColor3 = 1; }
-            else { leapColor3 = 0; }
+            if (bbm.currentIsHealthyAt(x, y)) { leapColor3 = 1; }
+            else if (bbm.currentIsDamagedAt(x, y)) { leapColor3 = 0; }
             leapX3 = x;
             leapY3 = y;
         }
@@ -455,8 +455,8 @@ public class GameBoardManager : MonoBehaviour
     {
         if (bbm.currentIsValidAt(x, y) && !bbm.currentIsDestroyedAt(x, y))
         {
-            if (bbm.currentIsHealthyAt(x, y) && !hasRock(x, y)) { leapColor4 = 1; }
-            else { leapColor4 = 0; }
+            if (bbm.currentIsHealthyAt(x, y)) { leapColor4 = 1; }
+            else if (bbm.currentIsDamagedAt(x, y)) { leapColor4 = 0; }
             leapX4 = x;
             leapY4 = y;
         }
@@ -773,7 +773,7 @@ public class GameBoardManager : MonoBehaviour
         float y = mTiles[0][bbm.getCurrentHeight() - 1].transform.position.y + delta.y;
         //Debug.Log("a" + x.ToString() + "b" + y.ToString() + "c" + sAnchor.ToString() + "d" + eAnchor.ToString());
         //done
-        Debug.Log(nextTileWidth);
+//        Debug.Log(nextTileWidth);
         if (nextTileWidth >= BASE_TILE_WIDTH || x < sAnchor.x || y < sAnchor.y)
         {
             Debug.Log("a" + x.ToString() + "b" + y.ToString() + "c" + sAnchor.ToString() + "d" + eAnchor.ToString());
