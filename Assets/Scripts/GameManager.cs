@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour {
 			exit = (GameObject)Instantiate(exit, exitPos, Quaternion.identity);
 			//basic ui
 			levelText.text = "Floor\n" + level.ToString();
-            nextLevelText.text = "Floor: " + (level + 1).ToString();
+            nextLevelText.text = "Floor " + (level + 1).ToString();
 			backtrack = (GameObject)Instantiate(backtrack, new Vector3(entrancePos.x, exitPos.y + 1, 0), Quaternion.identity);
 			btScript = backtrack.GetComponent<BackTrack>();
 			btScript.makeTransparent();
@@ -192,7 +192,7 @@ public class GameManager : MonoBehaviour {
 			if (Input.GetKeyUp(im.getPeekKey()))
 			{
 				levelText.text = "Floor\n" + level.ToString();
-                nextLevelText.text = "Floor: " + (level + 1).ToString();
+                nextLevelText.text = "Floor " + (level + 1).ToString();
 				playerScript.unfadePlayer();
                 gbm.unpeek();
                 eyeScript.unblink();
@@ -224,7 +224,7 @@ public class GameManager : MonoBehaviour {
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
 		//ui stuff
 		levelText.text = "Floor\n" + level.ToString();
-        nextLevelText.text = "Floor: " + (level + 1).ToString();
+        nextLevelText.text = "Floor " + (level + 1).ToString();
 		btScript.setPosition(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
 		ftScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
         leapScript.makeFullColor();
@@ -362,7 +362,7 @@ public class GameManager : MonoBehaviour {
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
 		//ui stuff
 		levelText.text = "Floor\n" + level.ToString();
-        nextLevelText.text = "Floor: " + (level + 1).ToString();
+        nextLevelText.text = "Floor " + (level + 1).ToString();
 		btScript.setPosition(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
 		ftScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
         leapScript.makeFullColor();
@@ -402,7 +402,7 @@ public class GameManager : MonoBehaviour {
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
 		//ui stuff
 		levelText.text = "Floor\n" + level.ToString();
-        nextLevelText.text = "Floor: " + (level + 1).ToString();
+        nextLevelText.text = "Floor " + (level + 1).ToString();
 		btScript.setPosition(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
 		ftScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
         leapScript.makeFullColor();
@@ -849,7 +849,7 @@ public class GameManager : MonoBehaviour {
 	{ 
 		level = LEVEL_START;
 		levelText.text = "Floor\n" + level.ToString();
-        nextLevelText.text = "Floor: " + (level + 1).ToString();
+        nextLevelText.text = "Floor " + (level + 1).ToString();
 		im = new InputManager();
 		gbm.clear();
 		//player lands on start
