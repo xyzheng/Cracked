@@ -773,7 +773,7 @@ public class GameBoardManager : MonoBehaviour
         float y = mTiles[0][bbm.getCurrentHeight() - 1].transform.position.y + delta.y;
         //Debug.Log("a" + x.ToString() + "b" + y.ToString() + "c" + sAnchor.ToString() + "d" + eAnchor.ToString());
         //done
-        Debug.Log(nextTileWidth);
+//        Debug.Log(nextTileWidth);
         if (nextTileWidth >= BASE_TILE_WIDTH || x < sAnchor.x || y < sAnchor.y)
         {
             Debug.Log("a" + x.ToString() + "b" + y.ToString() + "c" + sAnchor.ToString() + "d" + eAnchor.ToString());
