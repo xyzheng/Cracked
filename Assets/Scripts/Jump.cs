@@ -82,7 +82,7 @@ public class Jump : MonoBehaviour {
     }
     public void makeGreen()
     {
-        GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f, 1f);
+        GetComponent<SpriteRenderer>().color = new Color(0.0f, 162f / 255f, 232f / 255f, 1f);
         color = 1;
     }
     public void unColor()

@@ -99,18 +99,18 @@ public class GameManager : MonoBehaviour {
 			exit = (GameObject)Instantiate(exit, exitPos, Quaternion.identity);
 			//basic ui
 			levelText.text = "Floor\n" + level.ToString();
-            nextLevelText.text = "Floor: " + (level + 1).ToString();
-			backtrack = (GameObject)Instantiate(backtrack, new Vector3(entrancePos.x, exitPos.y + 1, 0), Quaternion.identity);
+            nextLevelText.text = "Floor " + (level + 1).ToString();
+			backtrack = (GameObject)Instantiate(backtrack, new Vector3(entrancePos.x + 2, exitPos.y + 1, 0), Quaternion.identity);
 			btScript = backtrack.GetComponent<BackTrack>();
 			btScript.makeTransparent();
-			forwardtrack = (GameObject)Instantiate(forwardtrack, new Vector3(exitPos.x, exitPos.y + 1, 0), Quaternion.identity);
+			forwardtrack = (GameObject)Instantiate(forwardtrack, new Vector3(exitPos.x - 2, exitPos.y + 1, 0), Quaternion.identity);
 			ftScript = forwardtrack.GetComponent<ForwardTrack>();
 			ftScript.makeTransparent();
-            jumpIcon = (GameObject)Instantiate(jumpIcon, new Vector3(entrancePos.x, exitPos.y, 0), Quaternion.identity);
+            jumpIcon = (GameObject)Instantiate(jumpIcon, new Vector3(entrancePos.x - 0.2f, exitPos.y + 0.0f, 0), Quaternion.identity);
             jumpScript = jumpIcon.GetComponent<Jump>();
-            leapIcon = (GameObject)Instantiate(leapIcon, new Vector3(entrancePos.x, exitPos.y - 1, 0), Quaternion.identity);
+            leapIcon = (GameObject)Instantiate(leapIcon, new Vector3(entrancePos.x - 0.2f, exitPos.y - 1.0f, 0), Quaternion.identity);
             leapScript = leapIcon.GetComponent<Leap>();
-            pushIcon = (GameObject)Instantiate(pushIcon, new Vector3(entrancePos.x, exitPos.y - 2, 0), Quaternion.identity);
+            pushIcon = (GameObject)Instantiate(pushIcon, new Vector3(entrancePos.x - 0.2f, exitPos.y - 2.0f, 0), Quaternion.identity);
             pushScript = pushIcon.GetComponent<Push>();
             eyeScript = eye.GetComponent<Eye>();
 			state = GameState.PLAY;
@@ -225,8 +225,8 @@ public class GameManager : MonoBehaviour {
 		//ui stuff
 		levelText.text = "Floor\n" + level.ToString();
         nextLevelText.text = "Floor: " + (level + 1).ToString();
-		btScript.setPosition(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
-		ftScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+		btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+		ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
         leapScript.makeFullColor();
         leapScript.untoggle();
         pushScript.stopShake();
@@ -363,8 +363,8 @@ public class GameManager : MonoBehaviour {
 		//ui stuff
 		levelText.text = "Floor\n" + level.ToString();
         nextLevelText.text = "Floor: " + (level + 1).ToString();
-		btScript.setPosition(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
-		ftScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+		btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+		ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
         leapScript.makeFullColor();
         leapScript.untoggle();
         pushScript.stopShake();
@@ -403,8 +403,8 @@ public class GameManager : MonoBehaviour {
 		//ui stuff
 		levelText.text = "Floor\n" + level.ToString();
         nextLevelText.text = "Floor: " + (level + 1).ToString();
-		btScript.setPosition(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
-		ftScript.setPosition(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+		btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+		ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
         leapScript.makeFullColor();
         leapScript.untoggle();
         pushScript.stopShake();
@@ -769,7 +769,7 @@ public class GameManager : MonoBehaviour {
                 leapMode = false;
             }
         }
-        else if (!playerScript.didJump() && Input.GetKeyUp(im.getJumpKey()) && !playerScript.isBusy())
+        else if (!playerScript.didJump() && Input.GetKeyUp(im.getJumpKey()) && !playerScript.isBusy() && !leapMode)
         {
             gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
             //check if move valid - player's y is flipped
@@ -849,7 +849,7 @@ public class GameManager : MonoBehaviour {
 	{ 
 		level = LEVEL_START;
 		levelText.text = "Floor\n" + level.ToString();
-        nextLevelText.text = "Floor: " + (level + 1).ToString();
+        nextLevelText.text = "Floor " + (level + 1).ToString();
 		im = new InputManager();
 		gbm.clear();
 		//player lands on start

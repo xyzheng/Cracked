@@ -9,7 +9,7 @@ public class Leap : MonoBehaviour {
     private int color = -1;      // -1 = white       // 0 = red      // 1 = green
     private Vector3 orig;
     private Vector3 togglePos;
-    private const float DELTA_X = 0.75f;
+    private const float DELTA_X = 0.35f;
     private const int FRAMES = 20;
     private enum AnimationState { IDLE, JUMP_UP, JUMP_DOWN }
     private AnimationState currentState;
@@ -116,7 +116,7 @@ public class Leap : MonoBehaviour {
     }
     public void makeGreen()
     {
-        GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f, 1f);
+        GetComponent<SpriteRenderer>().color = new Color(0.0f, 162f/255f, 232f/255f, 1f);
         color = 1;
     }
     public void unColor()
