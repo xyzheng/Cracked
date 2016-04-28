@@ -2949,6 +2949,13 @@ MonoBehaviour:
   leapIcon: {fileID: 101262, guid: 6905d8287b252bd4eb5d6d70a1d60b5a, type: 2}
   pushIcon: {fileID: 179456, guid: 9955c740a66400e4aaca9fc3c13f575f, type: 2}
   eye: {fileID: 1027298825}
+  peekText: {fileID: 52575682}
+  peekName: {fileID: 1453808640}
+  jumpLevel: 0
+  leapLevel: 0
+  pushLevel: 0
+  ewpLevel: 0
+  treLevel: 0
 --- !u!4 &1510949514
 Transform:
   m_ObjectHideFlags: 0
