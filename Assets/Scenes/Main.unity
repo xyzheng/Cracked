@@ -2941,21 +2941,16 @@ MonoBehaviour:
   player: {fileID: 149492, guid: a8f3b533472ff114296a95f69f24491a, type: 2}
   entrance: {fileID: 142568, guid: 927f00a0e46550c43bf547b0afae2628, type: 2}
   exit: {fileID: 115868, guid: 0d272075e407d154186a345a5869d753, type: 2}
-  levelText: {fileID: 21423511}
+  currentLevelText: {fileID: 21423511}
   nextLevelText: {fileID: 899995037}
-  backtrack: {fileID: 183818, guid: abaf33245d9e91044a6e09a128869d0d, type: 2}
-  forwardtrack: {fileID: 166304, guid: 791fd6629507d454a9314b61f296feee, type: 2}
+  btIcon: {fileID: 183818, guid: abaf33245d9e91044a6e09a128869d0d, type: 2}
+  ftIcon: {fileID: 166304, guid: 791fd6629507d454a9314b61f296feee, type: 2}
   jumpIcon: {fileID: 141978, guid: 764b8c5ee8974aa44bca0e4c81e71525, type: 2}
   leapIcon: {fileID: 101262, guid: 6905d8287b252bd4eb5d6d70a1d60b5a, type: 2}
   pushIcon: {fileID: 179456, guid: 9955c740a66400e4aaca9fc3c13f575f, type: 2}
   eye: {fileID: 1027298825}
-  peekText: {fileID: 52575682}
+  peekKey: {fileID: 52575682}
   peekName: {fileID: 1453808640}
-  jumpLevel: 0
-  leapLevel: 0
-  pushLevel: 0
-  ewpLevel: 0
-  treLevel: 0
 --- !u!4 &1510949514
 Transform:
   m_ObjectHideFlags: 0

@@ -19,11 +19,11 @@ public class GameManager : MonoBehaviour {
     public GameObject entrance;
 	public GameObject exit;
     //ui
-    public Text levelText;
+    public Text currentLevelText;
     public Text nextLevelText;
-	public GameObject backtrack;
+	public GameObject btIcon;
 	private BackTrack btScript;
-	public GameObject forwardtrack;
+	public GameObject ftIcon;
 	private ForwardTrack ftScript;
     public GameObject jumpIcon;
     private Jump jumpScript;
@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour {
     public GameObject pushIcon;
     private Push pushScript;
     public GameObject eye;
-    public GameObject peekText;
+    public GameObject peekKey;
     public GameObject peekName;
     private Eye eyeScript;
 	private Fade fadeScript;
@@ -42,11 +42,6 @@ public class GameManager : MonoBehaviour {
 	GameState priorState;
     enum ArcadeState { IDLE, JUMP, LEAP, PUSH, EWP, TRE }
     ArcadeState astate = ArcadeState.IDLE;
-    public int jumpLevel = 0;
-    public int leapLevel = 0;
-    public int pushLevel = 0;
-    public int ewpLevel = 0;
-    public int treLevel = 0;
 	enum LoadState { PLAYER, NEXT, BACK, FORWARD }
 	LoadState lstate;
 	private int level;
@@ -107,13 +102,13 @@ public class GameManager : MonoBehaviour {
 			entrance = (GameObject)Instantiate(entrance, entrancePos, Quaternion.identity);
 			exit = (GameObject)Instantiate(exit, exitPos, Quaternion.identity);
 			//basic ui
-			levelText.text = "Floor\n" + level.ToString();
+			currentLevelText.text = "Floor\n" + level.ToString();
             nextLevelText.text = "Floor " + (level + 1).ToString();
-			backtrack = (GameObject)Instantiate(backtrack, new Vector3(entrancePos.x + 2, exitPos.y + 1, 0), Quaternion.identity);
-			btScript = backtrack.GetComponent<BackTrack>();
+			btIcon = (GameObject)Instantiate(btIcon, new Vector3(entrancePos.x + 2, exitPos.y + 1, 0), Quaternion.identity);
+			btScript = btIcon.GetComponent<BackTrack>();
 			btScript.makeTransparent();
-			forwardtrack = (GameObject)Instantiate(forwardtrack, new Vector3(exitPos.x - 2, exitPos.y + 1, 0), Quaternion.identity);
-			ftScript = forwardtrack.GetComponent<ForwardTrack>();
+			ftIcon = (GameObject)Instantiate(ftIcon, new Vector3(exitPos.x - 2, exitPos.y + 1, 0), Quaternion.identity);
+			ftScript = ftIcon.GetComponent<ForwardTrack>();
 			ftScript.makeTransparent();
             jumpIcon = (GameObject)Instantiate(jumpIcon, new Vector3(entrancePos.x - 0.2f, exitPos.y + 0.0f, 0), Quaternion.identity);
             jumpScript = jumpIcon.GetComponent<Jump>();
@@ -150,8 +145,8 @@ public class GameManager : MonoBehaviour {
                 pushIcon.SetActive(false);
                 eye.SetActive(false);
                 nextLevelText.text = "";
-                backtrack.SetActive(false);
-                forwardtrack.SetActive(false);
+                btIcon.SetActive(false);
+                ftIcon.SetActive(false);
                 playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
                 playerScript.notJump();
                 playerScript.notLeap();
@@ -162,7 +157,7 @@ public class GameManager : MonoBehaviour {
                 entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
                 exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
                 //ui stuff
-                levelText.text = "Floor\n" + level.ToString();
+                currentLevelText.text = "Floor\n" + level.ToString();
                 Debug.Log("Loading Jump levels");
             }
             if (Input.GetKeyUp(KeyCode.Keypad1))
@@ -177,8 +172,8 @@ public class GameManager : MonoBehaviour {
                 pushIcon.SetActive(false);
                 eye.SetActive(false);
                 nextLevelText.text = "";
-                backtrack.SetActive(false);
-                forwardtrack.SetActive(false);
+                btIcon.SetActive(false);
+                ftIcon.SetActive(false);
                 playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
                 playerScript.notJump();
                 playerScript.notLeap();
@@ -189,7 +184,7 @@ public class GameManager : MonoBehaviour {
                 entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
                 exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
                 //ui stuff
-                levelText.text = "Floor\n" + level.ToString();
+                currentLevelText.text = "Floor\n" + level.ToString();
                 Debug.Log("Loading Leap levels");
             }
             if (Input.GetKeyUp(KeyCode.Keypad2))
@@ -204,8 +199,8 @@ public class GameManager : MonoBehaviour {
                 pushIcon.SetActive(true);
                 eye.SetActive(false);
                 nextLevelText.text = "";
-                backtrack.SetActive(false);
-                forwardtrack.SetActive(false);
+                btIcon.SetActive(false);
+                ftIcon.SetActive(false);
                 playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
                 playerScript.notJump();
                 playerScript.notLeap();
@@ -216,7 +211,7 @@ public class GameManager : MonoBehaviour {
                 entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
                 exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
                 //ui stuff
-                levelText.text = "Floor\n" + level.ToString();
+                currentLevelText.text = "Floor\n" + level.ToString();
                 Debug.Log("Loading Push levels");
             }
 
@@ -257,7 +252,7 @@ public class GameManager : MonoBehaviour {
 		}
         else if (state == GameState.PLAY_ARCADE)
         {
-            peekText.SetActive(false);
+            peekKey.SetActive(false);
             peekName.SetActive(false);
             if (astate == ArcadeState.JUMP)
             {
@@ -428,7 +423,7 @@ public class GameManager : MonoBehaviour {
                             entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
                             exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
                             //ui stuff
-                            levelText.text = "Floor\n" + level.ToString();
+                            currentLevelText.text = "Floor\n" + level.ToString();
                             btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
                             ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
                             jumpScript.makeFullColor();
@@ -510,7 +505,7 @@ public class GameManager : MonoBehaviour {
                     entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
                     exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
                     //ui stuff
-                    levelText.text = "Floor\n" + level.ToString();
+                    currentLevelText.text = "Floor\n" + level.ToString();
                     btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
                     ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
                     jumpScript.makeFullColor();
@@ -771,7 +766,7 @@ public class GameManager : MonoBehaviour {
                             entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
                             exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
                             //ui stuff
-                            levelText.text = "Floor\n" + level.ToString();
+                            currentLevelText.text = "Floor\n" + level.ToString();
                             btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
                             ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
                             jumpScript.makeFullColor();
@@ -859,7 +854,7 @@ public class GameManager : MonoBehaviour {
                     entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
                     exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
                     //ui stuff
-                    levelText.text = "Floor\n" + level.ToString();
+                    currentLevelText.text = "Floor\n" + level.ToString();
                     btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
                     ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
                     jumpScript.makeFullColor();
@@ -1042,7 +1037,7 @@ public class GameManager : MonoBehaviour {
                             entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
                             exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
                             //ui stuff
-                            levelText.text = "Floor\n" + level.ToString();
+                            currentLevelText.text = "Floor\n" + level.ToString();
                             btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
                             ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
                             jumpScript.makeFullColor();
@@ -1102,7 +1097,7 @@ public class GameManager : MonoBehaviour {
                     entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
                     exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
                     //ui stuff
-                    levelText.text = "Floor\n" + level.ToString();
+                    currentLevelText.text = "Floor\n" + level.ToString();
                     btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
                     ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
                     jumpScript.makeFullColor();
@@ -1152,7 +1147,7 @@ public class GameManager : MonoBehaviour {
             //exit peeking
             if (Input.GetKeyUp(im.getPeekKey()))
             {
-                levelText.text = "Floor\n" + level.ToString();
+                currentLevelText.text = "Floor\n" + level.ToString();
                 nextLevelText.text = "Floor: " + (level + 1).ToString();
                 playerScript.unfadePlayer();
                 gbm.unpeek();
@@ -1184,7 +1179,7 @@ public class GameManager : MonoBehaviour {
         entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
 		//ui stuff
-		levelText.text = "Floor\n" + level.ToString();
+		currentLevelText.text = "Floor\n" + level.ToString();
         nextLevelText.text = "Floor: " + (level + 1).ToString();
 		btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
 		ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
@@ -1305,7 +1300,7 @@ public class GameManager : MonoBehaviour {
 		entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
 		//ui stuff
-		levelText.text = "Floor\n" + level.ToString();
+		currentLevelText.text = "Floor\n" + level.ToString();
         nextLevelText.text = "Floor: " + (level + 1).ToString();
 		btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
 		ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
@@ -1345,7 +1340,7 @@ public class GameManager : MonoBehaviour {
 		entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
 		//ui stuff
-		levelText.text = "Floor\n" + level.ToString();
+		currentLevelText.text = "Floor\n" + level.ToString();
         nextLevelText.text = "Floor: " + (level + 1).ToString();
 		btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
 		ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
@@ -1359,7 +1354,7 @@ public class GameManager : MonoBehaviour {
 	}
 	public void handlePeek()
 	{
-        levelText.text = "Next\nFloor";
+        currentLevelText.text = "Next\nFloor";
         nextLevelText.text = "";
 		state = GameState.PEEK;
 		gbm.peek();
@@ -1779,7 +1774,7 @@ public class GameManager : MonoBehaviour {
 	public void resetGame()
 	{ 
 		level = LEVEL_START;
-		levelText.text = "Floor\n" + level.ToString();
+		currentLevelText.text = "Floor\n" + level.ToString();
         nextLevelText.text = "Floor " + (level + 1).ToString();
 		im = new InputManager();
 		gbm.clear();
@@ -1796,11 +1791,19 @@ public class GameManager : MonoBehaviour {
         //reset entrance/exit
         entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+        leapIcon.SetActive(true);
         leapScript.makeFullColor();
         leapScript.untoggle();
+        pushIcon.SetActive(true);
         pushScript.stopShake();
         pushScript.makeFullColor();
+        jumpIcon.SetActive(true);
         jumpScript.makeFullColor();
+        eye.SetActive(true);
+        peekName.SetActive(true);
+        peekKey.SetActive(true);
+        btIcon.SetActive(true);
+        ftIcon.SetActive(true);
         //update icons
         gbm.clearAllTileColors();
         handleIcons();
