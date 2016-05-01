@@ -59,10 +59,10 @@ public class GameManager : MonoBehaviour {
 	//public static AudioSource music;
 
 	//sliders and toggles
-	private Slider soundSlider;
-	private Slider musicSlider;
-	private Toggle soundToggle;
-	private Toggle musicToggle;
+	public Slider soundSlider;
+	public Slider musicSlider;
+	public Toggle soundToggle;
+	public Toggle musicToggle;
 
     // rock push var
     bool rockPushed;
@@ -1857,16 +1857,15 @@ public class GameManager : MonoBehaviour {
     /* SOUND */
     //sound slider
     public void updateSoundSlider () {
-		soundSlider = GameObject.Find("Sound Slider").GetComponent<Slider>();
-		for (int i=0; i<aSrc.Length; i++) {
-			aSrc[i].volume = soundSlider.value;
+		if (soundToggle.isOn) {
+			for (int i=0; i<aSrc.Length-1; i++) {
+				aSrc[i].volume = soundSlider.value;
+			}
 		}
 	}
 	//sound toggle
 	public void toggleSound () {
-		soundToggle = GameObject.Find("Sound Toggle").GetComponent<Toggle>();
-		soundSlider = GameObject.Find("Sound Slider").GetComponent<Slider>();
-		for (int i=0; i<aSrc.Length; i++) {
+		for (int i=0; i<aSrc.Length-1; i++) {
 			if (!soundToggle.isOn) {
 				aSrc[i].volume = 0f;
 			}
@@ -1877,17 +1876,16 @@ public class GameManager : MonoBehaviour {
 	}
 	//music slider
 	public void updateMusicSlider () {
-		musicSlider = GameObject.Find("Music Slider").GetComponent<Slider>();
-		//	music.volume = musicSlider.value;
+		if (musicToggle.isOn) { 
+			aSrc[5].volume = musicSlider.value;
+		}
 	}
 	public void toggleMusic () {
-		musicToggle = GameObject.Find("Music Toggle").GetComponent<Toggle>();
-		musicSlider = GameObject.Find("Music Slider").GetComponent<Slider>();
 		if (!musicToggle.isOn) {
-			//music.volume = 0f;
+			aSrc[5].volume = 0f;
 		}
 		else {
-			//	music.volume = musicSlider.value;
+			aSrc[5].volume = musicSlider.value;
 		}
 	}
 
@@ -1910,7 +1908,7 @@ public class GameManager : MonoBehaviour {
 		state = GameState.PLAY_ENDLESS;
 	}
 	public void mainMenuButton () {
-		StartCoroutine(fadeScript.gameFadeToBlack());
+		StartCoroutine(fadeScript.fadeOut());
 	}
 
     public void debug()

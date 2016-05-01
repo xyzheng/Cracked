@@ -92,7 +92,7 @@ public class MenuManager : MonoBehaviour {
 
 
 	void Update () {
-		if (fadeScript.fadingPanel.alpha == 0) {
+		if (fadeScript.faded) {
 			SceneManager.LoadScene ("Main");
 		}
 	}
