@@ -29,8 +29,8 @@ public class GameBoardManager : MonoBehaviour
     private List<KeyValuePair<Vector2, Vector2>> movingRocks;
 
     //minimap
-    private Vector2 sAnchor;
-    private Vector2 eAnchor;
+    private Vector2 sanch;
+    private Vector2 eanch;
     private const float BASE_TILE_WIDTH = 1f;
     private const float MIN_TILE_WIDTH = 0.25f;
 
@@ -42,9 +42,11 @@ public class GameBoardManager : MonoBehaviour
     ///zooming in and out
     private enum State { IDLE, BACKTRACK, FORWARDTRACK, PEEKING, CLEARED_BOARD, UNPEEKING }
     private State state;
-    private float currentTileWidth;
-    private float nextTileWidth;
+    private float ctw;
+    private float ntw;
     private int frames = 16;
+
+    private bool noMinimap;
 
     // (x, y) coordinates for highlighting a tile red.      Used to indicate an invalid move.
     int redX = -1;
@@ -90,8 +92,9 @@ public class GameBoardManager : MonoBehaviour
         color = new Vector4(1f, 1f, 1f, 1f);
         //zoom
         state = State.IDLE;
-        currentTileWidth = BASE_TILE_WIDTH;
-        nextTileWidth = MIN_TILE_WIDTH;
+        ctw = BASE_TILE_WIDTH;
+        ntw = MIN_TILE_WIDTH;
+        noMinimap = true;
     }
     //Do all procedural animation in lateupdate - conflicts with unity's animator otherwise
     void LateUpdate()
@@ -193,17 +196,17 @@ public class GameBoardManager : MonoBehaviour
             {
                 if (moveMapRight())
                 {
-                    currentTileWidth = BASE_TILE_WIDTH;
-                    nextTileWidth = MIN_TILE_WIDTH;
+                    ctw = BASE_TILE_WIDTH;
+                    ntw = MIN_TILE_WIDTH;
                     for (int i = 0; i < mTiles.Length; i++)
                     {
                         for (int j = 0; j < mTiles[i].Length; j++)
                         {
-                            mTiles[i][j].transform.position = new Vector3(eAnchor.x + (i * MIN_TILE_WIDTH), eAnchor.y + ((bbm.getNextHeight() - j - 1) * MIN_TILE_WIDTH), N_TILE_Z);
+                            mTiles[i][j].transform.position = new Vector3(eanch.x + (i * MIN_TILE_WIDTH), eanch.y + ((bbm.getNextHeight() - j - 1) * MIN_TILE_WIDTH), N_TILE_Z);
                             mTiles[i][j].transform.localScale = new Vector3(MIN_TILE_WIDTH, MIN_TILE_WIDTH, transform.localScale.z);
                             if (mRocks[i][j] != null)
                             {
-                                mRocks[i][j].transform.position = new Vector3(eAnchor.x + (i * MIN_TILE_WIDTH), eAnchor.y + ((bbm.getNextHeight() - j - 1) * MIN_TILE_WIDTH), N_ROCK_Z);
+                                mRocks[i][j].transform.position = new Vector3(eanch.x + (i * MIN_TILE_WIDTH), eanch.y + ((bbm.getNextHeight() - j - 1) * MIN_TILE_WIDTH), N_ROCK_Z);
                                 mRocks[i][j].transform.localScale = new Vector3(MIN_TILE_WIDTH, MIN_TILE_WIDTH, transform.localScale.z);
                             }
                         }
@@ -378,8 +381,8 @@ public class GameBoardManager : MonoBehaviour
     public void clearedCurrentBoard()
     {
         state = State.CLEARED_BOARD;
-        currentTileWidth = BASE_TILE_WIDTH;
-        nextTileWidth = MIN_TILE_WIDTH;
+        ctw = BASE_TILE_WIDTH;
+        ntw = MIN_TILE_WIDTH;
     }
     public void damageCurrentBoard(int x, int y)
     {
@@ -648,8 +651,8 @@ public class GameBoardManager : MonoBehaviour
     }
     private void drawTiles()
     {
-        sAnchor = new Vector2(bbm.getStart().x, bbm.getCurrentHeight() - bbm.getStart().y - 1);
-        eAnchor = new Vector2(sAnchor.x + bbm.getCurrentWidth() - MIN_TILE_WIDTH, bbm.getCurrentHeight() - (bbm.getStart().y) + MIN_TILE_WIDTH);
+        sanch = new Vector2(bbm.getStart().x, bbm.getCurrentHeight() - bbm.getStart().y - 1);
+        eanch = new Vector2(sanch.x + bbm.getCurrentWidth() - MIN_TILE_WIDTH, bbm.getCurrentHeight() - (bbm.getStart().y) + MIN_TILE_WIDTH);
         drawCurrentTiles();
         drawNextTiles();
     }
@@ -689,7 +692,7 @@ public class GameBoardManager : MonoBehaviour
         {
             for (int j = 0; j < bbm.getNextHeight(); j++)
             {
-                mTiles[i][j] = (GameObject)Instantiate(mTile, new Vector3(eAnchor.x + (i * MIN_TILE_WIDTH), eAnchor.y + ((bbm.getNextHeight() - j - 1) * MIN_TILE_WIDTH), N_TILE_Z), Quaternion.identity);
+                mTiles[i][j] = (GameObject)Instantiate(mTile, new Vector3(eanch.x + (i * MIN_TILE_WIDTH), eanch.y + ((bbm.getNextHeight() - j - 1) * MIN_TILE_WIDTH), N_TILE_Z), Quaternion.identity);
                 if (bbm.nextIsDamagedAt(i, j))
                 {
                     Tile script = mTiles[i][j].GetComponent<Tile>();
@@ -706,8 +709,8 @@ public class GameBoardManager : MonoBehaviour
     }
     private void drawRocks()
     {
-        sAnchor = new Vector2(bbm.getStart().x, bbm.getCurrentHeight() - bbm.getStart().y - 1);
-        eAnchor = new Vector2(sAnchor.x + bbm.getCurrentWidth() - MIN_TILE_WIDTH, bbm.getCurrentHeight() - (bbm.getStart().y) + MIN_TILE_WIDTH);
+        sanch = new Vector2(bbm.getStart().x, bbm.getCurrentHeight() - bbm.getStart().y - 1);
+        eanch = new Vector2(sanch.x + bbm.getCurrentWidth() - MIN_TILE_WIDTH, bbm.getCurrentHeight() - (bbm.getStart().y) + MIN_TILE_WIDTH);
         drawCurrentRocks();
         drawNextRocks();
     }
@@ -727,7 +730,7 @@ public class GameBoardManager : MonoBehaviour
         {
             for (int j = 0; j < bbm.getNextHeight(); j++)
             {
-                if (bbm.nextHasRockAt(i, j)) { mRocks[i][j] = (GameObject)Instantiate(mRock, new Vector3(eAnchor.x + (i * MIN_TILE_WIDTH), eAnchor.y + ((bbm.getCurrentHeight() - j - 1) * MIN_TILE_WIDTH), N_ROCK_Z), Quaternion.identity); }
+                if (bbm.nextHasRockAt(i, j)) { mRocks[i][j] = (GameObject)Instantiate(mRock, new Vector3(eanch.x + (i * MIN_TILE_WIDTH), eanch.y + ((bbm.getCurrentHeight() - j - 1) * MIN_TILE_WIDTH), N_ROCK_Z), Quaternion.identity); }
             }
         }
     }
@@ -752,15 +755,15 @@ public class GameBoardManager : MonoBehaviour
         //next board
         if (bbm.nextIsDamagedAt(x, y)) {
             tiles[x][y].GetComponent<Tile>().stepTile();
-            mTiles[x][y].GetComponent<Tile>().crackTile(); 
+            if (mTiles[x][y] != null) mTiles[x][y].GetComponent<Tile>().crackTile(); 
         }
         else if (bbm.nextIsDestroyedAt(x, y)) { mTiles[x][y].GetComponent<Tile>().breakTile(); }
     }
     private void updateRock(int x, int y)
     {
         //next
-        if (bbm.nextHasRockAt(x,y) && mRocks[x][y] == null){
-            mRocks[x][y] = (GameObject)Instantiate(mRock, new Vector3(eAnchor.x + (x * MIN_TILE_WIDTH), eAnchor.y + ((bbm.getCurrentHeight() - y - 1) * MIN_TILE_WIDTH), N_ROCK_Z), Quaternion.identity);
+        if (bbm.nextHasRockAt(x,y) && mRocks[x][y] == null && !noMinimap){
+            mRocks[x][y] = (GameObject)Instantiate(mRock, new Vector3(eanch.x + (x * MIN_TILE_WIDTH), eanch.y + ((bbm.getCurrentHeight() - y - 1) * MIN_TILE_WIDTH), N_ROCK_Z), Quaternion.identity);
         }
     }
 
@@ -768,39 +771,33 @@ public class GameBoardManager : MonoBehaviour
     public void goDown()
     {
         state = State.FORWARDTRACK;
-        currentTileWidth = BASE_TILE_WIDTH;
-        nextTileWidth = MIN_TILE_WIDTH;
+        ctw = BASE_TILE_WIDTH;
+        ntw = MIN_TILE_WIDTH;
     }
     private bool moveMapLeft() {
-        Vector2 delta = (sAnchor - eAnchor) / frames;
+        Vector2 delta = (sanch - eanch) / frames;
         float x = mTiles[0][bbm.getCurrentHeight() - 1].transform.position.x + delta.x;
         float y = mTiles[0][bbm.getCurrentHeight() - 1].transform.position.y + delta.y;
-        //Debug.Log("a" + x.ToString() + "b" + y.ToString() + "c" + sAnchor.ToString() + "d" + eAnchor.ToString());
-        //done
-//        Debug.Log(nextTileWidth);
-        if (nextTileWidth >= BASE_TILE_WIDTH || x < sAnchor.x || y < sAnchor.y)
+        if (ntw >= BASE_TILE_WIDTH || x < sanch.x || y < sanch.y)
         {
-            Debug.Log("a" + x.ToString() + "b" + y.ToString() + "c" + sAnchor.ToString() + "d" + eAnchor.ToString());
             state = State.IDLE;
-            nextTileWidth = BASE_TILE_WIDTH;
+            ntw = BASE_TILE_WIDTH;
         }
         else
         {
             float deltaSize = (BASE_TILE_WIDTH - MIN_TILE_WIDTH)/frames;
-            nextTileWidth += deltaSize;
+            ntw += deltaSize;
             //transform
             for (int i = 0; i < mTiles.Length; i++)
             {
                 for (int j = 0; j < mTiles[i].Length; j++)
                 {
-                    //mTiles[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y - (j * nextTileWidth), TILE_Z - 2);
-                    mTiles[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y + ((bbm.getNextHeight() - j - 1) * nextTileWidth), TILE_Z - 2);
-                    mTiles[i][j].transform.localScale = new Vector3(nextTileWidth, nextTileWidth, transform.localScale.z);
+                    mTiles[i][j].transform.position = new Vector3(x + (i * ntw), y + ((bbm.getNextHeight() - j - 1) * ntw), TILE_Z - 2);
+                    mTiles[i][j].transform.localScale = new Vector3(ntw, ntw, transform.localScale.z);
                     if (mRocks[i][j] != null)
                     {
-                        //mRocks[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y - (j * nextTileWidth), ROCK_Z - 2);
-                        mRocks[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y + ((bbm.getNextHeight() - j - 1) * nextTileWidth), ROCK_Z - 2);
-                        mRocks[i][j].transform.localScale = new Vector3(nextTileWidth, nextTileWidth, transform.localScale.z);
+                        mRocks[i][j].transform.position = new Vector3(x + (i * ntw), y + ((bbm.getNextHeight() - j - 1) * ntw), ROCK_Z - 2);
+                        mRocks[i][j].transform.localScale = new Vector3(ntw, ntw, transform.localScale.z);
                     }
                 }
             }
@@ -854,8 +851,8 @@ public class GameBoardManager : MonoBehaviour
     public void goUp()
     {
         state = State.BACKTRACK;
-        currentTileWidth = BASE_TILE_WIDTH;
-        nextTileWidth = MIN_TILE_WIDTH;
+        ctw = BASE_TILE_WIDTH;
+        ntw = MIN_TILE_WIDTH;
     }
     //private void zoomIn()
     //{
@@ -904,31 +901,31 @@ public class GameBoardManager : MonoBehaviour
     //peek
     private bool moveBoardRight()
     {
-        Vector2 delta = (eAnchor - sAnchor) / frames;
+        Vector2 delta = (eanch - sanch) / frames;
         float x = tiles[0][bbm.getCurrentHeight() - 1].transform.position.x + delta.x;
         float y = tiles[0][bbm.getCurrentHeight() - 1].transform.position.y + delta.y;
         //Debug.Log("a" + x.ToString() + "b" + y.ToString() + "c" + sAnchor.ToString() + "d" + eAnchor.ToString());
         //done
-        if (currentTileWidth <= MIN_TILE_WIDTH || x > eAnchor.x || y > eAnchor.y )
+        if (ctw <= MIN_TILE_WIDTH || x > eanch.x || y > eanch.y )
         {
             state = State.IDLE;
-            currentTileWidth = BASE_TILE_WIDTH;
+            ctw = BASE_TILE_WIDTH;
         }
         else
         {
             float deltaSize = (BASE_TILE_WIDTH - MIN_TILE_WIDTH) / frames;
-            currentTileWidth -= deltaSize;
+            ctw -= deltaSize;
             //transform
             for (int i = 0; i < tiles.Length; i++)
             {
                 for (int j = 0; j < tiles[i].Length; j++)
                 {
-                    tiles[i][j].transform.position = new Vector3(x + (i * currentTileWidth), y + ((bbm.getNextHeight() - j - 1) * currentTileWidth), TILE_Z - 2);
-                    tiles[i][j].transform.localScale = new Vector3(currentTileWidth, currentTileWidth, transform.localScale.z);
+                    tiles[i][j].transform.position = new Vector3(x + (i * ctw), y + ((bbm.getNextHeight() - j - 1) * ctw), TILE_Z - 2);
+                    tiles[i][j].transform.localScale = new Vector3(ctw, ctw, transform.localScale.z);
                     if (rocks[i][j] != null)
                     {
-                        rocks[i][j].transform.position = new Vector3(x + (i * currentTileWidth), y + ((bbm.getNextHeight() - j - 1) * currentTileWidth), ROCK_Z - 2);
-                        rocks[i][j].transform.localScale = new Vector3(currentTileWidth, currentTileWidth, transform.localScale.z);
+                        rocks[i][j].transform.position = new Vector3(x + (i * ctw), y + ((bbm.getNextHeight() - j - 1) * ctw), ROCK_Z - 2);
+                        rocks[i][j].transform.localScale = new Vector3(ctw, ctw, transform.localScale.z);
                     }
                 }
             }
@@ -937,33 +934,33 @@ public class GameBoardManager : MonoBehaviour
     }
     private bool moveMapRight()
     {
-        Vector2 delta = (eAnchor - sAnchor) / frames;
+        Vector2 delta = (eanch - sanch) / frames;
         float x = mTiles[0][bbm.getCurrentHeight() - 1].transform.position.x + delta.x;
         float y = mTiles[0][bbm.getCurrentHeight() - 1].transform.position.y + delta.y;
         //Debug.Log("moving map" + x.ToString() + "b" + y.ToString() + "c" + sAnchor.ToString() + "d" + eAnchor.ToString());
         //done
-        if (nextTileWidth <= MIN_TILE_WIDTH || x > eAnchor.x || y > eAnchor.y)
+        if (ntw <= MIN_TILE_WIDTH || x > eanch.x || y > eanch.y)
         {
             state = State.IDLE;
-            nextTileWidth = MIN_TILE_WIDTH;
+            ntw = MIN_TILE_WIDTH;
         }
         else
         {
             float deltaSize = (BASE_TILE_WIDTH - MIN_TILE_WIDTH) / frames;
-            nextTileWidth -= deltaSize;
+            ntw -= deltaSize;
             //transform
             for (int i = 0; i < mTiles.Length; i++)
             {
                 for (int j = 0; j < mTiles[i].Length; j++)
                 {
                     //mTiles[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y - (j * nextTileWidth), TILE_Z - 2);
-                    mTiles[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y + ((bbm.getNextHeight() - j - 1) * nextTileWidth), TILE_Z - 2);
-                    mTiles[i][j].transform.localScale = new Vector3(nextTileWidth, nextTileWidth, transform.localScale.z);
+                    mTiles[i][j].transform.position = new Vector3(x + (i * ntw), y + ((bbm.getNextHeight() - j - 1) * ntw), TILE_Z - 2);
+                    mTiles[i][j].transform.localScale = new Vector3(ntw, ntw, transform.localScale.z);
                     if (mRocks[i][j] != null)
                     {
                         //mRocks[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y - (j * nextTileWidth), ROCK_Z - 2);
-                        mRocks[i][j].transform.position = new Vector3(x + (i * nextTileWidth), y + ((bbm.getNextHeight() - j - 1) * nextTileWidth), ROCK_Z - 2);
-                        mRocks[i][j].transform.localScale = new Vector3(nextTileWidth, nextTileWidth, transform.localScale.z);
+                        mRocks[i][j].transform.position = new Vector3(x + (i * ntw), y + ((bbm.getNextHeight() - j - 1) * ntw), ROCK_Z - 2);
+                        mRocks[i][j].transform.localScale = new Vector3(ntw, ntw, transform.localScale.z);
                     }
                 }
             }
@@ -974,8 +971,8 @@ public class GameBoardManager : MonoBehaviour
     {
         peeking = true;
         state = State.PEEKING;
-        currentTileWidth = BASE_TILE_WIDTH;
-        nextTileWidth = MIN_TILE_WIDTH;
+        ctw = BASE_TILE_WIDTH;
+        ntw = MIN_TILE_WIDTH;
     }
     public void unpeek()
     {
@@ -1030,44 +1027,125 @@ public class GameBoardManager : MonoBehaviour
             movingRocks.Add(new KeyValuePair<Vector2, Vector2>(new Vector2(sx, sy), new Vector2(dx, dy)));
         }
     }
-    /*
-	public void loadGame () {
-		//load rocks
-		for (int i=0; i<slm.currentBoardsInfo.listOfRocksX.Count; i++) {
-			//(GameObject)Instantiate(rock, new Vector3(i, bbm.getCurrentHeight() - j - 1, -1), Quaternion.identity)
-			bbm.currentPlaceRockAt (slm.currentBoardsInfo.listOfRocksX[i], slm.currentBoardsInfo.listOfRocksY[i]);
-		}
-		/*
-		for (int i=0; i<slm.currentBoardsInfo.listOfTilesX.Count; i++) {
-			//(GameObject)Instantiate(rock, new Vector3(i, bbm.getCurrentHeight() - j - 1, -1), Quaternion.identity)
-			bbm.currentPlaceRockAt (slm.currentBoardsInfo.listOfRocksX[i], slm.currentBoardsInfo.listOfRocksY[i]);
-		}
-		*
-		//load cracked tiles
-		for (int i=0; i<slm.currentBoardsInfo.listOfTilesX.Count; i++) {
-			bbm.damageCurrentBoard (slm.currentBoardsInfo.listOfTilesX[i], slm.currentBoardsInfo.listOfTilesY[i]);
-			tiles[slm.currentBoardsInfo.listOfTilesX[i]][slm.currentBoardsInfo.listOfTilesY[i]].GetComponent<Tile>().crackTile();
-			//Debug.Log (bbm.currentIsDamagedAt(slm.currentBoardsInfo.listOfTilesX[i], slm.currentBoardsInfo.listOfTilesY[i]));
-			//bbm.nextIsDamagedAt(x,y)){ tiles[x][y].GetComponent<Tile>().stepCrackTile()
-		}
-		//load broken floors
-		for (int i=0; i<slm.currentBoardsInfo.listOfHolesX.Count; i++) {
-			bbm.damageCurrentBoard (slm.currentBoardsInfo.listOfHolesX[i], slm.currentBoardsInfo.listOfHolesY[i]);
-			bbm.damageCurrentBoard (slm.currentBoardsInfo.listOfHolesX[i], slm.currentBoardsInfo.listOfHolesY[i]);
-			tiles[slm.currentBoardsInfo.listOfHolesX[i]][slm.currentBoardsInfo.listOfHolesY[i]].GetComponent<Tile>().forceBrokenTile();
-		}
+    
+    //level stuff
+    public bool loadJumpLevel(int level)
+    {
+        noMinimap = true;
+        int MIN_LEVEL = 0;
+        int MAX_LEVEL = 4;
+        if (level >= MIN_LEVEL && level <= MAX_LEVEL)
+        {
+            clearTiles();
+            clearRocks();
+            movingRocks.Clear();
+            bbm = new BoardManager();
+            if (level == 0)
+            {
+                //blank
+            }
+            else if (level == 1) {
+                bbm.damageCurrentBoard(3, 0);
+                bbm.currentPlaceRockAt(4, 0);
+            }
+            else if (level == 2)
+            {
+                bbm.currentPlaceRockAt(4, 0);
+            }
+            else if (level == 3)
+            {
+                bbm.currentPlaceRockAt(4, 0);
+                bbm.currentPlaceRockAt(3, 0);
+            }
+            else if (level == 4)
+            {
+                bbm.currentPlaceRockAt(4, 0);
+                bbm.currentPlaceRockAt(3, 0);
+                bbm.currentPlaceRockAt(3, 1);
+            }
+            //etc
+            drawCurrentTiles();
+            drawCurrentRocks();
+        }
+        return level == MAX_LEVEL + 1;
+    }
 
-		for (int i=0; i<slm.currentBoardsInfo.listOfStepOnsX.Count; i++) {
-			bbm.stepCurrentBoard (slm.currentBoardsInfo.listOfStepOnsX[i], slm.currentBoardsInfo.listOfStepOnsY[i]);
-			tiles[slm.currentBoardsInfo.listOfHolesX[i]][slm.currentBoardsInfo.listOfHolesY[i]].GetComponent<Tile>().stepTile();
-		}
-		//Debug.Log (slm.currentBoardsInfo.boards.Count);
-		/*
-		for (int i=0; i<slm.currentBoardsInfo.boards.Count; i++) {
-			bbm.boards.Add (slm.currentBoardsInfo.boards[i]);
-		}
-		*
-		clearRocks();
-		drawCurrentRocks();
-	} */
+    public bool loadLeapLevel(int level)
+    {
+        noMinimap = true;
+        int MIN_LEVEL = 0;
+        int MAX_LEVEL = 2;
+        if (level >= MIN_LEVEL && level <= MAX_LEVEL)
+        {
+            clearTiles();
+            clearRocks();
+            bbm = new BoardManager();
+            if (level == 0)
+            {
+                //blank
+            }
+            else if (level == 1)
+            {
+                bbm.damageCurrentBoard(0, 3);
+                bbm.damageCurrentBoard(1, 3);
+                bbm.damageCurrentBoard(2, 3);
+                bbm.damageCurrentBoard(3, 3);
+                bbm.damageCurrentBoard(0, 3);
+                bbm.damageCurrentBoard(1, 3);
+                bbm.damageCurrentBoard(2, 3);
+                bbm.damageCurrentBoard(3, 3);
+                bbm.damageCurrentBoard(2, 4);
+                bbm.damageCurrentBoard(2, 4);
+            }
+            else if (level == 2)
+            {
+                bbm.damageCurrentBoard(0, 3);
+                bbm.damageCurrentBoard(1, 3);
+                bbm.damageCurrentBoard(2, 3);
+                bbm.damageCurrentBoard(3, 3);
+                bbm.damageCurrentBoard(0, 3);
+                bbm.damageCurrentBoard(1, 3);
+                bbm.damageCurrentBoard(2, 3);
+                bbm.damageCurrentBoard(3, 3);
+                bbm.currentPlaceRockAt(2, 4);
+            }
+            //etc
+            drawCurrentTiles();
+            drawRocks();
+        }
+        return level == MAX_LEVEL + 1;
+    }
+
+    public bool loadPushLevel(int level)
+    {
+        noMinimap = true;
+        int MIN_LEVEL = 0;
+        int MAX_LEVEL = 1;
+        if (level >= MIN_LEVEL && level <= MAX_LEVEL)
+        {
+            clearTiles();
+            clearRocks();
+            bbm = new BoardManager();
+            if (level == 0)
+            {
+                //blank
+            }
+            else if (level == 1)
+            {
+                bbm.damageCurrentBoard(0, 3);
+                bbm.damageCurrentBoard(1, 3);
+                bbm.damageCurrentBoard(2, 3);
+                bbm.damageCurrentBoard(4, 3);
+                bbm.damageCurrentBoard(0, 3);
+                bbm.damageCurrentBoard(1, 3);
+                bbm.damageCurrentBoard(2, 3);
+                bbm.damageCurrentBoard(4, 3);
+                bbm.currentPlaceRockAt(3, 4);
+            }
+            //etc
+            drawCurrentTiles();
+            drawRocks();
+        }
+        return level == MAX_LEVEL + 1;
+    }
 }
