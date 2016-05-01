@@ -19,11 +19,11 @@ public class GameManager : MonoBehaviour {
     public GameObject entrance;
 	public GameObject exit;
     //ui
-    public Text levelText;
+    public Text currentLevelText;
     public Text nextLevelText;
-	public GameObject backtrack;
+	public GameObject btIcon;
 	private BackTrack btScript;
-	public GameObject forwardtrack;
+	public GameObject ftIcon;
 	private ForwardTrack ftScript;
     public GameObject jumpIcon;
     private Jump jumpScript;
@@ -32,12 +32,16 @@ public class GameManager : MonoBehaviour {
     public GameObject pushIcon;
     private Push pushScript;
     public GameObject eye;
+    public GameObject peekKey;
+    public GameObject peekName;
     private Eye eyeScript;
 	private Fade fadeScript;
 	//States
-	enum GameState { TITLE, PAUSE, LOAD, PEEK, PLAY }
+    enum GameState { TITLE, PAUSE, LOAD, PEEK, PLAY_ENDLESS, PLAY_ARCADE }
 	GameState state;
 	GameState priorState;
+    enum ArcadeState { IDLE, JUMP, LEAP, PUSH, EWP, TRE }
+    ArcadeState astate = ArcadeState.IDLE;
 	enum LoadState { PLAYER, NEXT, BACK, FORWARD }
 	LoadState lstate;
 	private int level;
@@ -98,13 +102,13 @@ public class GameManager : MonoBehaviour {
 			entrance = (GameObject)Instantiate(entrance, entrancePos, Quaternion.identity);
 			exit = (GameObject)Instantiate(exit, exitPos, Quaternion.identity);
 			//basic ui
-			levelText.text = "Floor\n" + level.ToString();
+			currentLevelText.text = "Floor\n" + level.ToString();
             nextLevelText.text = "Floor " + (level + 1).ToString();
-			backtrack = (GameObject)Instantiate(backtrack, new Vector3(entrancePos.x + 2, exitPos.y + 1, 0), Quaternion.identity);
-			btScript = backtrack.GetComponent<BackTrack>();
+			btIcon = (GameObject)Instantiate(btIcon, new Vector3(entrancePos.x + 2, exitPos.y + 1, 0), Quaternion.identity);
+			btScript = btIcon.GetComponent<BackTrack>();
 			btScript.makeTransparent();
-			forwardtrack = (GameObject)Instantiate(forwardtrack, new Vector3(exitPos.x - 2, exitPos.y + 1, 0), Quaternion.identity);
-			ftScript = forwardtrack.GetComponent<ForwardTrack>();
+			ftIcon = (GameObject)Instantiate(ftIcon, new Vector3(exitPos.x - 2, exitPos.y + 1, 0), Quaternion.identity);
+			ftScript = ftIcon.GetComponent<ForwardTrack>();
 			ftScript.makeTransparent();
             jumpIcon = (GameObject)Instantiate(jumpIcon, new Vector3(entrancePos.x - 0.2f, exitPos.y + 0.0f, 0), Quaternion.identity);
             jumpScript = jumpIcon.GetComponent<Jump>();
@@ -113,7 +117,7 @@ public class GameManager : MonoBehaviour {
             pushIcon = (GameObject)Instantiate(pushIcon, new Vector3(entrancePos.x - 0.2f, exitPos.y - 2.0f, 0), Quaternion.identity);
             pushScript = pushIcon.GetComponent<Push>();
             eyeScript = eye.GetComponent<Eye>();
-			state = GameState.PLAY;
+			state = GameState.PLAY_ENDLESS;
 			//update priorstate
 			priorState = GameState.TITLE;
 		}
@@ -126,13 +130,96 @@ public class GameManager : MonoBehaviour {
 			//update prior state
 			priorState = GameState.PAUSE;
 		}
-		else if (state == GameState.PLAY)
+		else if (state == GameState.PLAY_ENDLESS)
 		{
+            //remove this with main menu stuff
+            if (Input.GetKeyUp(KeyCode.Keypad0))
+            {
+                level = 0;
+                state = GameState.PLAY_ARCADE;
+                astate = ArcadeState.JUMP;
+                gbm.loadJumpLevel(level);
+                priorState = GameState.PLAY_ENDLESS;
+                jumpIcon.SetActive(true);
+                leapIcon.SetActive(false);
+                pushIcon.SetActive(false);
+                eye.SetActive(false);
+                nextLevelText.text = "";
+                btIcon.SetActive(false);
+                ftIcon.SetActive(false);
+                playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
+                playerScript.notJump();
+                playerScript.notLeap();
+                handledPlayerJump = false;
+                handledPlayerLeap = false;
+                rockPushed = false;
+                //reset entrance/exit
+                entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+                exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+                //ui stuff
+                currentLevelText.text = "Floor\n" + level.ToString();
+                Debug.Log("Loading Jump levels");
+            }
+            if (Input.GetKeyUp(KeyCode.Keypad1))
+            {
+                level = 0;
+                state = GameState.PLAY_ARCADE;
+                astate = ArcadeState.LEAP;
+                gbm.loadLeapLevel(level);
+                priorState = GameState.PLAY_ENDLESS;
+                jumpIcon.SetActive(false);
+                leapIcon.SetActive(true);
+                pushIcon.SetActive(false);
+                eye.SetActive(false);
+                nextLevelText.text = "";
+                btIcon.SetActive(false);
+                ftIcon.SetActive(false);
+                playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
+                playerScript.notJump();
+                playerScript.notLeap();
+                handledPlayerJump = false;
+                handledPlayerLeap = false;
+                rockPushed = false;
+                //reset entrance/exit
+                entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+                exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+                //ui stuff
+                currentLevelText.text = "Floor\n" + level.ToString();
+                Debug.Log("Loading Leap levels");
+            }
+            if (Input.GetKeyUp(KeyCode.Keypad2))
+            {
+                level = 0;
+                state = GameState.PLAY_ARCADE;
+                astate = ArcadeState.PUSH;
+                gbm.loadPushLevel(level);
+                priorState = GameState.PLAY_ENDLESS;
+                jumpIcon.SetActive(false);
+                leapIcon.SetActive(false);
+                pushIcon.SetActive(true);
+                eye.SetActive(false);
+                nextLevelText.text = "";
+                btIcon.SetActive(false);
+                ftIcon.SetActive(false);
+                playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
+                playerScript.notJump();
+                playerScript.notLeap();
+                handledPlayerJump = false;
+                handledPlayerLeap = false;
+                rockPushed = false;
+                //reset entrance/exit
+                entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+                exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+                //ui stuff
+                currentLevelText.text = "Floor\n" + level.ToString();
+                Debug.Log("Loading Push levels");
+            }
+
 			//check if done with peek
 			if (priorState == GameState.PEEK)
 			{
 				gbm.unpeek();
-				priorState = GameState.PLAY;
+				priorState = GameState.PLAY_ENDLESS;
 			}
 			else
 			{
@@ -160,14 +247,883 @@ public class GameManager : MonoBehaviour {
 				//check input
 				handlePlayInput();
 				//update priorstate
-				priorState = GameState.PLAY;
+				priorState = GameState.PLAY_ENDLESS;
 			}
 		}
-		else if (state == GameState.LOAD)
-		{
-			//wait until player done with animation
-			if (lstate == LoadState.PLAYER && !playerScript.isBusy()){
-				lstate = LoadState.NEXT;
+        else if (state == GameState.PLAY_ARCADE)
+        {
+            peekKey.SetActive(false);
+            peekName.SetActive(false);
+            if (astate == ArcadeState.JUMP)
+            {
+                rockPushed = true;
+                //synch animations
+                if (!playerScript.isBusy())
+                {
+                    //synch animations
+                    if (!playerScript.duringMove)       // The tile gets cracked once the player steps on it (and is done hopping)
+                        gbm.steppedOn((int)playerScript.getPosition().x, gbm.getCurrentHeight() - (int)playerScript.getPosition().y - 1);
+                    //handle jump
+                    if (playerScript.didJump() && !handledPlayerJump) { handleJump(); }
+                    handleIcons();
+                }
+                priorState = GameState.PLAY_ARCADE;
+                //input
+                if (Input.GetKeyUp(im.getMoveUpKey()) && !playerScript.isBusy())
+                {
+                    gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
+                    //player's y is flipped
+                    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+                    //if backtracked accept changes
+                    gbm.moveWhileBacktrack((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    //if up valid
+                    if (gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1))
+                    {
+                        //player
+                        player.GetComponent<Player>().moveUp();
+                        //update icons
+                        handleIcons();
+                        if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                        //sound
+                        aSrc[0].PlayOneShot(crack, 1.0f);
+                    }
+                    else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)
+                        //&& gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)
+                        && gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y)
+                        && !gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)
+                        && gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2))
+                    {
+                        //rock push
+                        pushScript.startShake();
+                        rockPushed = true;
+                        gbm.pushRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1, (int)playerBoardPosition.x, (int)playerBoardPosition.y - 2);
+                        //player
+                        player.GetComponent<Player>().moveUp();
+                        //update icons
+                        handleIcons();
+                        if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                        //sound
+                        aSrc[0].PlayOneShot(crack, 1.0f);
+                    }
+                    //else playerScript.hopInPlace();        //invalid move
+                    else
+                    {
+                        playerScript.moveUpSmall();
+                        if (!pushScript.isFaded() && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)) pushScript.makeRed();
+                        if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)
+                        && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1))
+                        { gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1); }
+                    }
+
+                }
+                else if (Input.GetKeyUp(im.getMoveDownKey()) && !playerScript.isBusy())
+                {
+                    gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
+                    //player's y is flipped
+                    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+                    //if backtracked accept changes
+                    gbm.moveWhileBacktrack((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    if (gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1))          //check if move is valid
+                    {
+                        player.GetComponent<Player>().moveDown();               //move player
+                        //update icons
+                        handleIcons();
+                        if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                        aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                        //im.addToPriorKeys(im.getMoveDownKey());                //add to prior keys list
+                    }
+                    else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)
+                        //&& gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2)
+                        && gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y)
+                        && !gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2)
+                        && gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2))
+                    {
+                        rockPushed = true;                // can move a block down
+
+                        pushScript.startShake();
+                        gbm.pushRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1, (int)playerBoardPosition.x, (int)playerBoardPosition.y + 2);
+                        player.GetComponent<Player>().moveDown();                // move player
+                        //update icons
+                        handleIcons();
+                        if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                        aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
+                    }
+                    //else playerScript.hopInPlace();     //do the growing animation, hopping
+                    else
+                    {
+                        playerScript.moveDownSmall();
+                        if (!pushScript.isFaded() && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)) pushScript.makeRed();
+                        if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)
+                        && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1))
+                        { gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1); }
+                    }
+                }
+                else if (Input.GetKeyUp(im.getMoveLeftKey()) && !playerScript.isBusy())
+                {
+                    gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
+                    //player's y is flipped
+                    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+                    //if backtracked accept changes
+                    gbm.moveWhileBacktrack((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    if (gbm.canMoveTo((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y))          //check if move is valid
+                    {
+                        player.GetComponent<Player>().moveLeft();               //move player
+                        //update icons
+                        handleIcons();
+                        if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                        aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                        //im.addToPriorKeys(im.getMoveLeftKey());                //add to prior keys list
+                    }
+                    else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)
+                        //&& gbm.currentIsHealthyAt((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y)
+                        && gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y)
+                        && !gbm.hasRock((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y)
+                        && gbm.canMoveTo((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y))
+                    {
+                        rockPushed = true;                // can move a block left
+
+                        pushScript.startShake();
+                        gbm.pushRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y, (int)playerBoardPosition.x - 2, (int)playerBoardPosition.y);
+                        player.GetComponent<Player>().moveLeft();                // move player
+                        //update icons
+                        handleIcons();
+                        if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                        aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
+                    }
+                    //else playerScript.hopInPlace();     //do the growing animation, hopping
+                    else
+                    {
+                        playerScript.moveLeftSmall();
+                        if (!pushScript.isFaded() && gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)) pushScript.makeRed();
+                        if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)
+                        && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y))
+                        { gbm.setRedTile((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y); }
+                    }
+                }
+                else if (Input.GetKeyUp(im.getMoveRightKey()) && !playerScript.isBusy())
+                {
+                    gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
+                    //check if move valid - player's y is flipped
+                    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+                    //if backtracked accept changes
+                    gbm.moveWhileBacktrack((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    //check if at goal      //only move to next level when you press right and are at goal
+                    if (gbm.getGoal() == playerBoardPosition)
+                    {
+                        level += 1;
+                        if (!gbm.loadJumpLevel(level))
+                        {
+                            playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
+                            playerScript.notJump();
+                            playerScript.notLeap();
+                            handledPlayerJump = false;
+                            handledPlayerLeap = false;
+                            rockPushed = false;
+                            //reset entrance/exit
+                            entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+                            exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+                            //ui stuff
+                            currentLevelText.text = "Floor\n" + level.ToString();
+                            btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+                            ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+                            jumpScript.makeFullColor();
+                            //update icons
+                            handleIcons();
+                        }
+                        else
+                        {
+                            //DONE WITH JUMP LEVELS
+                            Debug.Log("Done with Jump Levels");
+                        }
+                    }
+                    if (gbm.canMoveTo((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))         //check if move valid
+                    {
+                        player.GetComponent<Player>().moveRight();                //move player
+                        //update icons
+                        handleIcons();
+                        if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                        aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                        //im.addToPriorKeys(im.getMoveRightKey());                //add to prior keys list
+                    }
+                    else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)
+                        //&& gbm.currentIsHealthyAt((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y)
+                        && gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y)
+                        && !gbm.hasRock((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y)
+                        && gbm.canMoveTo((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y))
+                    {
+                        rockPushed = true;                // can move a block right
+                        pushScript.startShake();
+                        gbm.pushRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y, (int)playerBoardPosition.x + 2, (int)playerBoardPosition.y);
+                        player.GetComponent<Player>().moveRight();                // move player
+                        //update icons
+                        handleIcons();
+                        if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                        aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
+                    }
+                    //else playerScript.hopInPlace();      //do the growing animation, hopping
+                    else
+                    {
+                        playerScript.moveRightSmall();
+                        if (!pushScript.isFaded() && gbm.hasRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)) pushScript.makeRed();
+                        if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)
+                        && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))
+                        { gbm.setRedTile((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y); }
+                    }
+                }
+                else if (!playerScript.didJump() && Input.GetKeyUp(im.getJumpKey()) && !playerScript.isBusy() && !leapMode)
+                {
+                    gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
+                    //check if move valid - player's y is flipped
+                    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+                    if (gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y))
+                    {
+                        //if backtracked accept changes
+                        gbm.moveWhileBacktrack((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                        jumpScript.startJump();
+                        playerScript.jump();
+                        //add to prior keys list
+                        //im.addToPriorKeys(im.getJumpKey());
+                    }
+                    else
+                    {
+                        playerScript.hopInPlace();
+                        jumpScript.makeRed();
+                        gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    }
+                }
+                else if (Input.GetKeyUp(im.getResetBoardKey()))
+                {
+                    gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
+                    gbm.loadJumpLevel(level);
+                    playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
+                    playerScript.notJump();
+                    playerScript.notLeap();
+                    handledPlayerJump = false;
+                    handledPlayerLeap = false;
+                    rockPushed = false;
+                    //reset entrance/exit
+                    entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+                    exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+                    //ui stuff
+                    currentLevelText.text = "Floor\n" + level.ToString();
+                    btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+                    ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+                    jumpScript.makeFullColor();
+                    //update icons
+                    handleIcons();
+                }
+                else if (Input.GetKeyUp(im.getPauseKey()) && state == GameState.PLAY_ARCADE) { handlePause(); }
+            }
+            else if (astate == ArcadeState.LEAP)
+            {
+                rockPushed = true;
+                //synch animations
+                if (!playerScript.isBusy())
+                {
+                    //synch animations
+                    if (!playerScript.duringMove)       // The tile gets cracked once the player steps on it (and is done hopping)
+                        gbm.steppedOn((int)playerScript.getPosition().x, gbm.getCurrentHeight() - (int)playerScript.getPosition().y - 1);
+                    //handle jump
+                    if (playerScript.didJump() && !handledPlayerJump) { handleJump(); }
+                    handleIcons();
+                }
+                priorState = GameState.PLAY_ARCADE;
+                if (Input.GetKeyUp(im.getMoveUpKey()) && !playerScript.isBusy())
+                {
+                    gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
+                    //player's y is flipped
+                    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+                    //if backtracked accept changes
+                    gbm.moveWhileBacktrack((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    //if not leap ...
+                    if (!leapMode)
+                    {
+                        //if up valid
+                        if (gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1))
+                        {
+                            //player
+                            player.GetComponent<Player>().moveUp();
+                            //update icons
+                            handleIcons();
+                            if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                            //sound
+                            aSrc[0].PlayOneShot(crack, 1.0f);
+                        }
+                        else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)
+                            //&& gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)
+                            && gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y)
+                            && !gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)
+                            && gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2))
+                        {
+                            //rock push
+                            pushScript.startShake();
+                            rockPushed = true;
+                            gbm.pushRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1, (int)playerBoardPosition.x, (int)playerBoardPosition.y - 2);
+                            //player
+                            player.GetComponent<Player>().moveUp();
+                            //update icons
+                            handleIcons();
+                            if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                            //sound
+                            aSrc[0].PlayOneShot(crack, 1.0f);
+                        }
+                        //else playerScript.hopInPlace();        //invalid move
+                        else
+                        {
+                            playerScript.moveUpSmall();
+                            if (!pushScript.isFaded() && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)) pushScript.makeRed();
+                            if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)
+                            && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1))
+                            { gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1); }
+                        }
+                    }
+                    else
+                    {
+                        if (gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)
+                            && gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)) // check if move is valid
+                        {
+                            player.GetComponent<Player>().moveUp2();        //move player two spaces up
+                            //update icons
+                            handleIcons();
+                            if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                            aSrc[0].PlayOneShot(crack, 1.0f);       // play walking sound
+                            handleLeap();
+                        }
+                        else
+                        {
+                            //can't leap
+                            leapScript.toggle();
+                            leapScript.makeRed();
+                            //playerScript.hopInPlace();
+                            playerScript.moveUpSmall();
+                            if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)
+                            && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2))
+                            { gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2); }
+                        }
+                        leapMode = false;
+                    }
+                }
+                else if (Input.GetKeyUp(im.getMoveDownKey()) && !playerScript.isBusy())
+                {
+                    gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
+                    //player's y is flipped
+                    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+                    //if backtracked accept changes
+                    gbm.moveWhileBacktrack((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    if (!leapMode)
+                    {
+                        if (gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1))          //check if move is valid
+                        {
+                            player.GetComponent<Player>().moveDown();               //move player
+                            //update icons
+                            handleIcons();
+                            if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                            aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                            //im.addToPriorKeys(im.getMoveDownKey());                //add to prior keys list
+                        }
+                        else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)
+                            //&& gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2)
+                            && gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y)
+                            && !gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2)
+                            && gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2))
+                        {
+                            rockPushed = true;                // can move a block down
+
+                            pushScript.startShake();
+                            gbm.pushRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1, (int)playerBoardPosition.x, (int)playerBoardPosition.y + 2);
+                            player.GetComponent<Player>().moveDown();                // move player
+                            //update icons
+                            handleIcons();
+                            if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                            aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
+                        }
+                        //else playerScript.hopInPlace();     //do the growing animation, hopping
+                        else
+                        {
+                            playerScript.moveDownSmall();
+                            if (!pushScript.isFaded() && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)) pushScript.makeRed();
+                            if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)
+                            && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1))
+                            { gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1); }
+                        }
+                    }
+                    else        // Leap mode on
+                    {
+                        if (gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2)
+                            && gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2))
+                        {
+                            player.GetComponent<Player>().moveDown2();               //move player two spaces down
+                            //update icons
+                            handleIcons();
+                            if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                            aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                            handleLeap();
+                        }
+                        else
+                        {
+                            //can't leap
+                            leapScript.toggle();
+                            leapScript.makeRed();
+                            //playerScript.hopInPlace();     //do the growing animation, hopping
+                            playerScript.moveDownSmall();
+                            if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2)
+                            && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2))
+                            { gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2); }
+                        }
+                        leapMode = false;
+                    }
+                }
+                else if (Input.GetKeyUp(im.getMoveLeftKey()) && !playerScript.isBusy())
+                {
+                    gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
+                    //player's y is flipped
+                    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+                    //if backtracked accept changes
+                    gbm.moveWhileBacktrack((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    if (!leapMode)
+                    {
+                        if (gbm.canMoveTo((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y))          //check if move is valid
+                        {
+                            player.GetComponent<Player>().moveLeft();               //move player
+                            //update icons
+                            handleIcons();
+                            if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                            aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                            //im.addToPriorKeys(im.getMoveLeftKey());                //add to prior keys list
+                        }
+                        else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)
+                            //&& gbm.currentIsHealthyAt((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y)
+                            && gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y)
+                            && !gbm.hasRock((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y)
+                            && gbm.canMoveTo((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y))
+                        {
+                            rockPushed = true;                // can move a block left
+
+                            pushScript.startShake();
+                            gbm.pushRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y, (int)playerBoardPosition.x - 2, (int)playerBoardPosition.y);
+                            player.GetComponent<Player>().moveLeft();                // move player
+                            //update icons
+                            handleIcons();
+                            if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                            aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
+                        }
+                        //else playerScript.hopInPlace();     //do the growing animation, hopping
+                        else
+                        {
+                            playerScript.moveLeftSmall();
+                            if (!pushScript.isFaded() && gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)) pushScript.makeRed();
+                            if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)
+                            && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y))
+                            { gbm.setRedTile((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y); }
+                        }
+                    }
+                    else        // Leap mode on
+                    {
+                        if (gbm.currentIsHealthyAt((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y)
+                            && gbm.canMoveTo((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y))          //check if move is valid
+                        {
+                            player.GetComponent<Player>().moveLeft2();               //move player two spaces left
+                            //update icons
+                            handleIcons();
+                            if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                            aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                            handleLeap();
+                        }
+                        else
+                        {
+                            //can't leap
+                            leapScript.toggle();
+                            leapScript.makeRed();
+                            //playerScript.hopInPlace();     //do the growing animation, hopping
+                            playerScript.moveLeftSmall();
+                            if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y)
+                            && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))
+                            { gbm.setRedTile((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y); }
+                        }
+                        leapMode = false;
+                    }
+                }
+                else if (Input.GetKeyUp(im.getMoveRightKey()) && !playerScript.isBusy())
+                {
+                    gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
+                    //check if move valid - player's y is flipped
+                    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+                    //if backtracked accept changes
+                    gbm.moveWhileBacktrack((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    //check if at goal      //only move to next level when you press right and are at goal
+                    if (gbm.getGoal() == playerBoardPosition)
+                    {
+                        level += 1;
+                        if (!gbm.loadLeapLevel(level))
+                        {
+                            playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
+                            playerScript.notJump();
+                            playerScript.notLeap();
+                            handledPlayerJump = false;
+                            handledPlayerLeap = false;
+                            rockPushed = false;
+                            //reset entrance/exit
+                            entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+                            exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+                            //ui stuff
+                            currentLevelText.text = "Floor\n" + level.ToString();
+                            btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+                            ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+                            jumpScript.makeFullColor();
+                            //update icons
+                            handleIcons();
+                        }
+                        else
+                        {
+                            Debug.Log("Done with Leap levels");
+                        }
+                    }
+                    if (!leapMode)
+                    {
+                        if (gbm.canMoveTo((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))         //check if move valid
+                        {
+                            player.GetComponent<Player>().moveRight();                //move player
+                            //update icons
+                            handleIcons();
+                            if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                            aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                            //im.addToPriorKeys(im.getMoveRightKey());                //add to prior keys list
+                        }
+                        else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)
+                            //&& gbm.currentIsHealthyAt((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y)
+                            && gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y)
+                            && !gbm.hasRock((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y)
+                            && gbm.canMoveTo((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y))
+                        {
+                            rockPushed = true;                // can move a block right
+                            pushScript.startShake();
+                            gbm.pushRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y, (int)playerBoardPosition.x + 2, (int)playerBoardPosition.y);
+                            player.GetComponent<Player>().moveRight();                // move player
+                            //update icons
+                            handleIcons();
+                            if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                            aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
+                        }
+                        //else playerScript.hopInPlace();      //do the growing animation, hopping
+                        else
+                        {
+                            playerScript.moveRightSmall();
+                            if (!pushScript.isFaded() && gbm.hasRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)) pushScript.makeRed();
+                            if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)
+                            && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))
+                            { gbm.setRedTile((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y); }
+                        }
+                    }
+                    else        // Leap mode on
+                    {
+                        if (gbm.currentIsHealthyAt((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y)
+                            && gbm.canMoveTo((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y))         //check if move valid
+                        {
+                            player.GetComponent<Player>().moveRight2();                //move player two spaces right
+                            //update icons
+                            handleIcons();
+                            if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                            aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                            handleLeap();
+                        }
+                        else
+                        {
+                            //can't leap
+                            leapScript.toggle();
+                            leapScript.makeRed();
+                            //playerScript.hopInPlace();
+                            playerScript.moveRightSmall();
+                            if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y)
+                            && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y))
+                            { gbm.setRedTile((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y); }
+                        }
+                        leapMode = false;
+                    }
+                }
+                else if (Input.GetKeyUp(im.getResetBoardKey()))
+                {
+                    gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
+                    gbm.loadLeapLevel(level);
+                    playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
+                    playerScript.notJump();
+                    playerScript.notLeap();
+                    handledPlayerJump = false;
+                    handledPlayerLeap = false;
+                    rockPushed = false;
+                    //reset entrance/exit
+                    entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+                    exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+                    //ui stuff
+                    currentLevelText.text = "Floor\n" + level.ToString();
+                    btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+                    ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+                    jumpScript.makeFullColor();
+                    //update icons
+                    handleIcons();
+                }
+                else if (Input.GetKeyUp(im.getPauseKey()) && state == GameState.PLAY_ARCADE) { handlePause(); }
+                else if (Input.GetKeyUp(im.getToggleLeapKey()) && !playerScript.isBusy())
+                {
+                    gbm.clearAllTileColors();
+                    toggleLeapMode();
+                }
+            }
+            else if (astate == ArcadeState.PUSH)
+            {
+                //stop pushing
+                if (rockPushed) { pushScript.stopShake(); }
+                //synch animations
+                if (!playerScript.isBusy())
+                {
+                    //synch animations
+                    if (!playerScript.duringMove)       // The tile gets cracked once the player steps on it (and is done hopping)
+                        gbm.steppedOn((int)playerScript.getPosition().x, gbm.getCurrentHeight() - (int)playerScript.getPosition().y - 1);
+                    //handle jump
+                    if (playerScript.didJump() && !handledPlayerJump) { handleJump(); }
+                    handleIcons();
+                }
+                priorState = GameState.PLAY_ARCADE;
+                if (Input.GetKeyUp(im.getMoveUpKey()) && !playerScript.isBusy())
+                {
+                    gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
+                    //player's y is flipped
+                    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+                    //if backtracked accept changes
+                    gbm.moveWhileBacktrack((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+
+                    //if up valid
+                    if (gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1))
+                    {
+                        //player
+                        player.GetComponent<Player>().moveUp();
+                        //update icons
+                        handleIcons();
+                        if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                        //sound
+                        aSrc[0].PlayOneShot(crack, 1.0f);
+                    }
+                    else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)
+                        //&& gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)
+                        && gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y)
+                        && !gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)
+                        && gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2))
+                    {
+                        //rock push
+                        pushScript.startShake();
+                        rockPushed = true;
+                        gbm.pushRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1, (int)playerBoardPosition.x, (int)playerBoardPosition.y - 2);
+                        //player
+                        player.GetComponent<Player>().moveUp();
+                        //update icons
+                        handleIcons();
+                        if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                        //sound
+                        aSrc[0].PlayOneShot(crack, 1.0f);
+                    }
+                    //else playerScript.hopInPlace();        //invalid move
+                    else
+                    {
+                        playerScript.moveUpSmall();
+                        if (!pushScript.isFaded() && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)) pushScript.makeRed();
+                        if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)
+                        && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1))
+                        { gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1); }
+                    }
+                }
+                else if (Input.GetKeyUp(im.getMoveDownKey()) && !playerScript.isBusy())
+                {
+                    gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
+                    //player's y is flipped
+                    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+                    //if backtracked accept changes
+                    gbm.moveWhileBacktrack((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    if (gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1))          //check if move is valid
+                    {
+                        player.GetComponent<Player>().moveDown();               //move player
+                        //update icons
+                        handleIcons();
+                        if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                        aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                        //im.addToPriorKeys(im.getMoveDownKey());                //add to prior keys list
+                    }
+                    else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)
+                        //&& gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2)
+                        && gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y)
+                        && !gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2)
+                        && gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y + 2))
+                    {
+                        rockPushed = true;                // can move a block down
+
+                        pushScript.startShake();
+                        gbm.pushRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1, (int)playerBoardPosition.x, (int)playerBoardPosition.y + 2);
+                        player.GetComponent<Player>().moveDown();                // move player
+                        //update icons
+                        handleIcons();
+                        if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                        aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
+                    }
+                    //else playerScript.hopInPlace();     //do the growing animation, hopping
+                    else
+                    {
+                        playerScript.moveDownSmall();
+                        if (!pushScript.isFaded() && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)) pushScript.makeRed();
+                        if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)
+                        && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1))
+                        { gbm.setRedTile((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1); }
+                    }
+                }
+                else if (Input.GetKeyUp(im.getMoveLeftKey()) && !playerScript.isBusy())
+                {
+                    gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
+                    //player's y is flipped
+                    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+                    //if backtracked accept changes
+                    gbm.moveWhileBacktrack((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    if (gbm.canMoveTo((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y))          //check if move is valid
+                    {
+                        player.GetComponent<Player>().moveLeft();               //move player
+                        //update icons
+                        handleIcons();
+                        if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                        aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                        //im.addToPriorKeys(im.getMoveLeftKey());                //add to prior keys list
+                    }
+                    else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)
+                        //&& gbm.currentIsHealthyAt((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y)
+                        && gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y)
+                        && !gbm.hasRock((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y)
+                        && gbm.canMoveTo((int)playerBoardPosition.x - 2, (int)playerBoardPosition.y))
+                    {
+                        rockPushed = true;                // can move a block left
+
+                        pushScript.startShake();
+                        gbm.pushRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y, (int)playerBoardPosition.x - 2, (int)playerBoardPosition.y);
+                        player.GetComponent<Player>().moveLeft();                // move player
+                        //update icons
+                        handleIcons();
+                        if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                        aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
+                    }
+                    //else playerScript.hopInPlace();     //do the growing animation, hopping
+                    else
+                    {
+                        playerScript.moveLeftSmall();
+                        if (!pushScript.isFaded() && gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)) pushScript.makeRed();
+                        if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)
+                        && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y))
+                        { gbm.setRedTile((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y); }
+                    }
+                }
+                else if (Input.GetKeyUp(im.getMoveRightKey()) && !playerScript.isBusy())
+                {
+                    gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
+                    //check if move valid - player's y is flipped
+                    Vector2 playerBoardPosition = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
+                    //if backtracked accept changes
+                    gbm.moveWhileBacktrack((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                    //check if at goal      //only move to next level when you press right and are at goal
+                    if (gbm.getGoal() == playerBoardPosition)
+                    {
+                        level += 1;
+                        if (!gbm.loadPushLevel(level))
+                        {
+                            playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
+                            playerScript.notJump();
+                            playerScript.notLeap();
+                            handledPlayerJump = false;
+                            handledPlayerLeap = false;
+                            rockPushed = false;
+                            //reset entrance/exit
+                            entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+                            exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+                            //ui stuff
+                            currentLevelText.text = "Floor\n" + level.ToString();
+                            btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+                            ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+                            jumpScript.makeFullColor();
+                            //update icons
+                            handleIcons();
+                        }
+                        else
+                        {
+                            Debug.Log("Cleared Push Levels");
+                        }
+                    }
+                    if (gbm.canMoveTo((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))         //check if move valid
+                    {
+                        player.GetComponent<Player>().moveRight();                //move player
+                        //update icons
+                        handleIcons();
+                        if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                        aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                        //im.addToPriorKeys(im.getMoveRightKey());                //add to prior keys list
+                    }
+                    else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)
+                        //&& gbm.currentIsHealthyAt((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y)
+                        && gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y)
+                        && !gbm.hasRock((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y)
+                        && gbm.canMoveTo((int)playerBoardPosition.x + 2, (int)playerBoardPosition.y))
+                    {
+                        rockPushed = true;                // can move a block right
+                        pushScript.startShake();
+                        gbm.pushRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y, (int)playerBoardPosition.x + 2, (int)playerBoardPosition.y);
+                        player.GetComponent<Player>().moveRight();                // move player
+                        //update icons
+                        handleIcons();
+                        if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
+                        aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
+                    }
+                    //else playerScript.hopInPlace();      //do the growing animation, hopping
+                    else
+                    {
+                        playerScript.moveRightSmall();
+                        if (!pushScript.isFaded() && gbm.hasRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)) pushScript.makeRed();
+                        if (gbm.bbm.currentIsValidAt((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)
+                        && !gbm.bbm.currentIsDestroyedAt((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))
+                        { gbm.setRedTile((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y); }
+                    }
+                }
+                else if (Input.GetKeyUp(im.getResetBoardKey()))
+                {
+                    gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
+                    gbm.loadPushLevel(level);
+                    playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
+                    playerScript.notJump();
+                    playerScript.notLeap();
+                    handledPlayerJump = false;
+                    handledPlayerLeap = false;
+                    rockPushed = false;
+                    //reset entrance/exit
+                    entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+                    exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+                    //ui stuff
+                    currentLevelText.text = "Floor\n" + level.ToString();
+                    btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+                    ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+                    jumpScript.makeFullColor();
+                    //update icons
+                    handleIcons();
+                }
+                else if (Input.GetKeyUp(im.getPauseKey()) && state == GameState.PLAY_ARCADE) { handlePause(); }
+                else if (Input.GetKeyUp(im.getToggleLeapKey()) && !playerScript.isBusy())
+                {
+                    gbm.clearAllTileColors();
+                    toggleLeapMode();
+                }
+            }
+            else if (astate == ArcadeState.EWP)
+            {
+            }
+            else if (astate == ArcadeState.TRE)
+            {
+            }
+        }
+        else if (state == GameState.LOAD)
+        {
+            //wait until player done with animation
+            if (lstate == LoadState.PLAYER && !playerScript.isBusy())
+            {
+                lstate = LoadState.NEXT;
                 gbm.clearedCurrentBoard();
             }
             else if (lstate != LoadState.PLAYER && gbm.busy())
@@ -181,26 +1137,26 @@ public class GameManager : MonoBehaviour {
                 if (lstate == LoadState.NEXT) { loadNextFloor(); }
                 else if (lstate == LoadState.BACK) { loadBacktrack(); }
                 else if (lstate == LoadState.FORWARD) { loadForwardTrack(); }
-                state = GameState.PLAY;
+                state = GameState.PLAY_ENDLESS;
             }
-			//update priorstate
-			priorState = GameState.LOAD;
-		}
-		else if (state == GameState.PEEK)
-		{
-			//exit peeking
-			if (Input.GetKeyUp(im.getPeekKey()))
-			{
-				levelText.text = "Floor\n" + level.ToString();
+            //update priorstate
+            priorState = GameState.LOAD;
+        }
+        else if (state == GameState.PEEK)
+        {
+            //exit peeking
+            if (Input.GetKeyUp(im.getPeekKey()))
+            {
+                currentLevelText.text = "Floor\n" + level.ToString();
                 nextLevelText.text = "Floor: " + (level + 1).ToString();
-				playerScript.unfadePlayer();
+                playerScript.unfadePlayer();
                 gbm.unpeek();
                 eyeScript.unblink();
-				state = GameState.PLAY;
-			}
-			//update priorstate
-			priorState = GameState.PEEK;
-		}
+                state = GameState.PLAY_ENDLESS;
+            }
+            //update priorstate
+            priorState = GameState.PEEK;
+        }
 	}
 
 	public void handleClearedFloor()
@@ -223,7 +1179,7 @@ public class GameManager : MonoBehaviour {
         entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
 		//ui stuff
-		levelText.text = "Floor\n" + level.ToString();
+		currentLevelText.text = "Floor\n" + level.ToString();
         nextLevelText.text = "Floor: " + (level + 1).ToString();
 		btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
 		ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
@@ -307,23 +1263,6 @@ public class GameManager : MonoBehaviour {
     {                               // we only call handleLeap if our destination is healthy (uncracked floor)
         handledPlayerLeap = true;
         leapScript.startJump();
-        //int playerBoardPosX = (int)playerScript.getPosition().x;        //get player pos
-        //int playerBoardPosY = gbm.getCurrentHeight() - (int)playerScript.getPosition().y - 1;
-        //int x = playerBoardPosX;            //at player pos
-        //int y = playerBoardPosY;
-        //if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
-        //x = playerBoardPosX;              //up from player pos
-        //y = playerBoardPosY - 1;
-        //if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
-        //x = playerBoardPosX;              //down
-        //y = playerBoardPosY + 1;
-        //if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
-        //x = playerBoardPosX - 1;          //left
-        //y = playerBoardPosY;
-        //if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
-        //x = playerBoardPosX + 1;          //right
-        //y = playerBoardPosY;
-        //if (!gbm.nextIsDamagedAt(x, y)) gbm.damageFutureBoard(x, y);
     }
     public void toggleLeapMode()
     {
@@ -361,7 +1300,7 @@ public class GameManager : MonoBehaviour {
 		entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
 		//ui stuff
-		levelText.text = "Floor\n" + level.ToString();
+		currentLevelText.text = "Floor\n" + level.ToString();
         nextLevelText.text = "Floor: " + (level + 1).ToString();
 		btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
 		ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
@@ -401,7 +1340,7 @@ public class GameManager : MonoBehaviour {
 		entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
 		//ui stuff
-		levelText.text = "Floor\n" + level.ToString();
+		currentLevelText.text = "Floor\n" + level.ToString();
         nextLevelText.text = "Floor: " + (level + 1).ToString();
 		btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
 		ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
@@ -415,7 +1354,7 @@ public class GameManager : MonoBehaviour {
 	}
 	public void handlePeek()
 	{
-        levelText.text = "Next\nFloor";
+        currentLevelText.text = "Next\nFloor";
         nextLevelText.text = "";
 		state = GameState.PEEK;
 		gbm.peek();
@@ -431,19 +1370,7 @@ public class GameManager : MonoBehaviour {
     public void handleIcons()
     {
         Vector2 pos = new Vector2(playerScript.getPosition().x, gbm.getCurrentHeight() - playerScript.getPosition().y - 1);
-        //if (gbm.bbm.currentIsDamagedAt((int)pos.x, (int)pos.y))       // Michael: "Red = invalid"
-        //{
-        //    if (!pushScript.isFaded()) { pushScript.makeRed(); }
-        //    //if (!leapScript.isFaded()) { leapScript.makeRed(); }    // You can leap while ON a crack. You can't leap TO a crack.
-        //    if (!jumpScript.isFaded()) { jumpScript.makeRed(); }
-        //}
-        //else
-        //{
-        //    if (!pushScript.isFaded()) { pushScript.unColor(); }
-        //    if (!leapScript.isFaded()) { leapScript.unColor(); }
-        //    if (!jumpScript.isFaded()) { jumpScript.unColor(); }
-        //}
-        if (gbm.bbm.currentIsDamagedAt((int)pos.x, (int)pos.y))          // Franky: "Green = usable, Red when you use invalidly, White = neutral"
+        if (gbm.bbm.currentIsDamagedAt((int)pos.x, (int)pos.y))         
         {
             if (!pushScript.isFaded()) { pushScript.unColor(); }
             if (!jumpScript.isFaded()) { jumpScript.unColor(); }
@@ -795,7 +1722,7 @@ public class GameManager : MonoBehaviour {
             gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
             resetBoard();
         }
-        else if (Input.GetKeyUp(im.getPauseKey()) && state == GameState.PLAY) { handlePause(); }
+        else if (Input.GetKeyUp(im.getPauseKey()) && state == GameState.PLAY_ENDLESS) { handlePause(); }
         else if (Input.GetKeyUp(im.getBacktrackKey()))
         {
             gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
@@ -807,7 +1734,6 @@ public class GameManager : MonoBehaviour {
             handleForwardTrack();
         }
         else if (Input.GetKeyUp(im.getPeekKey())) { handlePeek(); }
-        else if (Input.GetKeyUp(im.getDebugKey())) { debug(); }
         else if (Input.GetKeyUp(im.getToggleLeapKey()) && !playerScript.isBusy())
         {
             gbm.clearAllTileColors();
@@ -848,7 +1774,7 @@ public class GameManager : MonoBehaviour {
 	public void resetGame()
 	{ 
 		level = LEVEL_START;
-		levelText.text = "Floor\n" + level.ToString();
+		currentLevelText.text = "Floor\n" + level.ToString();
         nextLevelText.text = "Floor " + (level + 1).ToString();
 		im = new InputManager();
 		gbm.clear();
@@ -865,11 +1791,19 @@ public class GameManager : MonoBehaviour {
         //reset entrance/exit
         entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+        leapIcon.SetActive(true);
         leapScript.makeFullColor();
         leapScript.untoggle();
+        pushIcon.SetActive(true);
         pushScript.stopShake();
         pushScript.makeFullColor();
+        jumpIcon.SetActive(true);
         jumpScript.makeFullColor();
+        eye.SetActive(true);
+        peekName.SetActive(true);
+        peekKey.SetActive(true);
+        btIcon.SetActive(true);
+        ftIcon.SetActive(true);
         //update icons
         gbm.clearAllTileColors();
         handleIcons();
@@ -923,12 +1857,12 @@ public class GameManager : MonoBehaviour {
         if (Input.GetKeyUp(KeyCode.Escape))
         {
             pausePanel.SetActive(false);
-            state = GameState.PLAY;
+            state = GameState.PLAY_ENDLESS;
         }
     }
 	public void continueButton () {
 		pausePanel.SetActive(false);
-		state = GameState.PLAY;
+		state = GameState.PLAY_ENDLESS;
 	}
 	public void mainMenuButton () {
 		StartCoroutine(fadeScript.gameFadeToBlack());
