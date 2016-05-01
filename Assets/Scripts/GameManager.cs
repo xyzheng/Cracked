@@ -42,6 +42,9 @@ public class GameManager : MonoBehaviour {
 	GameState priorState;
     enum ArcadeState { IDLE, JUMP, LEAP, PUSH, EWP, TRE }
     ArcadeState astate = ArcadeState.IDLE;
+    ArcadeState priorAstate = ArcadeState.IDLE;
+    public float astateTimer = 0;
+    const float A_STATE_TIME_MAX = 0.5f;
 	enum LoadState { PLAYER, NEXT, BACK, FORWARD }
 	LoadState lstate;
 	private int level;
@@ -255,7 +258,111 @@ public class GameManager : MonoBehaviour {
         {
             peekKey.SetActive(false);
             peekName.SetActive(false);
-            if (astate == ArcadeState.JUMP)
+            if (astate == ArcadeState.IDLE)
+            {
+                astateTimer += Time.fixedDeltaTime;
+                if (astateTimer >= A_STATE_TIME_MAX)
+                {
+                    astateTimer = 0;
+                    if (priorAstate == ArcadeState.JUMP)
+                    {
+                        astate = ArcadeState.JUMP;
+                        level += 1;
+                        gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
+                        if (!gbm.loadJumpLevel(level))
+                        {
+                            playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
+                            playerScript.notJump();
+                            playerScript.notLeap();
+                            handledPlayerJump = false;
+                            handledPlayerLeap = false;
+                            rockPushed = false;
+                            //reset entrance/exit
+                            entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+                            exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+                            //ui stuff
+                            currentLevelText.text = "Floor\n" + level.ToString();
+                            btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+                            ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+                            jumpScript.makeFullColor();
+                            //update icons
+                            handleIcons();
+                        }
+                        else
+                        {
+                            //DONE WITH JUMP LEVELS
+                            Debug.Log("Done with Jump Levels");
+                            resetGame();
+                        }
+                    }
+                    else if (priorAstate == ArcadeState.LEAP)
+                    {
+                        level += 1;
+                        astate = ArcadeState.LEAP;
+                        gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
+                        if (!gbm.loadLeapLevel(level))
+                        {
+                            playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
+                            playerScript.notJump();
+                            playerScript.notLeap();
+                            handledPlayerJump = false;
+                            handledPlayerLeap = false;
+                            leapMode = false;
+                            //reset entrance/exit
+                            entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+                            exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+                            //ui stuff
+                            currentLevelText.text = "Floor\n" + level.ToString();
+                            btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+                            ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+                            leapScript.makeFullColor();
+                            leapScript.untoggle();
+                            //update icons
+                            handleIcons();
+                        }
+                        else
+                        {
+                            Debug.Log("Done with Leap levels");
+                            resetGame();
+                        }
+                    }
+                    else if (priorAstate == ArcadeState.PUSH)
+                    {
+                        level += 1;
+                        astate = ArcadeState.PUSH;
+                        gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
+                        if (!gbm.loadPushLevel(level))
+                        {
+                            playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
+                            playerScript.notJump();
+                            playerScript.notLeap();
+                            handledPlayerJump = false;
+                            handledPlayerLeap = false;
+                            rockPushed = false;
+                            //reset entrance/exit
+                            entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+                            exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+                            //ui stuff
+                            currentLevelText.text = "Floor\n" + level.ToString();
+                            btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+                            ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
+                            pushScript.makeFullColor();
+                            //update icons
+                            handleIcons();
+                        }
+                        else
+                        {
+                            Debug.Log("Cleared Push Levels");
+                            resetGame();
+                        }
+                    }
+                    priorAstate = ArcadeState.IDLE;
+                }
+                else
+                {
+                    playerScript.hopInPlace();
+                }
+            } else if (astate == ArcadeState.JUMP)
             {
                 rockPushed = true;
                 //synch animations
@@ -411,31 +518,9 @@ public class GameManager : MonoBehaviour {
                     //check if at goal      //only move to next level when you press right and are at goal
                     if (gbm.getGoal() == playerBoardPosition)
                     {
-                        level += 1;
-                        if (!gbm.loadJumpLevel(level))
-                        {
-                            playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
-                            playerScript.notJump();
-                            playerScript.notLeap();
-                            handledPlayerJump = false;
-                            handledPlayerLeap = false;
-                            rockPushed = false;
-                            //reset entrance/exit
-                            entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
-                            exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
-                            //ui stuff
-                            currentLevelText.text = "Floor\n" + level.ToString();
-                            btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
-                            ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
-                            jumpScript.makeFullColor();
-                            //update icons
-                            handleIcons();
-                        }
-                        else
-                        {
-                            //DONE WITH JUMP LEVELS
-                            Debug.Log("Done with Jump Levels");
-                        }
+                        astate = ArcadeState.IDLE;
+                        priorAstate = ArcadeState.JUMP;
+                        player.GetComponent<Player>().moveRight(); 
                     }
                     if (gbm.canMoveTo((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))         //check if move valid
                     {
@@ -757,32 +842,9 @@ public class GameManager : MonoBehaviour {
                     //check if at goal      //only move to next level when you press right and are at goal
                     if (gbm.getGoal() == playerBoardPosition)
                     {
-                        level += 1;
-                        gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
-                        if (!gbm.loadLeapLevel(level))
-                        {
-                            playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
-                            playerScript.notJump();
-                            playerScript.notLeap();
-                            handledPlayerJump = false;
-                            handledPlayerLeap = false;
-                            leapMode = false;
-                            //reset entrance/exit
-                            entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
-                            exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
-                            //ui stuff
-                            currentLevelText.text = "Floor\n" + level.ToString();
-                            btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
-                            ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
-                            leapScript.makeFullColor();
-                            leapScript.untoggle();
-                            //update icons
-                            handleIcons();
-                        }
-                        else
-                        {
-                            Debug.Log("Done with Leap levels");
-                        }
+                        astate = ArcadeState.IDLE;
+                        priorAstate = ArcadeState.LEAP;
+                        player.GetComponent<Player>().moveRight();
                     }
                     if (!leapMode)
                     {
@@ -1033,30 +1095,9 @@ public class GameManager : MonoBehaviour {
                     //check if at goal      //only move to next level when you press right and are at goal
                     if (gbm.getGoal() == playerBoardPosition)
                     {
-                        level += 1;
-                        if (!gbm.loadPushLevel(level))
-                        {
-                            playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
-                            playerScript.notJump();
-                            playerScript.notLeap();
-                            handledPlayerJump = false;
-                            handledPlayerLeap = false;
-                            rockPushed = false;
-                            //reset entrance/exit
-                            entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
-                            exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
-                            //ui stuff
-                            currentLevelText.text = "Floor\n" + level.ToString();
-                            btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
-                            ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
-                            pushScript.makeFullColor();
-                            //update icons
-                            handleIcons();
-                        }
-                        else
-                        {
-                            Debug.Log("Cleared Push Levels");
-                        }
+                        astate = ArcadeState.IDLE;
+                        priorAstate = ArcadeState.PUSH;
+                        player.GetComponent<Player>().moveRight();
                     }
                     if (gbm.canMoveTo((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y))         //check if move valid
                     {
