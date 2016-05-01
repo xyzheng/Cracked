@@ -1086,6 +1086,14 @@ public class GameBoardManager : MonoBehaviour
             }
             else if (level == 1)
             {
+                bbm.damageCurrentBoard(0, 2);
+                bbm.damageCurrentBoard(0, 2);
+                bbm.damageCurrentBoard(1, 2); 
+                bbm.damageCurrentBoard(1, 2);
+                bbm.damageCurrentBoard(2, 2);
+                bbm.damageCurrentBoard(2, 2);
+                bbm.damageCurrentBoard(3, 2);
+                bbm.damageCurrentBoard(3, 2);
                 bbm.damageCurrentBoard(0, 3);
                 bbm.damageCurrentBoard(1, 3);
                 bbm.damageCurrentBoard(2, 3);
@@ -1099,6 +1107,14 @@ public class GameBoardManager : MonoBehaviour
             }
             else if (level == 2)
             {
+                bbm.damageCurrentBoard(0, 2);
+                bbm.damageCurrentBoard(0, 2);
+                bbm.damageCurrentBoard(1, 2);
+                bbm.damageCurrentBoard(1, 2);
+                bbm.damageCurrentBoard(2, 2);
+                bbm.damageCurrentBoard(2, 2);
+                bbm.damageCurrentBoard(3, 2);
+                bbm.damageCurrentBoard(3, 2);
                 bbm.damageCurrentBoard(0, 3);
                 bbm.damageCurrentBoard(1, 3);
                 bbm.damageCurrentBoard(2, 3);
@@ -1120,7 +1136,7 @@ public class GameBoardManager : MonoBehaviour
     {
         noMinimap = true;
         int MIN_LEVEL = 0;
-        int MAX_LEVEL = 1;
+        int MAX_LEVEL = 2;
         if (level >= MIN_LEVEL && level <= MAX_LEVEL)
         {
             clearTiles();
@@ -1131,6 +1147,18 @@ public class GameBoardManager : MonoBehaviour
                 //blank
             }
             else if (level == 1)
+            {
+                bbm.damageCurrentBoard(0, 3);
+                bbm.damageCurrentBoard(1, 3);
+                bbm.damageCurrentBoard(2, 3);
+                bbm.damageCurrentBoard(4, 3);
+                bbm.damageCurrentBoard(0, 3);
+                bbm.damageCurrentBoard(1, 3);
+                bbm.damageCurrentBoard(2, 3);
+                bbm.damageCurrentBoard(4, 3);
+                bbm.currentPlaceRockAt(3, 4);
+            }
+            else if (level == 2)
             {
                 bbm.damageCurrentBoard(0, 3);
                 bbm.damageCurrentBoard(1, 3);
