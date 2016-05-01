@@ -583,12 +583,15 @@ public class GameManager : MonoBehaviour {
                         if (gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)
                             && gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)) // check if move is valid
                         {
+                            Debug.Log("LEAP1");
                             player.GetComponent<Player>().moveUp2();        //move player two spaces up
                             //update icons
                             handleIcons();
+                            Debug.Log("LEAP2");
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
                             aSrc[0].PlayOneShot(crack, 1.0f);       // play walking sound
                             handleLeap();
+                            Debug.Log("LEAP3");
                         }
                         else
                         {

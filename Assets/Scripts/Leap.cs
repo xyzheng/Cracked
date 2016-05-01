@@ -97,11 +97,13 @@ public class Leap : MonoBehaviour {
     {
         GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
         fade = true;
+        Debug.Log("A");
     }
     public void makeFullColor()
     {
         GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
         fade = false;
+        Debug.Log("B");
     }
     public void makeRed()
     {
