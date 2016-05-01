@@ -95,19 +95,13 @@ public class Leap : MonoBehaviour {
     //fade
     public void makeTransparent()
     {
-        if (!fade)
-        {
-            GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
-            fade = true;
-        }
+        GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
+        fade = true;
     }
     public void makeFullColor()
     {
-        if (fade)
-        {
-            GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
-            fade = false;
-        }
+        GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
+        fade = false;
     }
     public void makeRed()
     {

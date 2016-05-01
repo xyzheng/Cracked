@@ -169,6 +169,7 @@ public class GameManager : MonoBehaviour {
                 priorState = GameState.PLAY_ENDLESS;
                 jumpIcon.SetActive(false);
                 leapIcon.SetActive(true);
+                leapScript.makeFullColor();
                 pushIcon.SetActive(false);
                 eye.SetActive(false);
                 nextLevelText.text = "";
@@ -582,12 +583,15 @@ public class GameManager : MonoBehaviour {
                         if (gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)
                             && gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)) // check if move is valid
                         {
+                            Debug.Log("LEAP1");
                             player.GetComponent<Player>().moveUp2();        //move player two spaces up
                             //update icons
                             handleIcons();
+                            Debug.Log("LEAP2");
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
                             aSrc[0].PlayOneShot(crack, 1.0f);       // play walking sound
                             handleLeap();
+                            Debug.Log("LEAP3");
                         }
                         else
                         {
@@ -754,6 +758,7 @@ public class GameManager : MonoBehaviour {
                     if (gbm.getGoal() == playerBoardPosition)
                     {
                         level += 1;
+                        gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
                         if (!gbm.loadLeapLevel(level))
                         {
                             playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
@@ -761,7 +766,7 @@ public class GameManager : MonoBehaviour {
                             playerScript.notLeap();
                             handledPlayerJump = false;
                             handledPlayerLeap = false;
-                            rockPushed = false;
+                            leapMode = false;
                             //reset entrance/exit
                             entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
                             exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
@@ -769,7 +774,8 @@ public class GameManager : MonoBehaviour {
                             currentLevelText.text = "Floor\n" + level.ToString();
                             btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
                             ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
-                            jumpScript.makeFullColor();
+                            leapScript.makeFullColor();
+                            leapScript.untoggle();
                             //update icons
                             handleIcons();
                         }
@@ -844,12 +850,14 @@ public class GameManager : MonoBehaviour {
                 {
                     gbm.clearAllTileColors();     // Remove all red tiles when another key is pressed
                     gbm.loadLeapLevel(level);
-                    playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1));
+                    playerScript.setPosition(new Vector2(gbm.getStart().x, gbm.getCurrentHeight() - gbm.getStart().y - 1)); 
+                    //player lands on start
+                    gbm.steppedOn((int)gbm.getStart().x, (int)gbm.getStart().y);
                     playerScript.notJump();
                     playerScript.notLeap();
                     handledPlayerJump = false;
                     handledPlayerLeap = false;
-                    rockPushed = false;
+                    leapMode = false;
                     //reset entrance/exit
                     entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
                     exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
@@ -857,7 +865,8 @@ public class GameManager : MonoBehaviour {
                     currentLevelText.text = "Floor\n" + level.ToString();
                     btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
                     ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
-                    jumpScript.makeFullColor();
+                    leapScript.makeFullColor();
+                    leapScript.untoggle();
                     //update icons
                     handleIcons();
                 }
@@ -1040,7 +1049,7 @@ public class GameManager : MonoBehaviour {
                             currentLevelText.text = "Floor\n" + level.ToString();
                             btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
                             ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
-                            jumpScript.makeFullColor();
+                            pushScript.makeFullColor();
                             //update icons
                             handleIcons();
                         }
@@ -1100,16 +1109,11 @@ public class GameManager : MonoBehaviour {
                     currentLevelText.text = "Floor\n" + level.ToString();
                     btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
                     ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
-                    jumpScript.makeFullColor();
+                    pushScript.makeFullColor();
                     //update icons
                     handleIcons();
                 }
                 else if (Input.GetKeyUp(im.getPauseKey()) && state == GameState.PLAY_ARCADE) { handlePause(); }
-                else if (Input.GetKeyUp(im.getToggleLeapKey()) && !playerScript.isBusy())
-                {
-                    gbm.clearAllTileColors();
-                    toggleLeapMode();
-                }
             }
             else if (astate == ArcadeState.EWP)
             {
