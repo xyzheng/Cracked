@@ -133,7 +133,7 @@ public class GameManager : MonoBehaviour {
 		else if (state == GameState.PLAY_ENDLESS)
 		{
             //remove this with main menu stuff
-            if (Input.GetKeyUp(KeyCode.Keypad0))
+			if (Input.GetKeyUp(KeyCode.T))
             {
                 level = 0;
                 state = GameState.PLAY_ARCADE;
@@ -160,7 +160,7 @@ public class GameManager : MonoBehaviour {
                 currentLevelText.text = "Floor\n" + level.ToString();
                 Debug.Log("Loading Jump levels");
             }
-            if (Input.GetKeyUp(KeyCode.Keypad1))
+            if (Input.GetKeyUp(KeyCode.Y))
             {
                 level = 0;
                 state = GameState.PLAY_ARCADE;
@@ -187,7 +187,7 @@ public class GameManager : MonoBehaviour {
                 currentLevelText.text = "Floor\n" + level.ToString();
                 Debug.Log("Loading Leap levels");
             }
-            if (Input.GetKeyUp(KeyCode.Keypad2))
+            if (Input.GetKeyUp(KeyCode.U))
             {
                 level = 0;
                 state = GameState.PLAY_ARCADE;
