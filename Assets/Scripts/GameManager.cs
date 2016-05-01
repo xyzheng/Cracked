@@ -140,7 +140,7 @@ public class GameManager : MonoBehaviour {
 			}
             handleUnpause();
 			//update prior state
-			priorState = GameState.PAUSE;
+			//priorState = GameState.PAUSE;
 		}
 		else if (state == GameState.PLAY_ENDLESS)
 		{	
@@ -709,15 +709,12 @@ public class GameManager : MonoBehaviour {
                         if (gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)
                             && gbm.canMoveTo((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)) // check if move is valid
                         {
-                            Debug.Log("LEAP1");
                             player.GetComponent<Player>().moveUp2();        //move player two spaces up
                             //update icons
                             handleIcons();
-                            Debug.Log("LEAP2");
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
                             aSrc[0].PlayOneShot(crack, 1.0f);       // play walking sound
                             handleLeap();
-                            Debug.Log("LEAP3");
                         }
                         else
                         {
@@ -1858,45 +1855,94 @@ public class GameManager : MonoBehaviour {
         handleIcons();
     }
 	public void resetGame()
-	{ 
-		level = LEVEL_START;
-		currentLevelText.text = "Floor\n" + level.ToString();
-        nextLevelText.text = "Floor " + (level + 1).ToString();
-		im = new InputManager();
-		gbm.clear();
-		//player lands on start
-		gbm.steppedOn((int)gbm.getStart().x, (int)gbm.getStart().y);
-		//player
-		playerScript.reset((int)gbm.getStart().x, (int)(gbm.getCurrentHeight() - gbm.getStart().y - 1));
+	{
+        level = LEVEL_START;
+        currentLevelText.text = "Floor\n" + level.ToString();
+        im = new InputManager();
+        gbm.clear();
+        //player lands on start
+        gbm.steppedOn((int)gbm.getStart().x, (int)gbm.getStart().y);
+        //player
+        playerScript.reset((int)gbm.getStart().x, (int)(gbm.getCurrentHeight() - gbm.getStart().y - 1));
         playerScript.notJump();
         playerScript.notLeap();
         handledPlayerJump = false;
         handledPlayerLeap = false;
         leapMode = false;
         rockPushed = false;
-        //reset entrance/exit
         entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
-		exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
-        leapIcon.SetActive(true);
-        leapScript.makeFullColor();
-        leapScript.untoggle();
-        pushIcon.SetActive(true);
-        pushScript.stopShake();
-        pushScript.makeFullColor();
-        jumpIcon.SetActive(true);
-        jumpScript.makeFullColor();
-        eye.SetActive(true);
-        peekName.SetActive(true);
-        peekKey.SetActive(true);
-        btIcon.SetActive(true);
-        ftIcon.SetActive(true);
-        //update icons
-        gbm.clearAllTileColors();
-        handleIcons();
-		//turn off pause menu
-		pausePanel.SetActive(false);
-		state = GameState.PLAY_ENDLESS;
-		//levelLoaded = false;
+        exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+        //turn off pause menu
+        pausePanel.SetActive(false);
+        if (priorState == GameState.PLAY_ARCADE)
+        {
+            priorState = state;
+            state = GameState.PLAY_ARCADE;
+            if (astate == ArcadeState.JUMP)
+            {
+                gbm.loadJumpLevel(level);
+                jumpIcon.SetActive(true);
+                jumpScript.makeFullColor();
+            }
+            else if (astate == ArcadeState.LEAP)
+            {
+                gbm.loadLeapLevel(level);
+                leapIcon.SetActive(true);
+                leapScript.makeFullColor();
+                leapScript.untoggle();
+
+            } else if (astate == ArcadeState.PUSH){
+                gbm.loadPushLevel(level);
+                pushIcon.SetActive(true);
+                pushScript.stopShake();
+                pushScript.makeFullColor();
+            }
+            //update icons
+            gbm.clearAllTileColors();
+            handleIcons();
+        }
+        else
+        {
+            //level = LEVEL_START;
+            //currentLevelText.text = "Floor\n" + level.ToString();
+            nextLevelText.text = "Floor " + (level + 1).ToString();
+            //im = new InputManager();
+            //gbm.clear();
+            ////player lands on start
+            //gbm.steppedOn((int)gbm.getStart().x, (int)gbm.getStart().y);
+            ////player
+            //playerScript.reset((int)gbm.getStart().x, (int)(gbm.getCurrentHeight() - gbm.getStart().y - 1));
+            //playerScript.notJump();
+            //playerScript.notLeap();
+            //handledPlayerJump = false;
+            //handledPlayerLeap = false;
+            //leapMode = false;
+            //rockPushed = false;
+            //reset entrance/exit
+            //entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+            //exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+            leapIcon.SetActive(true);
+            leapScript.makeFullColor();
+            leapScript.untoggle();
+            pushIcon.SetActive(true);
+            pushScript.stopShake();
+            pushScript.makeFullColor();
+            jumpIcon.SetActive(true);
+            jumpScript.makeFullColor();
+            eye.SetActive(true);
+            peekName.SetActive(true);
+            peekKey.SetActive(true);
+            btIcon.SetActive(true);
+            ftIcon.SetActive(true);
+            //update icons
+            gbm.clearAllTileColors();
+            handleIcons();
+            //turn off pause menu
+            //pausePanel.SetActive(false);
+            priorState = state;
+            state = GameState.PLAY_ENDLESS;
+            //levelLoaded = false;
+        }
     }
 
     /* SOUND */
@@ -1938,6 +1984,7 @@ public class GameManager : MonoBehaviour {
     public void handlePause()
     {
         pausePanel.SetActive(true);
+        priorState = state;
         state = GameState.PAUSE;
     }
     public void handleUnpause()
@@ -1945,12 +1992,14 @@ public class GameManager : MonoBehaviour {
         if (Input.GetKeyUp(KeyCode.Escape))
         {
             pausePanel.SetActive(false);
-            state = GameState.PLAY_ENDLESS;
+            //state = GameState.PLAY_ENDLESS;
+            state = priorState;
         }
     }
 	public void continueButton () {
 		pausePanel.SetActive(false);
-		state = GameState.PLAY_ENDLESS;
+		//state = GameState.PLAY_ENDLESS;
+        state = priorState;
 	}
 	public void mainMenuButton () {
 		StartCoroutine(fadeScript.fadeOut());
