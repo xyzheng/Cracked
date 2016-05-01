@@ -20,16 +20,39 @@ public class MenuManager : MonoBehaviour {
 	public Toggle soundToggle;
 	public Toggle musicToggle;
 
+	//stage manager
+	GameObject stageManager;
+	StageManager stageManagerScript;
+
 	Fade fadeScript;
 
 	public void Start () {
 		fadeScript = GetComponent<Fade>();
 		hoverSound = GetComponents<AudioSource>()[0];
 		backgroundMusic = GetComponents<AudioSource>()[1];
+		stageManager = GameObject.Find ("Stage Manager");
+		stageManagerScript = stageManager.GetComponent<StageManager>();
+	}
+		
+	//different play buttons
+	public void endlessButton () {
+		stageManagerScript.stage = 0;
+		StartCoroutine(fadeScript.fadeOut ());
 	}
 
-	public void playButton () {
-		StartCoroutine(fadeScript.fadeOut());
+	public void jumpButton () {
+		stageManagerScript.stage = 1;
+		StartCoroutine(fadeScript.fadeOut ());
+	}
+
+	public void leapButton () {
+		stageManagerScript.stage = 2;
+		StartCoroutine(fadeScript.fadeOut ());
+	}
+
+	public void pushButton () {
+		stageManagerScript.stage = 3;
+		StartCoroutine(fadeScript.fadeOut ());
 	}
 
 	public void optionsButton () {

@@ -3168,6 +3168,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fadingPanel: {fileID: 1847679348}
   isFading: 0
+  faded: 0
 --- !u!82 &1510949521
 AudioSource:
   m_ObjectHideFlags: 0
@@ -3850,7 +3851,7 @@ CanvasGroup:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1847679344}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0

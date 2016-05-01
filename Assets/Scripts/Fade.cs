@@ -26,4 +26,16 @@ public class Fade : MonoBehaviour {
 		faded = true;
 		isFading = false;
 	}
+
+	//fade from black effect
+	public IEnumerator fadeIn () {
+		isFading = true;
+		float fadeTime = 1.0f;
+		while (fadingPanel.alpha > 0) {
+			fadingPanel.alpha -= Time.deltaTime / fadeTime;
+			yield return null;
+		}
+		faded = true;
+		isFading = false;
+	}
 }
