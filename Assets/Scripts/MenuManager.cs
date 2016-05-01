@@ -27,6 +27,7 @@ public class MenuManager : MonoBehaviour {
 
 	public void backButton () {
 		optionsPanel.GetComponentInChildren<Button>().GetComponentInChildren<Text>().fontSize = 20;
+		tutorialPanel.GetComponentsInChildren<Button>()[3].GetComponentInChildren<Text>().fontSize = 20;
 		menuPanel.SetActive(true);
 		optionsPanel.SetActive(false);
 		tutorialPanel.SetActive(false);
