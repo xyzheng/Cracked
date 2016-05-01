@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour {
 	LoadState lstate;
 	private int level;
 	private const int LEVEL_START = 0;
+	private bool levelLoaded = false;
 
 	// audio variables
 	public static AudioSource[] aSrc;
@@ -59,10 +60,14 @@ public class GameManager : MonoBehaviour {
 	//public static AudioSource music;
 
 	//sliders and toggles
-	private Slider soundSlider;
-	private Slider musicSlider;
-	private Toggle soundToggle;
-	private Toggle musicToggle;
+	public Slider soundSlider;
+	public Slider musicSlider;
+	public Toggle soundToggle;
+	public Toggle musicToggle;
+
+	//stage manager
+	private GameObject stageManager;
+	private StageManager stageManagerScript;
 
     // rock push var
     bool rockPushed;
@@ -90,7 +95,11 @@ public class GameManager : MonoBehaviour {
 		jump = aSrc[3].clip;
         //soundSlider = GameObject.Find("Sound Slider").GetComponent<Slider>();
         rockPushed = false;
+		//stage manager 
+		stageManager = GameObject.Find ("Stage Manager");
+		stageManagerScript = stageManager.GetComponent<StageManager>();
 		fadeScript = GetComponent<Fade>();
+		StartCoroutine(fadeScript.fadeIn());
     }
 
 	// Main update loop
@@ -134,9 +143,38 @@ public class GameManager : MonoBehaviour {
 			priorState = GameState.PAUSE;
 		}
 		else if (state == GameState.PLAY_ENDLESS)
-		{
+		{	
+			/*
+			if (stageManagerScript.stage == 0 && !levelLoaded) {
+				//player lands on start
+				if (!playerScript.duringMove) gbm.steppedOn((int)gbm.getStart().x, (int)gbm.getStart().y);
+				//instantiate exit to right of goal/entrance to left
+				Vector3 entrancePos = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
+				Vector3 exitPos = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
+				entrance = (GameObject)Instantiate(entrance, entrancePos, Quaternion.identity);
+				exit = (GameObject)Instantiate(exit, exitPos, Quaternion.identity);
+				//basic ui
+				currentLevelText.text = "Floor\n" + level.ToString();
+				nextLevelText.text = "Floor " + (level + 1).ToString();
+				btIcon = (GameObject)Instantiate(btIcon, new Vector3(entrancePos.x + 2, exitPos.y + 1, 0), Quaternion.identity);
+				btScript = btIcon.GetComponent<BackTrack>();
+				btScript.makeTransparent();
+				ftIcon = (GameObject)Instantiate(ftIcon, new Vector3(exitPos.x - 2, exitPos.y + 1, 0), Quaternion.identity);
+				ftScript = ftIcon.GetComponent<ForwardTrack>();
+				ftScript.makeTransparent();
+				jumpIcon = (GameObject)Instantiate(jumpIcon, new Vector3(entrancePos.x - 0.2f, exitPos.y + 0.0f, 0), Quaternion.identity);
+				jumpScript = jumpIcon.GetComponent<Jump>();
+				leapIcon = (GameObject)Instantiate(leapIcon, new Vector3(entrancePos.x - 0.2f, exitPos.y - 1.0f, 0), Quaternion.identity);
+				leapScript = leapIcon.GetComponent<Leap>();
+				pushIcon = (GameObject)Instantiate(pushIcon, new Vector3(entrancePos.x - 0.2f, exitPos.y - 2.0f, 0), Quaternion.identity);
+				pushScript = pushIcon.GetComponent<Push>();
+				eyeScript = eye.GetComponent<Eye>();
+				state = GameState.PLAY_ENDLESS;
+				levelLoaded = true;
+			}
+			*/
             //remove this with main menu stuff
-            if (Input.GetKeyUp(KeyCode.Keypad0))
+			if (stageManagerScript.stage == 1 && !levelLoaded) 
             {
                 level = 0;
                 state = GameState.PLAY_ARCADE;
@@ -162,8 +200,9 @@ public class GameManager : MonoBehaviour {
                 //ui stuff
                 currentLevelText.text = "Floor\n" + level.ToString();
                 Debug.Log("Loading Jump levels");
+				levelLoaded = true;
             }
-            if (Input.GetKeyUp(KeyCode.Keypad1))
+			if (stageManagerScript.stage == 2 && !levelLoaded)
             {
                 level = 0;
                 state = GameState.PLAY_ARCADE;
@@ -190,8 +229,9 @@ public class GameManager : MonoBehaviour {
                 //ui stuff
                 currentLevelText.text = "Floor\n" + level.ToString();
                 Debug.Log("Loading Leap levels");
+				levelLoaded = true;
             }
-            if (Input.GetKeyUp(KeyCode.Keypad2))
+			if (stageManagerScript.stage == 3 && !levelLoaded)
             {
                 level = 0;
                 state = GameState.PLAY_ARCADE;
@@ -217,6 +257,7 @@ public class GameManager : MonoBehaviour {
                 //ui stuff
                 currentLevelText.text = "Floor\n" + level.ToString();
                 Debug.Log("Loading Push levels");
+				levelLoaded = true;
             }
 
 			//check if done with peek
@@ -1852,21 +1893,24 @@ public class GameManager : MonoBehaviour {
         //update icons
         gbm.clearAllTileColors();
         handleIcons();
+		//turn off pause menu
+		pausePanel.SetActive(false);
+		state = GameState.PLAY_ENDLESS;
+		//levelLoaded = false;
     }
 
     /* SOUND */
     //sound slider
     public void updateSoundSlider () {
-		soundSlider = GameObject.Find("Sound Slider").GetComponent<Slider>();
-		for (int i=0; i<aSrc.Length; i++) {
-			aSrc[i].volume = soundSlider.value;
+		if (soundToggle.isOn) {
+			for (int i=0; i<aSrc.Length-1; i++) {
+				aSrc[i].volume = soundSlider.value;
+			}
 		}
 	}
 	//sound toggle
 	public void toggleSound () {
-		soundToggle = GameObject.Find("Sound Toggle").GetComponent<Toggle>();
-		soundSlider = GameObject.Find("Sound Slider").GetComponent<Slider>();
-		for (int i=0; i<aSrc.Length; i++) {
+		for (int i=0; i<aSrc.Length-1; i++) {
 			if (!soundToggle.isOn) {
 				aSrc[i].volume = 0f;
 			}
@@ -1877,17 +1921,16 @@ public class GameManager : MonoBehaviour {
 	}
 	//music slider
 	public void updateMusicSlider () {
-		musicSlider = GameObject.Find("Music Slider").GetComponent<Slider>();
-		//	music.volume = musicSlider.value;
+		if (musicToggle.isOn) { 
+			aSrc[5].volume = musicSlider.value;
+		}
 	}
 	public void toggleMusic () {
-		musicToggle = GameObject.Find("Music Toggle").GetComponent<Toggle>();
-		musicSlider = GameObject.Find("Music Slider").GetComponent<Slider>();
 		if (!musicToggle.isOn) {
-			//music.volume = 0f;
+			aSrc[5].volume = 0f;
 		}
 		else {
-			//	music.volume = musicSlider.value;
+			aSrc[5].volume = musicSlider.value;
 		}
 	}
 
@@ -1910,7 +1953,7 @@ public class GameManager : MonoBehaviour {
 		state = GameState.PLAY_ENDLESS;
 	}
 	public void mainMenuButton () {
-		StartCoroutine(fadeScript.gameFadeToBlack());
+		StartCoroutine(fadeScript.fadeOut());
 	}
 
     public void debug()
