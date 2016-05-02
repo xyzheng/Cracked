@@ -253,11 +253,13 @@ public class GameBoardManager : MonoBehaviour
     {
         if (!bbm.currentIsDamagedAt(x, y))
         {
+			if (bbm.currentIsValidAt(x, y)) {
             tiles[x][y].GetComponent<Tile>().stepTile();
             if (!bbm.nextIsDamagedAt(x, y)) { 
                 bbm.damageNextBoard(x, y);
                 updateTile(x, y);
             } 
+			}
         } else if (bbm.currentIsDamagedAt(x,y)){
             //shake rocks
             if (bbm.currentHasRockAt(x, y + 1)) {

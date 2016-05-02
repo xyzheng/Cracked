@@ -104,6 +104,11 @@ public class GameManager : MonoBehaviour {
 
 	// Main update loop
 	void Update () {
+		/*
+		if (fadeScript.fadingPanel.alpha == 1) {
+			SceneManager.LoadScene ("MainMenu");
+		}
+		*/
 		if (state == GameState.TITLE)
 		{
             //player lands on start
@@ -333,7 +338,10 @@ public class GameManager : MonoBehaviour {
                         {
                             //DONE WITH JUMP LEVELS
                             Debug.Log("Done with Jump Levels");
-                            resetGame();
+							StartCoroutine(fadeScript.fadeOutToMenu());
+							//fadeScript.StartCoroutine(fadeOut());
+							//SceneManager.LoadScene ("MainMenu");
+                           	//resetGame();
                         }
                     }
                     else if (priorAstate == ArcadeState.LEAP)
@@ -364,7 +372,9 @@ public class GameManager : MonoBehaviour {
                         else
                         {
                             Debug.Log("Done with Leap levels");
-                            resetGame();
+							StartCoroutine(fadeScript.fadeOutToMenu());
+							//SceneManager.LoadScene("MainMenu");
+							//resetGame();
                         }
                     }
                     else if (priorAstate == ArcadeState.PUSH)
@@ -394,7 +404,9 @@ public class GameManager : MonoBehaviour {
                         else
                         {
                             Debug.Log("Cleared Push Levels");
-                            resetGame();
+							StartCoroutine(fadeScript.fadeOutToMenu());
+							//SceneManager.LoadScene("MainMenu");
+							//resetGame();
                         }
                     }
                     priorAstate = ArcadeState.IDLE;

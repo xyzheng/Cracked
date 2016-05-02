@@ -32,6 +32,7 @@ public class MenuManager : MonoBehaviour {
 		backgroundMusic = GetComponents<AudioSource>()[1];
 		stageManager = GameObject.Find ("Stage Manager");
 		stageManagerScript = stageManager.GetComponent<StageManager>();
+		//StartCoroutine(fadeScript.fadeIn());
 	}
 		
 	//different play buttons

@@ -38,4 +38,17 @@ public class Fade : MonoBehaviour {
 		faded = true;
 		isFading = false;
 	}
+
+	public IEnumerator fadeOutToMenu () {
+		isFading = true;
+		float fadeTime = 1.0f;
+		while (fadingPanel.alpha < 1) {
+			fadingPanel.alpha += Time.deltaTime / fadeTime;
+			yield return null;
+		}
+		faded = true;
+		isFading = false;
+		SceneManager.LoadScene("MainMenu");
+	}
+
 }
