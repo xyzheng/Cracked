@@ -135,6 +135,7 @@ public class GameManager : MonoBehaviour {
             pushScript = pushIcon.GetComponent<Push>();
             eyeScript = eye.GetComponent<Eye>();
 			state = GameState.PLAY_ENDLESS;
+			gbm.noMinimap = false;
 			//update priorstate
 			priorState = GameState.TITLE;
 		}
@@ -206,6 +207,7 @@ public class GameManager : MonoBehaviour {
                 currentLevelText.text = "Floor\n" + level.ToString();
                 Debug.Log("Loading Jump levels");
 				levelLoaded = true;
+				gbm.noMinimap = false;
             }
 			if (stageManagerScript.stage == 2 && !levelLoaded)
             {
@@ -235,6 +237,7 @@ public class GameManager : MonoBehaviour {
                 currentLevelText.text = "Floor\n" + level.ToString();
                 Debug.Log("Loading Leap levels");
 				levelLoaded = true;
+				gbm.noMinimap = false;
             }
 			if (stageManagerScript.stage == 3 && !levelLoaded)
             {
@@ -263,6 +266,7 @@ public class GameManager : MonoBehaviour {
                 currentLevelText.text = "Floor\n" + level.ToString();
                 Debug.Log("Loading Push levels");
 				levelLoaded = true;
+				gbm.noMinimap = false;
             }
 
 			//check if done with peek
@@ -1233,6 +1237,7 @@ public class GameManager : MonoBehaviour {
                 else if (lstate == LoadState.BACK) { loadBacktrack(); }
                 else if (lstate == LoadState.FORWARD) { loadForwardTrack(); }
                 state = GameState.PLAY_ENDLESS;
+				gbm.noMinimap = false;
             }
             //update priorstate
             priorState = GameState.LOAD;
@@ -1248,6 +1253,7 @@ public class GameManager : MonoBehaviour {
                 gbm.unpeek();
                 eyeScript.unblink();
                 state = GameState.PLAY_ENDLESS;
+				gbm.noMinimap = false;
             }
             //update priorstate
             priorState = GameState.PEEK;
@@ -1953,6 +1959,7 @@ public class GameManager : MonoBehaviour {
             //pausePanel.SetActive(false);
             priorState = state;
             state = GameState.PLAY_ENDLESS;
+			gbm.noMinimap = false;
             //levelLoaded = false;
         }
     }

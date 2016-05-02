@@ -46,7 +46,7 @@ public class GameBoardManager : MonoBehaviour
     private float ntw;
     private int frames = 16;
 
-    private bool noMinimap;
+    public bool noMinimap;
 
     // (x, y) coordinates for highlighting a tile red.      Used to indicate an invalid move.
     int redX = -1;
