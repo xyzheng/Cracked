@@ -1081,16 +1081,16 @@ public class GameBoardManager : MonoBehaviour
 			}
 			else if (level == 3)
 			{
-				bbm.damageCurrentBoard(0, 1); bbm.damageCurrentBoard(2, 1); bbm.damageCurrentBoard(3, 1);
-				bbm.damageCurrentBoard(3, 2); bbm.damageCurrentBoard(3, 4);
-				bbm.currentPlaceRockAt(1, 1); bbm.currentPlaceRockAt(2, 1);
-				bbm.currentPlaceRockAt(3, 0); bbm.currentPlaceRockAt(3, 2); bbm.currentPlaceRockAt(3, 3);
+				bbm.damageCurrentBoard(0, 1); bbm.damageCurrentBoard(1, 1); bbm.damageCurrentBoard(3, 1);
+				bbm.damageCurrentBoard(3, 3); bbm.damageCurrentBoard(3, 4);
+				bbm.currentPlaceRockAt(1, 1); bbm.currentPlaceRockAt(2, 1); bbm.currentPlaceRockAt(4, 1);
+                bbm.currentPlaceRockAt(3, 0); bbm.currentPlaceRockAt(3, 2); bbm.currentPlaceRockAt(3, 3);
 			}
 			else if (level == 4)
 			{
 				bbm.damageCurrentBoard(2, 0); bbm.damageCurrentBoard(2, 2);
 				bbm.damageCurrentBoard(3, 1); bbm.damageCurrentBoard(3, 3);
-				bbm.damageCurrentBoard(4, 3); bbm.damageCurrentBoard(4, 4);
+				bbm.damageCurrentBoard(4, 2); bbm.damageCurrentBoard(4, 4);
 				bbm.currentPlaceRockAt(2, 1); bbm.currentPlaceRockAt(2, 3);
 				bbm.currentPlaceRockAt(3, 0); bbm.currentPlaceRockAt(3, 2);
 				bbm.currentPlaceRockAt(4, 1); bbm.currentPlaceRockAt(4, 3);
@@ -1288,16 +1288,15 @@ public class GameBoardManager : MonoBehaviour
 			}
 			else if (level == 3)
 			{
-				bbm.nextPlaceRockAt(4, 1);
-				bbm.damageCurrentBoard(1, 0); bbm.damageCurrentBoard(2, 0);
+				bbm.damageCurrentBoard(0, 0); bbm.damageCurrentBoard(1, 0);
 				bbm.damageCurrentBoard(1, 1); bbm.damageCurrentBoard(1, 1);
 				bbm.damageCurrentBoard(2, 1); bbm.damageCurrentBoard(2, 1);
 				bbm.damageCurrentBoard(3, 1); bbm.damageCurrentBoard(3, 1);
-				bbm.damageCurrentBoard(4, 1); bbm.damageCurrentBoard(4, 1);
 				bbm.damageCurrentBoard(1, 2); bbm.damageCurrentBoard(1, 2);
 				bbm.damageCurrentBoard(2, 2); bbm.damageCurrentBoard(2, 2);
 				bbm.damageCurrentBoard(3, 2);
-				bbm.currentPlaceRockAt(4, 0);
+                bbm.damageCurrentBoard(4, 1); bbm.damageCurrentBoard(4, 2);
+                bbm.currentPlaceRockAt(4, 0);
 			}
 			drawCurrentTiles();
 			drawCurrentRocks();
@@ -1328,10 +1327,8 @@ public class GameBoardManager : MonoBehaviour
 				bbm.damageCurrentBoard(3, 2); bbm.damageCurrentBoard(3, 2);
 				bbm.damageCurrentBoard(0, 1); bbm.damageCurrentBoard(0, 1);
 				bbm.damageCurrentBoard(0, 2); bbm.damageCurrentBoard(0, 2);
-				bbm.damageCurrentBoard(0, 3); bbm.damageCurrentBoard(0, 3);
 				bbm.damageCurrentBoard(1, 1); bbm.damageCurrentBoard(1, 1);
 				bbm.damageCurrentBoard(1, 2); bbm.damageCurrentBoard(1, 2);
-				bbm.damageCurrentBoard(1, 3); bbm.damageCurrentBoard(1, 3);
 				bbm.currentPlaceRockAt(2, 1); bbm.currentPlaceRockAt(2, 2);
 			}
 			if (level == 1)
