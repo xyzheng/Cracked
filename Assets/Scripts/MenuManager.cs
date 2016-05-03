@@ -56,7 +56,25 @@ public class MenuManager : MonoBehaviour {
 		StartCoroutine(fadeScript.fadeOut ());
 	}
 
-	public void optionsButton () {
+    public void crackButton()
+    {
+        stageManagerScript.stage = 4;
+        StartCoroutine(fadeScript.fadeOut());
+    }
+
+    public void jumpLeapButton()
+    {
+        stageManagerScript.stage = 5;
+        StartCoroutine(fadeScript.fadeOut());
+    }
+
+    public void jumpLeapPushButton()
+    {
+        stageManagerScript.stage = 6;
+        StartCoroutine(fadeScript.fadeOut());
+    }
+
+    public void optionsButton () {
 		menuPanel.GetComponentsInChildren<Button>()[2].GetComponentInChildren<Text>().fontSize = 20;
 		menuPanel.SetActive(false);
 		optionsPanel.SetActive(true);

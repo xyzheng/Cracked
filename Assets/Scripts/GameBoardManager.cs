@@ -1029,9 +1029,10 @@ public class GameBoardManager : MonoBehaviour
             movingRocks.Add(new KeyValuePair<Vector2, Vector2>(new Vector2(sx, sy), new Vector2(dx, dy)));
         }
     }
-    
+
     //level stuff
-    public bool loadJumpLevel(int level)
+
+    public bool loadCrackLevel(int level)
     {
         noMinimap = true;
         int MIN_LEVEL = 0;
@@ -1044,28 +1045,90 @@ public class GameBoardManager : MonoBehaviour
             bbm = new BoardManager();
             if (level == 0)
             {
-                //blank
-            }
-            else if (level == 1) {
-                bbm.damageCurrentBoard(3, 0);
                 bbm.currentPlaceRockAt(4, 0);
+                bbm.damageCurrentBoard(4, 1);
+            }
+            else if (level == 1)
+            {
+                bbm.currentPlaceRockAt(4, 0);
+                bbm.currentPlaceRockAt(4, 1);
+                bbm.currentPlaceRockAt(4, 2);
+                bbm.currentPlaceRockAt(4, 3);
+                bbm.damageCurrentBoard(3, 0);
+                bbm.damageCurrentBoard(3, 1);
+                bbm.damageCurrentBoard(3, 2);
+                bbm.damageCurrentBoard(3, 3);
             }
             else if (level == 2)
             {
-                bbm.currentPlaceRockAt(4, 0);
+                bbm.damageCurrentBoard(2, 0); bbm.damageCurrentBoard(3, 0); bbm.damageCurrentBoard(4, 0);
+                bbm.damageCurrentBoard(2, 1); bbm.damageCurrentBoard(3, 1); bbm.damageCurrentBoard(4, 1);
+                bbm.damageCurrentBoard(2, 2); bbm.damageCurrentBoard(3, 2); bbm.damageCurrentBoard(4, 2);
+                bbm.damageCurrentBoard(2, 3); bbm.damageCurrentBoard(3, 3); bbm.damageCurrentBoard(4, 3);
+                bbm.damageCurrentBoard(2, 4); bbm.damageCurrentBoard(3, 4); bbm.damageCurrentBoard(4, 4);
+                bbm.currentPlaceRockAt(4, 0); bbm.currentPlaceRockAt(4, 1); bbm.currentPlaceRockAt(4, 2); bbm.currentPlaceRockAt(4, 3);
+                bbm.currentPlaceRockAt(3, 1); bbm.currentPlaceRockAt(3, 2); bbm.currentPlaceRockAt(3, 3); bbm.currentPlaceRockAt(3, 4);
             }
             else if (level == 3)
+            {
+                bbm.currentPlaceRockAt(1, 1); bbm.currentPlaceRockAt(2, 1);
+                bbm.currentPlaceRockAt(3, 0); bbm.currentPlaceRockAt(3, 2); bbm.currentPlaceRockAt(3, 3);
+                bbm.damageCurrentBoard(0, 1); bbm.damageCurrentBoard(2, 1); bbm.damageCurrentBoard(3, 1);
+                bbm.damageCurrentBoard(3, 2); bbm.damageCurrentBoard(3, 4);
+            }
+            else if (level == 4)
+            {
+                bbm.currentPlaceRockAt(2, 1); bbm.currentPlaceRockAt(2, 3);
+                bbm.currentPlaceRockAt(3, 0); bbm.currentPlaceRockAt(3, 2);
+                bbm.currentPlaceRockAt(4, 1); bbm.currentPlaceRockAt(4, 3);
+                bbm.damageCurrentBoard(2, 0); bbm.damageCurrentBoard(2, 2);
+                bbm.damageCurrentBoard(3, 1); bbm.damageCurrentBoard(3, 3);
+                bbm.damageCurrentBoard(4, 3); bbm.damageCurrentBoard(4, 4);
+            }
+            drawCurrentTiles();
+            drawCurrentRocks();
+        }
+        return level == MAX_LEVEL + 1;
+    }
+
+    public bool loadJumpLevel(int level)
+    {
+        noMinimap = true;
+        int MIN_LEVEL = 0;
+        int MAX_LEVEL = 4;
+        if (level >= MIN_LEVEL && level <= MAX_LEVEL)
+        {
+            clearTiles();
+            clearRocks();
+            movingRocks.Clear();
+            bbm = new BoardManager();
+            if (level == 0) {
+                bbm.currentPlaceRockAt(4, 0);
+            }
+            else if (level == 1)
             {
                 bbm.currentPlaceRockAt(4, 0);
                 bbm.currentPlaceRockAt(3, 0);
             }
-            else if (level == 4)
+            else if (level == 2)
             {
                 bbm.currentPlaceRockAt(4, 0);
                 bbm.currentPlaceRockAt(3, 0);
                 bbm.currentPlaceRockAt(3, 1);
             }
-            //etc
+            else if (level == 3)
+            {
+                bbm.currentPlaceRockAt(4, 0);
+                bbm.currentPlaceRockAt(3, 1);
+            }
+            else if (level == 4)
+            {
+                bbm.currentPlaceRockAt(4, 0);
+                bbm.currentPlaceRockAt(4, 1);
+                bbm.currentPlaceRockAt(3, 0);
+                bbm.currentPlaceRockAt(3, 1);
+                bbm.damageCurrentBoard(4, 2);
+            }
             drawCurrentTiles();
             drawCurrentRocks();
         }
@@ -1076,7 +1139,7 @@ public class GameBoardManager : MonoBehaviour
     {
         noMinimap = true;
         int MIN_LEVEL = 0;
-        int MAX_LEVEL = 2;
+        int MAX_LEVEL = 3;
         if (level >= MIN_LEVEL && level <= MAX_LEVEL)
         {
             clearTiles();
@@ -1084,50 +1147,44 @@ public class GameBoardManager : MonoBehaviour
             bbm = new BoardManager();
             if (level == 0)
             {
-                //blank
+                bbm.damageCurrentBoard(0, 2); bbm.damageCurrentBoard(0, 2);
+                bbm.damageCurrentBoard(1, 2); bbm.damageCurrentBoard(1, 2);
+                bbm.damageCurrentBoard(2, 2); bbm.damageCurrentBoard(2, 2);
+                bbm.damageCurrentBoard(3, 2); bbm.damageCurrentBoard(3, 2);
+                bbm.damageCurrentBoard(4, 2); bbm.damageCurrentBoard(4, 2);
             }
             else if (level == 1)
             {
-                bbm.damageCurrentBoard(0, 2);
-                bbm.damageCurrentBoard(0, 2);
-                bbm.damageCurrentBoard(1, 2); 
-                bbm.damageCurrentBoard(1, 2);
-                bbm.damageCurrentBoard(2, 2);
-                bbm.damageCurrentBoard(2, 2);
-                bbm.damageCurrentBoard(3, 2);
-                bbm.damageCurrentBoard(3, 2);
-                bbm.damageCurrentBoard(0, 3);
-                bbm.damageCurrentBoard(1, 3);
-                bbm.damageCurrentBoard(2, 3);
-                bbm.damageCurrentBoard(3, 3);
-                bbm.damageCurrentBoard(0, 3);
-                bbm.damageCurrentBoard(1, 3);
-                bbm.damageCurrentBoard(2, 3);
-                bbm.damageCurrentBoard(3, 3);
-                bbm.damageCurrentBoard(2, 4);
-                bbm.damageCurrentBoard(2, 4);
+                bbm.currentPlaceRockAt(0, 2); bbm.currentPlaceRockAt(0, 2);
+                bbm.currentPlaceRockAt(1, 2); bbm.currentPlaceRockAt(1, 2);
+                bbm.currentPlaceRockAt(2, 2); bbm.currentPlaceRockAt(2, 2);
+                bbm.currentPlaceRockAt(3, 2); bbm.currentPlaceRockAt(3, 2);
+                bbm.currentPlaceRockAt(4, 2); bbm.currentPlaceRockAt(4, 2);
+                bbm.damageCurrentBoard(0, 1); bbm.damageCurrentBoard(1, 1);
+                bbm.damageCurrentBoard(3, 1); bbm.damageCurrentBoard(4, 1);
             }
             else if (level == 2)
             {
-                bbm.damageCurrentBoard(0, 2);
-                bbm.damageCurrentBoard(0, 2);
-                bbm.damageCurrentBoard(1, 2);
-                bbm.damageCurrentBoard(1, 2);
-                bbm.damageCurrentBoard(2, 2);
-                bbm.damageCurrentBoard(2, 2);
-                bbm.damageCurrentBoard(3, 2);
-                bbm.damageCurrentBoard(3, 2);
-                bbm.damageCurrentBoard(0, 3);
-                bbm.damageCurrentBoard(1, 3);
-                bbm.damageCurrentBoard(2, 3);
-                bbm.damageCurrentBoard(3, 3);
-                bbm.damageCurrentBoard(0, 3);
-                bbm.damageCurrentBoard(1, 3);
-                bbm.damageCurrentBoard(2, 3);
-                bbm.damageCurrentBoard(3, 3);
-                bbm.currentPlaceRockAt(2, 4);
+                bbm.currentPlaceRockAt(1, 2); bbm.nextPlaceRockAt(2, 2); bbm.nextPlaceRockAt(2, 3);
+                bbm.damageCurrentBoard(2, 1); bbm.damageCurrentBoard(2, 3);
+                bbm.damageCurrentBoard(0, 0); bbm.damageCurrentBoard(0, 0);
+                bbm.damageCurrentBoard(0, 1); bbm.damageCurrentBoard(0, 1);
+                bbm.damageCurrentBoard(0, 2); bbm.damageCurrentBoard(0, 2);
+                bbm.damageCurrentBoard(1, 0); bbm.damageCurrentBoard(1, 0);
+                bbm.damageCurrentBoard(1, 1); bbm.damageCurrentBoard(1, 1);
+                bbm.damageCurrentBoard(1, 2); bbm.damageCurrentBoard(1, 2);
+                bbm.damageCurrentBoard(3, 1); bbm.damageCurrentBoard(3, 1);
+                bbm.damageCurrentBoard(3, 2); bbm.damageCurrentBoard(3, 2);
+                bbm.damageCurrentBoard(4, 1); bbm.damageCurrentBoard(4, 1);
+                bbm.damageCurrentBoard(4, 2); bbm.damageCurrentBoard(4, 2);
             }
-            //etc
+            else if (level == 3)
+            {
+                bbm.damageCurrentBoard(4, 0);
+                bbm.currentPlaceRockAt(4, 1); bbm.currentPlaceRockAt(3, 0); bbm.currentPlaceRockAt(3, 1);
+                bbm.damageCurrentBoard(4, 1);
+                bbm.damageCurrentBoard(2, 0); bbm.damageCurrentBoard(4, 2);
+            }
             drawCurrentTiles();
             drawRocks();
         }
@@ -1146,35 +1203,148 @@ public class GameBoardManager : MonoBehaviour
             bbm = new BoardManager();
             if (level == 0)
             {
-                //blank
+                bbm.currentPlaceRockAt(2, 0);
+                bbm.currentPlaceRockAt(3, 1);
+                bbm.currentPlaceRockAt(4, 2);
             }
             else if (level == 1)
             {
-                bbm.damageCurrentBoard(0, 3);
-                bbm.damageCurrentBoard(1, 3);
-                bbm.damageCurrentBoard(2, 3);
-                bbm.damageCurrentBoard(4, 3);
-                bbm.damageCurrentBoard(0, 3);
-                bbm.damageCurrentBoard(1, 3);
-                bbm.damageCurrentBoard(2, 3);
-                bbm.damageCurrentBoard(4, 3);
-                bbm.currentPlaceRockAt(3, 4);
+                bbm.currentPlaceRockAt(4, 1);
+                bbm.damageCurrentBoard(3, 0); bbm.damageCurrentBoard(3, 0);
             }
             else if (level == 2)
             {
-                bbm.damageCurrentBoard(0, 3);
-                bbm.damageCurrentBoard(1, 3);
-                bbm.damageCurrentBoard(2, 3);
-                bbm.damageCurrentBoard(4, 3);
-                bbm.damageCurrentBoard(0, 3);
-                bbm.damageCurrentBoard(1, 3);
-                bbm.damageCurrentBoard(2, 3);
-                bbm.damageCurrentBoard(4, 3);
-                bbm.currentPlaceRockAt(3, 4);
+                bbm.nextHasRockAt(2, 0);
+                bbm.damageCurrentBoard(2, 0); bbm.damageCurrentBoard(2, 0);
+                bbm.currentPlaceRockAt(3, 1);
+                bbm.damageCurrentBoard(4, 2); bbm.damageCurrentBoard(4, 2);
             }
-            //etc
+            else if (level == 3)
+            {
+                bbm.currentPlaceRockAt(2, 2);
+                bbm.damageCurrentBoard(0, 0); bbm.damageCurrentBoard(0, 0);
+                bbm.damageCurrentBoard(0, 1); bbm.damageCurrentBoard(0, 1);
+                bbm.damageCurrentBoard(1, 0); bbm.damageCurrentBoard(1, 0);
+                bbm.damageCurrentBoard(1, 1); bbm.damageCurrentBoard(1, 1);
+                bbm.nextPlaceRockAt(1, 1);
+                bbm.damageCurrentBoard(3, 1); bbm.damageCurrentBoard(3, 1);
+                bbm.damageCurrentBoard(4, 1); bbm.damageCurrentBoard(4, 1);
+                bbm.nextPlaceRockAt(3, 1);
+            }
             drawCurrentTiles();
             drawRocks();
+        }
+        return level == MAX_LEVEL + 1;
+    }
+
+    public bool loadJumpLeapLevel(int level)
+    {
+        noMinimap = true;
+        int MIN_LEVEL = 0;
+        int MAX_LEVEL = 3;
+        if (level >= MIN_LEVEL && level <= MAX_LEVEL)
+        {
+            clearTiles();
+            clearRocks();
+            movingRocks.Clear();
+            bbm = new BoardManager();
+            if (level == 0)
+            {
+                bbm.currentPlaceRockAt(4, 0); bbm.currentPlaceRockAt(4, 1);
+                bbm.currentPlaceRockAt(3, 0); bbm.currentPlaceRockAt(3, 1);
+            }
+            if (level == 1)
+            {
+                bbm.currentPlaceRockAt(2, 2); bbm.damageCurrentBoard(2, 1);
+                bbm.damageCurrentBoard(4, 4); bbm.damageCurrentBoard(4, 4);
+                bbm.damageCurrentBoard(4, 3); bbm.damageCurrentBoard(4, 3);
+                bbm.damageCurrentBoard(3, 4); bbm.damageCurrentBoard(3, 4);
+                bbm.damageCurrentBoard(3, 3); bbm.damageCurrentBoard(3, 3);
+                bbm.damageCurrentBoard(0, 0); bbm.damageCurrentBoard(0, 0);
+                bbm.damageCurrentBoard(0, 1); bbm.damageCurrentBoard(0, 1);
+                bbm.damageCurrentBoard(0, 2); bbm.damageCurrentBoard(0, 2);
+                bbm.damageCurrentBoard(1, 0); bbm.damageCurrentBoard(1, 0);
+                bbm.damageCurrentBoard(1, 1); bbm.damageCurrentBoard(1, 1);
+                bbm.damageCurrentBoard(1, 2); bbm.damageCurrentBoard(1, 2);
+                bbm.nextPlaceRockAt(1, 2); bbm.nextPlaceRockAt(1, 1);
+            }
+            else if (level == 2)
+            {
+                bbm.currentPlaceRockAt(2, 0); bbm.currentPlaceRockAt(2, 1); bbm.currentPlaceRockAt(2, 2);
+                bbm.currentPlaceRockAt(3, 2); bbm.currentPlaceRockAt(4, 2);
+                bbm.damageCurrentBoard(3, 0); bbm.damageCurrentBoard(3, 1); bbm.damageCurrentBoard(4, 1);
+            }
+            else if (level == 3)
+            {
+                bbm.currentPlaceRockAt(4, 0);
+                bbm.nextPlaceRockAt(4, 1);
+                bbm.damageCurrentBoard(1, 0); bbm.damageCurrentBoard(2, 0);
+                bbm.damageCurrentBoard(1, 1); bbm.damageCurrentBoard(1, 1);
+                bbm.damageCurrentBoard(2, 1); bbm.damageCurrentBoard(2, 1);
+                bbm.damageCurrentBoard(3, 1); bbm.damageCurrentBoard(3, 1);
+                bbm.damageCurrentBoard(4, 1); bbm.damageCurrentBoard(4, 1);
+                bbm.damageCurrentBoard(1, 2); bbm.damageCurrentBoard(1, 2);
+                bbm.damageCurrentBoard(2, 2); bbm.damageCurrentBoard(2, 2);
+                bbm.damageCurrentBoard(3, 2);
+            }
+            drawCurrentTiles();
+            drawCurrentRocks();
+        }
+        return level == MAX_LEVEL + 1;
+    }
+
+    public bool loadJumpLeapPushLevel(int level)
+    {
+        noMinimap = true;
+        int MIN_LEVEL = 0;
+        int MAX_LEVEL = 2;
+        if (level >= MIN_LEVEL && level <= MAX_LEVEL)
+        {
+            clearTiles();
+            clearRocks();
+            movingRocks.Clear();
+            bbm = new BoardManager();
+            if (level == 0)
+            {
+                bbm.currentPlaceRockAt(2, 1); bbm.currentPlaceRockAt(2, 2);
+                bbm.damageCurrentBoard(3, 0); bbm.damageCurrentBoard(3, 0);
+                bbm.damageCurrentBoard(4, 4); bbm.damageCurrentBoard(4, 4);
+                bbm.damageCurrentBoard(4, 3); bbm.damageCurrentBoard(4, 3);
+                bbm.damageCurrentBoard(4, 2); bbm.damageCurrentBoard(4, 2);
+                bbm.damageCurrentBoard(3, 4); bbm.damageCurrentBoard(3, 4);
+                bbm.damageCurrentBoard(3, 3); bbm.damageCurrentBoard(3, 3);
+                bbm.damageCurrentBoard(3, 2); bbm.damageCurrentBoard(3, 2);
+                bbm.nextPlaceRockAt(3, 2); bbm.nextPlaceRockAt(1, 2); bbm.nextPlaceRockAt(1, 1);
+                bbm.damageCurrentBoard(0, 1); bbm.damageCurrentBoard(0, 1);
+                bbm.damageCurrentBoard(0, 2); bbm.damageCurrentBoard(0, 2);
+                bbm.damageCurrentBoard(0, 3); bbm.damageCurrentBoard(0, 3);
+                bbm.damageCurrentBoard(1, 1); bbm.damageCurrentBoard(1, 1);
+                bbm.damageCurrentBoard(1, 2); bbm.damageCurrentBoard(1, 2);
+                bbm.damageCurrentBoard(1, 3); bbm.damageCurrentBoard(1, 3);
+            }
+            if (level == 1)
+            {
+                bbm.damageCurrentBoard(0, 3); bbm.damageCurrentBoard(0, 3);
+                bbm.damageCurrentBoard(1, 3); bbm.damageCurrentBoard(1, 3);
+                bbm.damageCurrentBoard(2, 3); bbm.damageCurrentBoard(2, 3);
+                bbm.damageCurrentBoard(2, 2); bbm.damageCurrentBoard(2, 2);
+                bbm.damageCurrentBoard(3, 3); bbm.damageCurrentBoard(3, 3);
+                bbm.damageCurrentBoard(4, 3); bbm.damageCurrentBoard(4, 3);
+                bbm.currentPlaceRockAt(0, 1);
+                bbm.currentPlaceRockAt(1, 1);
+                bbm.currentPlaceRockAt(2, 0);
+                bbm.currentPlaceRockAt(3, 1);
+                bbm.currentPlaceRockAt(4, 1);
+            }
+            if (level == 2)
+            {
+                bbm.damageCurrentBoard(4, 0);
+                bbm.currentPlaceRockAt(2, 1);
+                bbm.currentPlaceRockAt(3, 0); bbm.currentPlaceRockAt(3, 1); bbm.currentPlaceRockAt(3, 2);
+                bbm.currentPlaceRockAt(4, 1);
+            }
+            drawCurrentTiles();
+            drawCurrentRocks();
         }
         return level == MAX_LEVEL + 1;
     }
