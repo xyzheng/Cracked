@@ -178,8 +178,9 @@ public class GameManager : MonoBehaviour {
 				currentLevelText.text = "Floor\n" + level.ToString();
 				Debug.Log("Loading Jump levels");
 				levelLoaded = true;
-				gbm.noMinimap = false;
-			}
+				gbm.noMinimap = true;
+                gbm.updateAllTiles();
+            }
 			else if (stageManagerScript.stage == 2 && !levelLoaded)
 			{
 				level = 0;
@@ -208,8 +209,9 @@ public class GameManager : MonoBehaviour {
 				currentLevelText.text = "Floor\n" + level.ToString();
 				Debug.Log("Loading Leap levels");
 				levelLoaded = true;
-				gbm.noMinimap = false;
-			}
+				gbm.noMinimap = true;
+                gbm.updateAllTiles();
+            }
 			else if (stageManagerScript.stage == 3 && !levelLoaded)
 			{
 				level = 0;
@@ -237,8 +239,9 @@ public class GameManager : MonoBehaviour {
 				currentLevelText.text = "Floor\n" + level.ToString();
 				Debug.Log("Loading Push levels");
 				levelLoaded = true;
-				gbm.noMinimap = false;
-			}
+				gbm.noMinimap = true;
+                gbm.updateAllTiles();
+            }
 			else if (stageManagerScript.stage == 4 && !levelLoaded)
 			{
 				level = 0;
@@ -266,8 +269,9 @@ public class GameManager : MonoBehaviour {
 				currentLevelText.text = "Floor\n" + level.ToString();
 				Debug.Log("Loading Crack levels");
 				levelLoaded = true;
-				gbm.noMinimap = false;
-			}
+				gbm.noMinimap = true;
+                gbm.updateAllTiles();
+            }
 			else if (stageManagerScript.stage == 5 && !levelLoaded)
 			{
 				level = 0;
@@ -295,8 +299,9 @@ public class GameManager : MonoBehaviour {
 				currentLevelText.text = "Floor\n" + level.ToString();
 				Debug.Log("Loading Jump Leap levels");
 				levelLoaded = true;
-				gbm.noMinimap = false;
-			}
+				gbm.noMinimap = true;
+                gbm.updateAllTiles();
+            }
 			else if (stageManagerScript.stage == 6 && !levelLoaded)
 			{
 				level = 0;
@@ -324,8 +329,9 @@ public class GameManager : MonoBehaviour {
 				currentLevelText.text = "Floor\n" + level.ToString();
 				Debug.Log("Loading Jump Leap Pushlevels");
 				levelLoaded = true;
-				gbm.noMinimap = false;
-			}
+				gbm.noMinimap = true;
+                gbm.updateAllTiles();
+            }
 
 			//check if done with peek
 			if (priorState == GameState.PEEK)
@@ -518,7 +524,7 @@ public class GameManager : MonoBehaviour {
 							playerScript.notLeap();
 							handledPlayerJump = false;
 							handledPlayerLeap = false;
-							rockPushed = false;
+							rockPushed = true;
 							//reset entrance/exit
 							entrance.GetComponent<Transform>().position = new Vector3(gbm.getStart().x - 1, gbm.getCurrentHeight() - gbm.getStart().y - 1, 0);
 							exit.GetComponent<Transform>().position = new Vector3(gbm.getGoal().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y - 1, 0);
@@ -1957,6 +1963,8 @@ public class GameManager : MonoBehaviour {
                     btScript.setPosition(gbm.getStart().x + 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
                     ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
                     jumpScript.makeFullColor();
+                    leapScript.makeFullColor();
+                    leapScript.untoggle();
                     //update icons
                     handleIcons();
                 }
@@ -2329,6 +2337,7 @@ public class GameManager : MonoBehaviour {
                     ftScript.setPosition(gbm.getGoal().x - 1, gbm.getCurrentHeight() - gbm.getGoal().y, 0);
                     jumpScript.makeFullColor();
                     leapScript.makeFullColor();
+                    leapScript.untoggle();
                     pushScript.makeFullColor();
                     //update icons
                     handleIcons();
