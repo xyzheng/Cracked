@@ -1165,7 +1165,8 @@ public class GameBoardManager : MonoBehaviour
             }
             else if (level == 2)
             {
-                bbm.currentPlaceRockAt(1, 2); bbm.nextPlaceRockAt(2, 2); bbm.nextPlaceRockAt(2, 3);
+                bbm.currentPlaceRockAt(2, 2);
+                bbm.nextPlaceRockAt(1, 2); bbm.nextPlaceRockAt(3, 2);
                 bbm.damageCurrentBoard(2, 1); bbm.damageCurrentBoard(2, 3);
                 bbm.damageCurrentBoard(0, 0); bbm.damageCurrentBoard(0, 0);
                 bbm.damageCurrentBoard(0, 1); bbm.damageCurrentBoard(0, 1);
@@ -1186,7 +1187,7 @@ public class GameBoardManager : MonoBehaviour
                 bbm.damageCurrentBoard(2, 0); bbm.damageCurrentBoard(4, 2);
             }
             drawCurrentTiles();
-            drawRocks();
+            drawCurrentRocks();
         }
         return level == MAX_LEVEL + 1;
     }
@@ -1195,7 +1196,7 @@ public class GameBoardManager : MonoBehaviour
     {
         noMinimap = true;
         int MIN_LEVEL = 0;
-        int MAX_LEVEL = 2;
+        int MAX_LEVEL = 3;
         if (level >= MIN_LEVEL && level <= MAX_LEVEL)
         {
             clearTiles();
@@ -1214,7 +1215,7 @@ public class GameBoardManager : MonoBehaviour
             }
             else if (level == 2)
             {
-                bbm.nextHasRockAt(2, 0);
+                bbm.nextPlaceRockAt(2, 0);
                 bbm.damageCurrentBoard(2, 0); bbm.damageCurrentBoard(2, 0);
                 bbm.currentPlaceRockAt(3, 1);
                 bbm.damageCurrentBoard(4, 2); bbm.damageCurrentBoard(4, 2);
@@ -1232,7 +1233,7 @@ public class GameBoardManager : MonoBehaviour
                 bbm.nextPlaceRockAt(3, 1);
             }
             drawCurrentTiles();
-            drawRocks();
+            drawCurrentRocks();
         }
         return level == MAX_LEVEL + 1;
     }
