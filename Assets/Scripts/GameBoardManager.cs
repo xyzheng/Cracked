@@ -1032,7 +1032,7 @@ public class GameBoardManager : MonoBehaviour
 		if (bbm.currentHasRockAt(sx, sy))
 		{
             // play rock sound
-            GameManager.aSrc[6].PlayOneShot(GameManager.pushing, 1.0f);
+            GameManager.aSrc[5].PlayOneShot(GameManager.pushing, 1.0f);
             // move rock to pos (dx,dy) from (sx, sy)
             bbm.currentRemoveAt(sx, sy);
 			bbm.currentPlaceRockAt(dx, dy);

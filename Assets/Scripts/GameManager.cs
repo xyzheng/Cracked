@@ -89,14 +89,14 @@ public class GameManager : MonoBehaviour {
 		handledPlayerLeap = false;
 		leapMode = false;
 		// set up audio variables
-		// 0: crack, 1: leap, 2: fall, 3: jump 6: push 7: walk
+		// 0: crack, 1: leap, 2: fall, 3: jump 5: push 6: walk
 		aSrc = GetComponents<AudioSource>();
 		crack = aSrc[0].clip;
 		leap = aSrc[1].clip;
 		fall = aSrc[2].clip;
 		jump = aSrc[3].clip;
-        pushing = aSrc[6].clip;
-        walking = aSrc[7].clip;
+        pushing = aSrc[5].clip;
+        walking = aSrc[6].clip;
 		//soundSlider = GameObject.Find("Sound Slider").GetComponent<Slider>();
 		rockPushed = false;
 		//stage manager 
@@ -625,7 +625,7 @@ public class GameManager : MonoBehaviour {
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
 						//sound
-						aSrc[0].PlayOneShot(crack, 1.0f);
+						aSrc[6].PlayOneShot(walking, 1.0f);
 					}
 					else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)
 						//&& gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)
@@ -642,8 +642,6 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						//sound
-						aSrc[0].PlayOneShot(crack, 1.0f);
 					}
 					//else playerScript.hopInPlace();        //invalid move
 					else
@@ -669,7 +667,7 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+						aSrc[6].PlayOneShot(walking, 1.0f);               // play walking sound
 						//im.addToPriorKeys(im.getMoveDownKey());                //add to prior keys list
 					}
 					else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)
@@ -686,7 +684,6 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
 					}
 					//else playerScript.hopInPlace();     //do the growing animation, hopping
 					else
@@ -711,7 +708,7 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+						aSrc[6].PlayOneShot(walking, 1.0f);               // play walking sound
 						//im.addToPriorKeys(im.getMoveLeftKey());                //add to prior keys list
 					}
 					else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)
@@ -728,7 +725,6 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
 					}
 					//else playerScript.hopInPlace();     //do the growing animation, hopping
 					else
@@ -760,7 +756,7 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+						aSrc[6].PlayOneShot(walking, 1.0f);               // play walking sound
 						//im.addToPriorKeys(im.getMoveRightKey());                //add to prior keys list
 					}
 					else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)
@@ -776,7 +772,6 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
 					}
 					//else playerScript.hopInPlace();      //do the growing animation, hopping
 					else
@@ -866,7 +861,7 @@ public class GameManager : MonoBehaviour {
 							handleIcons();
 							if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
 							//sound
-							aSrc[0].PlayOneShot(crack, 1.0f);
+							aSrc[6].PlayOneShot(walking, 1.0f);
 						}
 						else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)
 							//&& gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)
@@ -883,8 +878,6 @@ public class GameManager : MonoBehaviour {
 							//update icons
 							handleIcons();
 							if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-							//sound
-							aSrc[0].PlayOneShot(crack, 1.0f);
 						}
 						//else playerScript.hopInPlace();        //invalid move
 						else
@@ -905,7 +898,7 @@ public class GameManager : MonoBehaviour {
 							//update icons
 							handleIcons();
 							if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-							aSrc[0].PlayOneShot(crack, 1.0f);       // play walking sound
+							aSrc[6].PlayOneShot(walking, 1.0f);       // play walking sound
 							handleLeap();
 						}
 						else
@@ -937,7 +930,7 @@ public class GameManager : MonoBehaviour {
 							//update icons
 							handleIcons();
 							if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-							aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+							aSrc[6].PlayOneShot(walking, 1.0f);               // play walking sound
 							//im.addToPriorKeys(im.getMoveDownKey());                //add to prior keys list
 						}
 						else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)
@@ -954,7 +947,6 @@ public class GameManager : MonoBehaviour {
 							//update icons
 							handleIcons();
 							if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-							aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
 						}
 						//else playerScript.hopInPlace();     //do the growing animation, hopping
 						else
@@ -975,7 +967,6 @@ public class GameManager : MonoBehaviour {
 							//update icons
 							handleIcons();
 							if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-							aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
 							handleLeap();
 						}
 						else
@@ -1007,7 +998,7 @@ public class GameManager : MonoBehaviour {
 							//update icons
 							handleIcons();
 							if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-							aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+							aSrc[6].PlayOneShot(walking, 1.0f);               // play walking sound
 							//im.addToPriorKeys(im.getMoveLeftKey());                //add to prior keys list
 						}
 						else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)
@@ -1024,7 +1015,6 @@ public class GameManager : MonoBehaviour {
 							//update icons
 							handleIcons();
 							if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-							aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
 						}
 						//else playerScript.hopInPlace();     //do the growing animation, hopping
 						else
@@ -1045,7 +1035,6 @@ public class GameManager : MonoBehaviour {
 							//update icons
 							handleIcons();
 							if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-							aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
 							handleLeap();
 						}
 						else
@@ -1084,7 +1073,7 @@ public class GameManager : MonoBehaviour {
 							//update icons
 							handleIcons();
 							if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-							aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+							aSrc[6].PlayOneShot(walking, 1.0f);               // play walking sound
 							//im.addToPriorKeys(im.getMoveRightKey());                //add to prior keys list
 						}
 						else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)
@@ -1100,7 +1089,6 @@ public class GameManager : MonoBehaviour {
 							//update icons
 							handleIcons();
 							if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-							aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
 						}
 						//else playerScript.hopInPlace();      //do the growing animation, hopping
 						else
@@ -1121,7 +1109,6 @@ public class GameManager : MonoBehaviour {
 							//update icons
 							handleIcons();
 							if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-							aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
 							handleLeap();
 						}
 						else
@@ -1202,7 +1189,7 @@ public class GameManager : MonoBehaviour {
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
 						//sound
-						aSrc[0].PlayOneShot(crack, 1.0f);
+						aSrc[6].PlayOneShot(walking, 1.0f);
 					}
 					else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)
 						//&& gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)
@@ -1219,8 +1206,6 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						//sound
-						aSrc[0].PlayOneShot(crack, 1.0f);
 					}
 					//else playerScript.hopInPlace();        //invalid move
 					else
@@ -1245,7 +1230,7 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+						aSrc[6].PlayOneShot(walking, 1.0f);               // play walking sound
 						//im.addToPriorKeys(im.getMoveDownKey());                //add to prior keys list
 					}
 					else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)
@@ -1262,7 +1247,6 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
 					}
 					//else playerScript.hopInPlace();     //do the growing animation, hopping
 					else
@@ -1287,7 +1271,7 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+						aSrc[6].PlayOneShot(walking, 1.0f);               // play walking sound
 						//im.addToPriorKeys(im.getMoveLeftKey());                //add to prior keys list
 					}
 					else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)
@@ -1304,7 +1288,6 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
 					}
 					//else playerScript.hopInPlace();     //do the growing animation, hopping
 					else
@@ -1336,7 +1319,7 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+						aSrc[6].PlayOneShot(walking, 1.0f);               // play walking sound
 						//im.addToPriorKeys(im.getMoveRightKey());                //add to prior keys list
 					}
 					else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)
@@ -1352,7 +1335,6 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
 					}
 					//else playerScript.hopInPlace();      //do the growing animation, hopping
 					else
@@ -1419,7 +1401,7 @@ public class GameManager : MonoBehaviour {
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
 						//sound
-						aSrc[0].PlayOneShot(crack, 1.0f);
+						aSrc[6].PlayOneShot(walking, 1.0f);
 					}
 					else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)
 						//&& gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)
@@ -1436,8 +1418,6 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						//sound
-						aSrc[0].PlayOneShot(crack, 1.0f);
 					}
 					//else playerScript.hopInPlace();        //invalid move
 					else
@@ -1463,7 +1443,7 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+						aSrc[6].PlayOneShot(walking, 1.0f);               // play walking sound
 						//im.addToPriorKeys(im.getMoveDownKey());                //add to prior keys list
 					}
 					else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)
@@ -1480,7 +1460,6 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
 					}
 					//else playerScript.hopInPlace();     //do the growing animation, hopping
 					else
@@ -1505,7 +1484,7 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+						aSrc[6].PlayOneShot(walking, 1.0f);               // play walking sound
 						//im.addToPriorKeys(im.getMoveLeftKey());                //add to prior keys list
 					}
 					else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)
@@ -1522,7 +1501,6 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
 					}
 					//else playerScript.hopInPlace();     //do the growing animation, hopping
 					else
@@ -1554,7 +1532,7 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+						aSrc[6].PlayOneShot(walking, 1.0f);               // play walking sound
 						//im.addToPriorKeys(im.getMoveRightKey());                //add to prior keys list
 					}
 					else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)
@@ -1570,7 +1548,6 @@ public class GameManager : MonoBehaviour {
 						//update icons
 						handleIcons();
 						if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-						aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
 					}
 					//else playerScript.hopInPlace();      //do the growing animation, hopping
 					else
@@ -1639,7 +1616,7 @@ public class GameManager : MonoBehaviour {
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
                             //sound
-                            aSrc[0].PlayOneShot(crack, 1.0f);
+                            aSrc[6].PlayOneShot(walking, 1.0f);
                         }
                         else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)
                             //&& gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)
@@ -1656,8 +1633,6 @@ public class GameManager : MonoBehaviour {
                             //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            //sound
-                            aSrc[0].PlayOneShot(crack, 1.0f);
                         }
                         //else playerScript.hopInPlace();        //invalid move
                         else
@@ -1680,7 +1655,6 @@ public class GameManager : MonoBehaviour {
                                                                             //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);       // play walking sound
                             handleLeap();
                         }
                         else
@@ -1714,7 +1688,7 @@ public class GameManager : MonoBehaviour {
                                                                                     //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                            aSrc[6].PlayOneShot(walking, 1.0f);               // play walking sound
                                                                             //im.addToPriorKeys(im.getMoveDownKey());                //add to prior keys list
                         }
                         else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)
@@ -1731,7 +1705,6 @@ public class GameManager : MonoBehaviour {
                                                                                      //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
                         }
                         //else playerScript.hopInPlace();     //do the growing animation, hopping
                         else
@@ -1754,7 +1727,6 @@ public class GameManager : MonoBehaviour {
                                                                                      //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
                             handleLeap();
                         }
                         else
@@ -1788,7 +1760,7 @@ public class GameManager : MonoBehaviour {
                                                                                     //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                            aSrc[6].PlayOneShot(walking, 1.0f);               // play walking sound
                                                                             //im.addToPriorKeys(im.getMoveLeftKey());                //add to prior keys list
                         }
                         else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)
@@ -1805,7 +1777,6 @@ public class GameManager : MonoBehaviour {
                                                                                      //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
                         }
                         //else playerScript.hopInPlace();     //do the growing animation, hopping
                         else
@@ -1828,7 +1799,6 @@ public class GameManager : MonoBehaviour {
                                                                                      //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
                             handleLeap();
                         }
                         else
@@ -1869,7 +1839,7 @@ public class GameManager : MonoBehaviour {
                                                                                       //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                            aSrc[6].PlayOneShot(walking, 1.0f);               // play walking sound
                                                                             //im.addToPriorKeys(im.getMoveRightKey());                //add to prior keys list
                         }
                         else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)
@@ -1885,7 +1855,6 @@ public class GameManager : MonoBehaviour {
                                                                                       //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
                         }
                         //else playerScript.hopInPlace();      //do the growing animation, hopping
                         else
@@ -1908,7 +1877,6 @@ public class GameManager : MonoBehaviour {
                                                                                        //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
                             handleLeap();
                         }
                         else
@@ -2012,7 +1980,7 @@ public class GameManager : MonoBehaviour {
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
                             //sound
-                            aSrc[0].PlayOneShot(crack, 1.0f);
+                            aSrc[6].PlayOneShot(walking, 1.0f);
                         }
                         else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)
                             //&& gbm.currentIsHealthyAt((int)playerBoardPosition.x, (int)playerBoardPosition.y - 2)
@@ -2029,8 +1997,6 @@ public class GameManager : MonoBehaviour {
                             //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            //sound
-                            aSrc[0].PlayOneShot(crack, 1.0f);
                         }
                         //else playerScript.hopInPlace();        //invalid move
                         else
@@ -2053,7 +2019,6 @@ public class GameManager : MonoBehaviour {
                                                                             //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);       // play walking sound
                             handleLeap();
                         }
                         else
@@ -2087,7 +2052,7 @@ public class GameManager : MonoBehaviour {
                                                                                     //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                            aSrc[6].PlayOneShot(walking, 1.0f);               // play walking sound
                                                                             //im.addToPriorKeys(im.getMoveDownKey());                //add to prior keys list
                         }
                         else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y + 1)
@@ -2104,7 +2069,6 @@ public class GameManager : MonoBehaviour {
                                                                                      //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
                         }
                         //else playerScript.hopInPlace();     //do the growing animation, hopping
                         else
@@ -2127,7 +2091,6 @@ public class GameManager : MonoBehaviour {
                                                                                      //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
                             handleLeap();
                         }
                         else
@@ -2161,7 +2124,7 @@ public class GameManager : MonoBehaviour {
                                                                                     //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                            aSrc[6].PlayOneShot(walking, 1.0f);               // play walking sound
                                                                             //im.addToPriorKeys(im.getMoveLeftKey());                //add to prior keys list
                         }
                         else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x - 1, (int)playerBoardPosition.y)
@@ -2178,7 +2141,6 @@ public class GameManager : MonoBehaviour {
                                                                                      //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
                         }
                         //else playerScript.hopInPlace();     //do the growing animation, hopping
                         else
@@ -2201,7 +2163,6 @@ public class GameManager : MonoBehaviour {
                                                                                      //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
                             handleLeap();
                         }
                         else
@@ -2242,7 +2203,7 @@ public class GameManager : MonoBehaviour {
                                                                                       //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
+                            aSrc[6].PlayOneShot(walking, 1.0f);               // play walking sound
                                                                             //im.addToPriorKeys(im.getMoveRightKey());                //add to prior keys list
                         }
                         else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x + 1, (int)playerBoardPosition.y)
@@ -2258,7 +2219,6 @@ public class GameManager : MonoBehaviour {
                                                                                       //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);                // play walking sound
                         }
                         //else playerScript.hopInPlace();      //do the growing animation, hopping
                         else
@@ -2281,7 +2241,6 @@ public class GameManager : MonoBehaviour {
                                                                                        //update icons
                             handleIcons();
                             if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
-                            aSrc[0].PlayOneShot(crack, 1.0f);               // play walking sound
                             handleLeap();
                         }
                         else
@@ -2671,7 +2630,7 @@ public class GameManager : MonoBehaviour {
 					player.GetComponent<Player>().moveUp();
 					//update icons
 					handleIcons();
-                    aSrc[7].PlayOneShot(walking, 1.0f);
+                    aSrc[6].PlayOneShot(walking, 1.0f);
                     if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
 				}
 				else if (!rockPushed && gbm.hasRock((int)playerBoardPosition.x, (int)playerBoardPosition.y - 1)
@@ -2738,7 +2697,7 @@ public class GameManager : MonoBehaviour {
 					player.GetComponent<Player>().moveDown();               //move player
 					//update icons
 					handleIcons();
-                    aSrc[7].PlayOneShot(walking, 1.0f);
+                    aSrc[6].PlayOneShot(walking, 1.0f);
                     if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
 					//im.addToPriorKeys(im.getMoveDownKey());                //add to prior keys list
 				}
@@ -2805,7 +2764,7 @@ public class GameManager : MonoBehaviour {
 					player.GetComponent<Player>().moveLeft();               //move player
 					//update icons
 					handleIcons();
-                    aSrc[7].PlayOneShot(walking, 1.0f);
+                    aSrc[6].PlayOneShot(walking, 1.0f);
                     if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
 					//im.addToPriorKeys(im.getMoveLeftKey());                //add to prior keys list
 				}
@@ -2874,7 +2833,7 @@ public class GameManager : MonoBehaviour {
 					player.GetComponent<Player>().moveRight();                //move player
 					//update icons
 					handleIcons();
-                    aSrc[7].PlayOneShot(walking, 1.0f);
+                    aSrc[6].PlayOneShot(walking, 1.0f);
                     if (!playerScript.duringMove) gbm.steppedOffOf((int)playerBoardPosition.x, (int)playerBoardPosition.y);
 					//im.addToPriorKeys(im.getMoveRightKey());                //add to prior keys list
 				}
@@ -3147,15 +3106,15 @@ public class GameManager : MonoBehaviour {
 	//music slider
 	public void updateMusicSlider () {
 		if (musicToggle.isOn) { 
-			aSrc[5].volume = musicSlider.value;
+			aSrc[7].volume = musicSlider.value;
 		}
 	}
 	public void toggleMusic () {
 		if (!musicToggle.isOn) {
-			aSrc[5].volume = 0f;
+			aSrc[7].volume = 0f;
 		}
 		else {
-			aSrc[5].volume = musicSlider.value;
+			aSrc[7].volume = musicSlider.value;
 		}
 	}
 

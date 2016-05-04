@@ -2733,10 +2733,10 @@ GameObject:
   - 82: {fileID: 1510949516}
   - 82: {fileID: 1510949515}
   - 82: {fileID: 1510949519}
-  - 82: {fileID: 1510949521}
   - 114: {fileID: 1510949520}
   - 82: {fileID: 1510949523}
   - 82: {fileID: 1510949522}
+  - 82: {fileID: 1510949521}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
