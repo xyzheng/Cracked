@@ -326,15 +326,15 @@ public class GameBoardManager : MonoBehaviour
 			//break the floor
 			bbm.damageCurrentBoard(x, y);
 			// play sound for making a hole
-			GameManager.aSrc[1].PlayOneShot(GameManager.hole, 1.0f);
+			GameManager.aSrc[0].PlayOneShot(GameManager.crack, 1.0f);
 			updateTile(x, y);
 			//check rocks
 			dropRocks(x, y);
 		}
 		else if (!bbm.nextIsDamagedAt(x, y))
 		{
-			//did not step off a damaged tile
-			bbm.stepCurrentBoard(x, y);
+            //did not step off a damaged tile
+            bbm.stepCurrentBoard(x, y);
 			bbm.damageNextBoard(x, y);
 			updateTile(x, y);
 		}
@@ -549,8 +549,9 @@ public class GameBoardManager : MonoBehaviour
 				{
 					StartCoroutine(rocks[rX][rY].GetComponent<Rock>().moveAndScale(new Vector3(rocks[rX][rY].transform.position.x - 1.0f, rocks[rX][rY].transform.position.y, rocks[rX][rY].transform.position.z), 0.5f));
 				}
-				//Destroy(rocks[rX][rY]);
-				rocks[rX][rY] = null;
+                GameManager.aSrc[2].PlayOneShot(GameManager.fall, 1.0f);
+                //Destroy(rocks[rX][rY]);
+                rocks[rX][rY] = null;
 				bbm.currentRemoveAt(rX, rY);
 				//next board has no rock, place it there unless it has a hole
 				if (!bbm.nextIsDestroyedAt(x, y)) { 
@@ -1030,8 +1031,10 @@ public class GameBoardManager : MonoBehaviour
 	{
 		if (bbm.currentHasRockAt(sx, sy))
 		{
-			// move rock to pos (dx,dy) from (sx, sy)
-			bbm.currentRemoveAt(sx, sy);
+            // play rock sound
+            GameManager.aSrc[6].PlayOneShot(GameManager.pushing, 1.0f);
+            // move rock to pos (dx,dy) from (sx, sy)
+            bbm.currentRemoveAt(sx, sy);
 			bbm.currentPlaceRockAt(dx, dy);
 			// push rock
 			StartCoroutine(rocks[sx][sy].GetComponent<Rock>().move(new Vector3(rocks[sx][sy].transform.position.x + (dx - sx), rocks[sx][sy].transform.position.y - (dy - sy), rocks[sx][sy].transform.position.z), 0.35f));
